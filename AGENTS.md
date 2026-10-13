@@ -14,3 +14,4 @@
 - Use Web Speech synthesis only after user interaction.
 - Scope adult and child semantic theme tokens to the phone screen and keep the desktop preview shell independent so mode changes do not recolor the workspace.
 - Never render a button or other interactive control inside another button; keep secondary controls as siblings in a flex row, because nested buttons break SSR hydration and make early clicks dead.
+- Content ported from the original GitHub repo (max688a-hash/yuya-english-speaking-app) lives verbatim in src/lib/advanced/*.ts with @ts-nocheck; keep user-facing labels free of exam brand names (use 进阶 / 1–6 级), to avoid trademark issues.
