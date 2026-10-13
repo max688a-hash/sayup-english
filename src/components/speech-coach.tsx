@@ -1,4 +1,4 @@
-import { tr } from '@/lib/tr';
+import { tr, getContentLang } from '@/lib/tr';
 import { useEffect, useRef, useState } from 'react';
 import { AlertTriangle, CheckCheck, Loader2, Mic, Play, RotateCcw, Square, Sprout } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -48,7 +48,7 @@ export function SpeechCoach({ target, onPassed, onRecord }: { target: string; on
     setPhase('analyzing');
     const ctrl = new AbortController(); abort.current = ctrl;
     try {
-      const form = new FormData(); form.append('file', result.file); form.append('target', target);
+      const form = new FormData(); form.append('file', result.file); form.append('target', target); form.append('lang', getContentLang());
       const res = await fetch('/api/speech-analyze', { method: 'POST', body: form, signal: ctrl.signal });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) { setPhase('error'); setMessage(data.error ?? tr('分析失败，请稍后再试。')); return; }

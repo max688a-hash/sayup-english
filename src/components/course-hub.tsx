@@ -29,7 +29,7 @@ export function CourseHub({ speak, onRecord, onExit }: { speak: Speak; onRecord:
   const back = () => { if (step > 0) { setStep(step - 1); setK(0); } else setWeek(null); };
   const next = () => { setStep(step + 1); setK(0); };
   const bar = <div className="story-steps">{STEPS.map((s, i) => <span key={s} className={cn(i <= step && 'on')}>{tr(s)}</span>)}</div>;
-  const title = tr('第 {0} 周 · {1}', week.week, week.title);
+  const title = tr('第 {0} 周 · {1}', week.week, tr(week.title));
 
   if (step === 0) return <div className="adv-hub">{head(title, back)}{bar}
     <p className="adv-zh">{tr('本周目标：{0}。先听，每句点开听 2–3 遍，看懂中文意思。', week.goal)}</p>

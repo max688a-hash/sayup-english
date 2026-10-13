@@ -115,7 +115,7 @@ export function StoryReader({ speak, onRecord, onExit, initialLevel }: { speak: 
     const item = story.circling[i]; const r = results[i]; const last = i >= story.circling.length - 1;
     const pick = (c: string) => { if (r) return; const next = [...results]; next[i] = { correct: c === item.answer, chosen: c }; setResults(next); speak(item.answer, 'current'); };
     return <div className="adv-hub"><Head title={tr(story.titleZh)} onBack={back} />{steps}
-      <p className="adv-zh">{tr('第 {0} / {1} 题 · {2}。听问题，选出故事里的说法。', i + 1, story.circling.length, TYPE_LABEL[item.type] ?? tr('问答'))}</p>
+      <p className="adv-zh">{tr('第 {0} / {1} 题 · {2}。听问题，选出故事里的说法。', i + 1, story.circling.length, tr(TYPE_LABEL[item.type] ?? '问答'))}</p>
       <div className="adv-card"><p className="adv-q-title">{item.question}</p><p className="adv-zh">{tr(item.questionZh)}</p><Button size="sm" variant="ghost" onClick={() => speak(item.question, 'normal')}><Volume2 size={14} />{tr('听问题')}</Button></div>
       <div className="adv-options col">{item.choices.map((c: string) => <Button key={c} variant="outline" className={cn('adv-option', r && c === item.answer && 'right')} onClick={() => pick(c)}>{r && c === item.answer && <Check size={16} />}{c}</Button>)}</div>
       {r && <div className="adv-card"><b>{r.correct ? tr('答对了') : tr('地道的说法是')}</b><p>{item.answer}</p><p className="adv-zh">{tr(item.answerZh)}</p><Button size="sm" variant="ghost" onClick={() => speak(item.answer, 'current')}><Volume2 size={14} />{tr('再听一遍')}</Button></div>}
