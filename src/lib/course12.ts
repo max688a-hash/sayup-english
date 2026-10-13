@@ -7,6 +7,7 @@ export type Week = {
   phrases: Pair[]; drills: Drill[]; dialogue: { who: 'A' | 'B'; en: string; zh: string }[]; task: Pair;
 };
 
+const STAGE_NAMES = ['第 1 阶段 · 敢开口', '第 2 阶段 · 能办事', '第 3 阶段 · 能表达'] as const;
 export const STAGES = [
   { name: '第 1 阶段 · 敢开口', weeks: '1–4 周', desc: '生活里最常用的 200 句，先说出来再说好' },
   { name: '第 2 阶段 · 能办事', weeks: '5–8 周', desc: '出门、办事、上班的完整对话' },
@@ -14,7 +15,7 @@ export const STAGES = [
 ];
 
 export const COURSE: Week[] = [
-  { week: 1, stage: STAGES[0].name, title: '介绍自己，聊起来', goal: '30 秒说清你是谁、做什么、喜欢什么',
+  { week: 1, stage: STAGE_NAMES[0], title: '介绍自己，聊起来', goal: '30 秒说清你是谁、做什么、喜欢什么',
     phrases: [
       { en: "Hi, I'm Lin. Nice to meet you.", zh: '你好，我是林。很高兴认识你。' },
       { en: 'I work as a designer in Shanghai.', zh: '我在上海做设计师。' },
@@ -37,7 +38,7 @@ export const COURSE: Week[] = [
       { who: 'B', en: 'Yes, about ten minutes from here.', zh: '是的，离这儿十分钟左右。' },
     ],
     task: { en: 'Introduce yourself in 30 seconds: name, job, city, one hobby.', zh: '用 30 秒介绍自己：名字、工作、城市、一个爱好。' } },
-  { week: 2, stage: STAGES[0].name, title: '点餐和买咖啡', goal: '在餐厅、咖啡店独立点单并提出要求',
+  { week: 2, stage: STAGE_NAMES[0], title: '点餐和买咖啡', goal: '在餐厅、咖啡店独立点单并提出要求',
     phrases: [
       { en: "Can I get a latte, please?", zh: '请给我一杯拿铁。' },
       { en: "I'd like the chicken salad.", zh: '我想要鸡肉沙拉。' },
@@ -60,7 +61,7 @@ export const COURSE: Week[] = [
       { who: 'B', en: 'To go. Can I pay by phone?', zh: '带走。能用手机付吗？' },
     ],
     task: { en: 'Order a drink and a meal, change one thing, then ask for the bill.', zh: '点一份饮料和一份餐，改一个要求，然后买单。' } },
-  { week: 3, stage: STAGES[0].name, title: '问路和交通', goal: '问路、听懂指路、坐车换乘',
+  { week: 3, stage: STAGE_NAMES[0], title: '问路和交通', goal: '问路、听懂指路、坐车换乘',
     phrases: [
       { en: 'Excuse me, how do I get to the station?', zh: '打扰一下，去车站怎么走？' },
       { en: 'Go straight and turn left at the lights.', zh: '直走，在红绿灯左转。' },
@@ -83,7 +84,7 @@ export const COURSE: Week[] = [
       { who: 'B', en: 'Line 2. You don\'t need to change.', zh: '2 号线，不用换乘。' },
     ],
     task: { en: 'Explain the way from your home to the nearest station.', zh: '说清楚从你家到最近车站怎么走。' } },
-  { week: 4, stage: STAGES[0].name, title: '购物和讲价', goal: '询价、试穿、退换货',
+  { week: 4, stage: STAGE_NAMES[0], title: '购物和讲价', goal: '询价、试穿、退换货',
     phrases: [
       { en: 'How much is this?', zh: '这个多少钱？' },
       { en: 'Do you have this in a larger size?', zh: '这个有大一号的吗？' },
@@ -106,7 +107,7 @@ export const COURSE: Week[] = [
       { who: 'B', en: "It fits well. I'll take it.", zh: '很合身，我买了。' },
     ],
     task: { en: 'Buy something, ask for another size, and ask about returns.', zh: '买一件东西，要另一个尺码，再问退货规则。' } },
-  { week: 5, stage: STAGES[1].name, title: '酒店、预约和办事', goal: '订房、预约、处理小问题',
+  { week: 5, stage: STAGE_NAMES[1], title: '酒店、预约和办事', goal: '订房、预约、处理小问题',
     phrases: [
       { en: "I have a reservation under the name Wang.", zh: '我用“王”这个名字预订过。' },
       { en: "I'd like to book a table for two at seven.", zh: '我想订七点两个人的位子。' },
@@ -129,7 +130,7 @@ export const COURSE: Week[] = [
       { who: 'B', en: 'Great. And what\'s the Wi-Fi password?', zh: '好的，Wi-Fi 密码是多少？' },
     ],
     task: { en: 'Call a hotel: book, ask two questions, report one problem.', zh: '给酒店打电话：订房、问两个问题、报一个问题。' } },
-  { week: 6, stage: STAGES[1].name, title: '看病和说感受', goal: '说清身体不适和需求',
+  { week: 6, stage: STAGE_NAMES[1], title: '看病和说感受', goal: '说清身体不适和需求',
     phrases: [
       { en: "I don't feel very well.", zh: '我不太舒服。' },
       { en: "I've had a headache since yesterday.", zh: '我从昨天开始头疼。' },
@@ -152,7 +153,7 @@ export const COURSE: Week[] = [
       { who: 'B', en: 'Thank you. Should I come back if it gets worse?', zh: '谢谢，如果更严重要再来吗？' },
     ],
     task: { en: 'Describe a time you were sick: when, what hurt, what you did.', zh: '讲一次生病：什么时候、哪里疼、怎么处理的。' } },
-  { week: 7, stage: STAGES[1].name, title: '上班第一周', goal: '和同事打招呼、请求帮忙、确认任务',
+  { week: 7, stage: STAGE_NAMES[1], title: '上班第一周', goal: '和同事打招呼、请求帮忙、确认任务',
     phrases: [
       { en: 'Could you show me how this works?', zh: '能教我这个怎么用吗？' },
       { en: 'Just to confirm, the deadline is Friday?', zh: '确认一下，截止日期是周五吗？' },
@@ -175,7 +176,7 @@ export const COURSE: Week[] = [
       { who: 'B', en: 'Yes, Excel. No problem.', zh: '对，Excel，没问题。' },
     ],
     task: { en: 'Ask a colleague for help and confirm the deadline.', zh: '向同事请求帮忙，并确认截止时间。' } },
-  { week: 8, stage: STAGES[1].name, title: '打电话和约时间', goal: '电话里约时间、改时间、留言',
+  { week: 8, stage: STAGE_NAMES[1], title: '打电话和约时间', goal: '电话里约时间、改时间、留言',
     phrases: [
       { en: 'Hi, this is Lin from ABC Company.', zh: '你好，我是 ABC 公司的林。' },
       { en: "I'm calling about the order.", zh: '我打电话是关于订单的事。' },
@@ -198,7 +199,7 @@ export const COURSE: Week[] = [
       { who: 'B', en: 'Perfect. See you then.', zh: '好的，到时见。' },
     ],
     task: { en: 'Call to reschedule a meeting and agree on a new time.', zh: '打电话改约会议，并定下新时间。' } },
-  { week: 9, stage: STAGES[2].name, title: '讲一段经历', goal: '用过去时把一件事讲清楚、讲生动',
+  { week: 9, stage: STAGE_NAMES[2], title: '讲一段经历', goal: '用过去时把一件事讲清楚、讲生动',
     phrases: [
       { en: 'Last summer, I went to Yunnan with friends.', zh: '去年夏天，我和朋友去了云南。' },
       { en: 'At first, everything went well.', zh: '一开始一切顺利。' },
@@ -221,7 +222,7 @@ export const COURSE: Week[] = [
       { who: 'B', en: 'Yes. In the end, he invited us for lunch!', zh: '帮了，最后还请我们吃了午饭！' },
     ],
     task: { en: 'Tell a 1-minute story using: at first, but then, in the end.', zh: '用 at first / but then / in the end 讲一个 1 分钟的故事。' } },
-  { week: 10, stage: STAGES[2].name, title: '给观点和理由', goal: '说出看法、给两个理由、礼貌地不同意',
+  { week: 10, stage: STAGE_NAMES[2], title: '给观点和理由', goal: '说出看法、给两个理由、礼貌地不同意',
     phrases: [
       { en: 'In my opinion, working from home saves time.', zh: '在我看来，居家办公节省时间。' },
       { en: 'The main reason is that I don\'t have to commute.', zh: '主要原因是不用通勤。' },
@@ -244,7 +245,7 @@ export const COURSE: Week[] = [
       { who: 'B', en: 'I see your point, but it depends on where you live.', zh: '我明白，但要看你住在哪儿。' },
     ],
     task: { en: 'Give your opinion on one topic with two reasons and one "on the other hand".', zh: '就一个话题给观点，两个理由，加一句 on the other hand。' } },
-  { week: 11, stage: STAGES[2].name, title: '开会和汇报', goal: '开会时发言、汇报进度、提出问题',
+  { week: 11, stage: STAGE_NAMES[2], title: '开会和汇报', goal: '开会时发言、汇报进度、提出问题',
     phrases: [
       { en: "Let me give you a quick update.", zh: '我简单汇报一下进度。' },
       { en: "We're on track to finish by the end of the month.", zh: '我们按计划月底能完成。' },
@@ -267,7 +268,7 @@ export const COURSE: Week[] = [
       { who: 'B', en: 'Could we borrow one tester for two weeks?', zh: '能借一位测试同事两周吗？' },
     ],
     task: { en: 'Give a 1-minute project update: progress, one risk, one request.', zh: '做 1 分钟项目汇报：进度、一个风险、一个请求。' } },
-  { week: 12, stage: STAGES[2].name, title: '读懂短文并复述', goal: '读懂一篇工作或新闻短文，用自己的话复述',
+  { week: 12, stage: STAGE_NAMES[2], title: '读懂短文并复述', goal: '读懂一篇工作或新闻短文，用自己的话复述',
     phrases: [
       { en: 'The article is mainly about remote work.', zh: '这篇文章主要讲远程办公。' },
       { en: 'According to the report, sales rose by ten percent.', zh: '根据报告，销售额增长了百分之十。' },
