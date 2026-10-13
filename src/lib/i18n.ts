@@ -38,6 +38,8 @@ const zh = {
   submit: '提交申请',
   criteria: '哪些情况算“贫困”？',
   submitted: '申请已提交，等待人工审核。审核通过后自动开通学习名额。',
+  chsi: '学信网验证码（大学生必填，中小学生可留空）',
+  chsiHint: '登录学信网申请“学籍在线验证报告”，报告上的在线验证码填在这里。审核时我们会到学信网核对真假，伪造验证码会被直接拒绝。',
 };
 type Dict = typeof zh;
 
@@ -73,6 +75,8 @@ const vi: Dict = {
   submit: 'Gửi đơn',
   criteria: 'Thế nào là "khó khăn"?',
   submitted: 'Đã gửi đơn, đang chờ duyệt. Duyệt xong sẽ tự mở quyền học.',
+  chsi: 'Mã xác minh CHSI (bắt buộc cho sinh viên đại học)',
+  chsiHint: 'Đăng nhập CHSI để lấy báo cáo xác minh trực tuyến, điền mã xác minh vào đây. Chúng tôi sẽ đối chiếu trên CHSI; mã giả sẽ bị từ chối.',
 };
 
 const ja: Dict = {
@@ -107,6 +111,8 @@ const ja: Dict = {
   submit: '申請する',
   criteria: '「困難」の基準は？',
   submitted: '申請を受け付けました。審査後、自動で利用枠が開きます。',
+  chsi: '学信網（CHSI）認証コード（大学生は必須）',
+  chsiHint: '学信網で「学籍オンライン認証報告」を申請し、認証コードをここに入力。審査時に学信網で照合します。偽造は拒否されます。',
 };
 
 export const DICT: Record<Lang, Dict> = { zh, vi, ja };
