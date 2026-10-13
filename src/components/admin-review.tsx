@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 
 type App = { id: string; aid_type: string; full_name: string; school: string; region: string; proof_path: string; chsi_code: string | null; status: string; created_at: string; review_note: string | null };
-const TABS = [['pending', '待审核'], ['approved', '已通过'], ['rejected', '已驳回']] as const;
+const TABS = [['pending', tr('待审核')], ['approved', tr('已通过')], ['rejected', tr('已驳回')]] as const;
 
 export function AdminReview({ onClose }: { onClose: () => void }) {
   const [status, setStatus] = useState<string>('pending');
@@ -27,7 +27,7 @@ export function AdminReview({ onClose }: { onClose: () => void }) {
     if (next === 'rejected' && !note) { setMsg('驳回时请写一句原因，学员能看到。'); return; }
     const { error } = await supabase.from('aid_applications').update({ status: next, review_note: note || null, reviewed_at: new Date().toISOString() }).eq('id', a.id);
     if (error) { setMsg('操作失败，请重试。'); return; }
-    setMsg(next === 'approved' ? `已通过 ${a.full_name}，学习名额已自动开通。` : `已驳回 ${a.full_name}。`);
+    setMsg(next === 'approved' ? tr('已通过 {0}，学习名额已自动开通。', a.full_name) : tr('已驳回 {0}。', a.full_name));
     void load();
   }
   return <div className="member-backdrop" onClick={onClose}><section role="dialog" aria-modal="true" aria-label="助学审核" className="member-sheet" onClick={e => e.stopPropagation()}>
