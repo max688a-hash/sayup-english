@@ -52,7 +52,7 @@ export function AuthDialog({ reason, onClose }: { reason?: string; onClose: () =
 
 type Aid = { aid_type: string; status: string; created_at: string; chsi_code: string | null; review_note: string | null };
 type Rec = { id: string; target: string; score: number; main_issue: string | null; created_at: string };
-const STATUS: Record<string, string> = { pending: '审核中', approved: '已通过，名额已开通', rejected: '未通过' };
+const STATUS: Record<string, string> = { pending: tr('审核中'), approved: tr('已通过，名额已开通'), rejected: tr('未通过') };
 
 export function AccountSheet({ user, onClose }: { user: User; onClose: () => void }) {
   const [aid, setAid] = useState<Aid[]>([]);
