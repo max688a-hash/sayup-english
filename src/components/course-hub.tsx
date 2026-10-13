@@ -32,7 +32,7 @@ export function CourseHub({ speak, onRecord, onExit }: { speak: Speak; onRecord:
   const title = tr('第 {0} 周 · {1}', week.week, tr(week.title));
 
   if (step === 0) return <div className="adv-hub">{head(title, back)}{bar}
-    <p className="adv-zh">{tr('本周目标：{0}。先听，每句点开听 2–3 遍，看懂中文意思。', tr(week.goal))}</p>
+    <p className="adv-zh">{tr('本周目标：{0}。先听，每句点开听 2–3 遍，看懂意思。', tr(week.goal))}</p>
     <div className="weak-list">{week.phrases.map(p => <Button variant="ghost" className="weak-card" key={p.en} onClick={() => speak(p.en, 'current')}><div className="text-left min-w-0"><h3 className="whitespace-normal">{p.en}</h3><p>{tr(p.zh)}</p></div><Volume2 size={16} className="ml-auto shrink-0" /></Button>)}</div>
     <Button className="w-full mt-3" onClick={next}>{tr('听懂了，去跟读')}</Button>
   </div>;
