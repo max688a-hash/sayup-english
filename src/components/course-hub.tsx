@@ -18,17 +18,17 @@ export function CourseHub({ speak, onRecord, onExit }: { speak: Speak; onRecord:
   const [done, setDone] = useState<number[]>([]);
   const { user } = useAuth();
   useEffect(() => { if (!user) return; supabase.from('learning_progress').select('item_key').like('item_key', 'course:%').then(r => setDone((r.data ?? []).map(x => Number(x.item_key.split(':')[1])))); }, [user]);
-  const head = (title: string, back: () => void) => <div className="detail-heading"><Button variant="ghost" size="icon" aria-label="返回上一级" onClick={back}><ArrowLeft /></Button><span>{title}</span><span className="w-9" /></div>;
+  const head = (title: string, back: () => void) => <div className="detail-heading"><Button variant="ghost" size="icon" aria-label={tr('返回上一级')} onClick={back}><ArrowLeft /></Button><span>{title}</span><span className="w-9" /></div>;
 
   if (!week) return <div className="adv-hub">{head(tr('12 周主线课程'), onExit)}
-    <div className="strength-summary"><div><span className="eyebrow">{tr('A2 → B1+ · 约 3 个月')}</span><h2>{tr('日常与职场英语')}</h2><p>{tr('每周一个真实场景：先听懂，再跟读，再替换句型，最后开口完成任务。每天约 20 分钟。')}</p>{!user && <p className="text-xs text-amber mt-1">未登录：完成记录只保存到刷新前。点右上角头像登录即可长期保存。</p>}</div></div>
+    <div className="strength-summary"><div><span className="eyebrow">{tr('A2 → B1+ · 约 3 个月')}</span><h2>{tr('日常与职场英语')}</h2><p>{tr('每周一个真实场景：先听懂，再跟读，再替换句型，最后开口完成任务。每天约 20 分钟。')}</p>{!user && <p className="text-xs text-amber mt-1">{tr('未登录：完成记录只保存到刷新前。点右上角头像登录即可长期保存。')}</p>}</div></div>
     {STAGES.map(s => <div key={tr(s.name)}><div className="section-heading"><h2>{tr(s.name)}</h2><span>{tr(s.weeks)}</span></div><p className="adv-zh mb-2">{tr(s.desc)}</p>
       <div className="weak-list">{COURSE.filter(w => w.stage === s.name).map(w => <Button variant="ghost" className="weak-card" key={w.week} onClick={() => { setWeek(w); setStep(0); setK(0); }}><span className={cn('path-number', done.includes(w.week) && 'active')}>{done.includes(w.week) ? <Check size={18} /> : String(w.week).padStart(2, '0')}</span><div className="text-left min-w-0"><h3>{tr(w.title)}</h3><p>{tr(w.goal)}</p></div><ChevronRight className="ml-auto" /></Button>)}</div></div>)}
   </div>;
 
   const back = () => { if (step > 0) { setStep(step - 1); setK(0); } else setWeek(null); };
   const next = () => { setStep(step + 1); setK(0); };
-  const bar = <div className="story-steps">{STEPS.map((s, i) => <span key={s} className={cn(i <= step && 'on')}>{s}</span>)}</div>;
+  const bar = <div className="story-steps">{STEPS.map((s, i) => <span key={s} className={cn(i <= step && 'on')}>{tr(s)}</span>)}</div>;
   const title = tr('第 {0} 周 · {1}', week.week, week.title);
 
   if (step === 0) return <div className="adv-hub">{head(title, back)}{bar}

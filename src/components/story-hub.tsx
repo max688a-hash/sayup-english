@@ -24,7 +24,7 @@ const TYPE_LABEL: Record<string, string> = { yes_no: '是非问', either_or: '�
 function shuffle<T>(a: T[]) { const r = [...a]; for (let i = r.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [r[i], r[j]] = [r[j], r[i]]; } return r; }
 
 function Head({ title, onBack }: { title: string; onBack: () => void }) {
-  return <div className="detail-heading"><Button variant="ghost" size="icon" aria-label="返回上一级" onClick={onBack}><ArrowLeft /></Button><span>{title}</span><span className="w-9" /></div>;
+  return <div className="detail-heading"><Button variant="ghost" size="icon" aria-label={tr('返回上一级')} onClick={onBack}><ArrowLeft /></Button><span>{title}</span><span className="w-9" /></div>;
 }
 
 export function PlacementTest({ speak, onExit, onStart }: { speak: Speak; onExit: () => void; onStart: (cefr: string) => void }) {
@@ -38,7 +38,7 @@ export function PlacementTest({ speak, onExit, onStart }: { speak: Speak; onExit
     const rec = recommendTier(byTier);
     const meta = TIER[rec];
     const total = picks.filter(p => p.correct).length;
-    return <div className="adv-hub"><Head title="测评结果" onBack={onExit} />
+    return <div className="adv-hub"><Head title={tr('测评结果')} onBack={onExit} />
       <div className="strength-summary"><div><span className="eyebrow">{tr('答对 {0} / {1}', total, qs.length)}</span><h2>{tr('推荐从「{0}」开始', meta.label)}</h2><p>{meta.cefr} · {tr(meta.desc)}</p></div></div>
       <div className="adv-card">{CEFR.map(c => { const t = c.toLowerCase(); return <p key={c} className="flex justify-between"><span>{c} {tr(CEFR_LABEL[c])}</span><b>{byTier[t] || 0} / 2</b></p>; })}</div>
       <p className="adv-zh my-3">{tr('这不是考试，只是帮你挑一个学起来不费劲的起点。挑高挑低都行，随时能换。')}</p>
