@@ -22,6 +22,8 @@ export function SpeakingApp() {
   const [feedback, setFeedback] = useState(false);
   const [turnTip, setTurnTip] = useState('');
   const [lastReply, setLastReply] = useState('');
+  const [attempts, setAttempts] = useState<{ turn: number; reply: string; tip: string }[]>([]);
+  const [showReview, setShowReview] = useState(false);
   const [recording, setRecording] = useState(false);
   const [notice, setNotice] = useState('');
   const [speaking, setSpeaking] = useState(false);
@@ -58,7 +60,7 @@ export function SpeakingApp() {
   }
   function resetDetail() {
     if (timer.current) clearTimeout(timer.current);
-    setScene(null); setLearning(-1); setWordIndex(null); setPractice(null); setFeedback(false); setRecording(false); setCompleted(false); setAnswer(''); setChecked(false); setTurnTip(''); setLastReply('');
+    setScene(null); setLearning(-1); setWordIndex(null); setPractice(null); setFeedback(false); setRecording(false); setCompleted(false); setAnswer(''); setChecked(false); setTurnTip(''); setLastReply(''); setAttempts([]); setShowReview(false);
     window.speechSynthesis?.cancel(); setSpeaking(false);
   }
   function openScene(item: Scene, role = false) {
