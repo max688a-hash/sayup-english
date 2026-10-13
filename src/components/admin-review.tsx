@@ -3,6 +3,7 @@ import { Check, ExternalLink, FileText, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
+import { tr } from '@/lib/tr';
 
 type App = { id: string; aid_type: string; full_name: string; school: string; region: string; proof_path: string; chsi_code: string | null; status: string; created_at: string; review_note: string | null };
 const TABS = [['pending', tr('待审核')], ['approved', tr('已通过')], ['rejected', tr('已驳回')]] as const;
