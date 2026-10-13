@@ -8,6 +8,13 @@
       "when": 1791868622481,
       "tag": "0000_migration",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791869001446,
+      "tag": "0001_add_chsi_code_to_aid_applications",
+      "breakpoints": true
     }
   ]
 }

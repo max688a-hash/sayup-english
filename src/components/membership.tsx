@@ -27,7 +27,7 @@ export function AidDialog({ lang, userId, onClose }: { lang: Lang; userId: strin
   const t = DICT[lang];
   const [type, setType] = useState<'poor' | 'normal'>('poor');
   const [file, setFile] = useState<File | null>(null);
-  const [form, setForm] = useState({ name: '', school: '', region: '' });
+  const [form, setForm] = useState({ name: '', school: '', region: '', chsi: '' });
   const [done, setDone] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
@@ -41,7 +41,7 @@ export function AidDialog({ lang, userId, onClose }: { lang: Lang; userId: strin
     const path = `${userId}/${crypto.randomUUID()}.${ext}`;
     const up = await supabase.storage.from('aid-proofs').upload(path, file, { contentType: file.type });
     if (up.error) { setErr('证件上传失败，请重试。'); setBusy(false); return; }
-    const { error } = await supabase.from('aid_applications').insert({ user_id: userId, aid_type: type, full_name: form.name.trim().slice(0, 80), school: form.school.trim().slice(0, 120), region: form.region.trim().slice(0, 120), proof_path: path });
+    const { error } = await supabase.from('aid_applications').insert({ user_id: userId, aid_type: type, full_name: form.name.trim().slice(0, 80), school: form.school.trim().slice(0, 120), region: form.region.trim().slice(0, 120), proof_path: path, chsi_code: form.chsi.trim().slice(0, 40) || null });
     setBusy(false);
     if (error) setErr('提交失败，请重试。'); else setDone(true);
   }
@@ -53,6 +53,8 @@ export function AidDialog({ lang, userId, onClose }: { lang: Lang; userId: strin
       <label>{t.name}<input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></label>
       <label>{t.school}<input value={form.school} onChange={e => setForm({ ...form, school: e.target.value })} /></label>
       <label>{t.region}<input value={form.region} onChange={e => setForm({ ...form, region: e.target.value })} /></label>
+      <label>{t.chsi}<input value={form.chsi} onChange={e => setForm({ ...form, chsi: e.target.value })} placeholder="如：A1B2C3D4E5F6" /></label>
+      <p className="member-note">{t.chsiHint}</p>
       <label>{t.proof}<input type="file" accept="image/*,application/pdf" onChange={e => setFile(e.target.files?.[0] ?? null)} /></label>
       {err && <p className="member-note" role="alert">{err}</p>}
       <Button type="submit" className="w-full h-11" disabled={!ready}>{busy ? '提交中…' : t.submit}</Button>
