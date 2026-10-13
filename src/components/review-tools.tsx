@@ -40,13 +40,13 @@ const CHUNKS: { frame: string; zh: string; fills: string[] }[] = [
   { frame: "It depends on ___.", zh: '表达看情况', fills: ['the weather', 'how much it costs', 'my schedule', 'what my boss says'] },
   { frame: "I'm not sure, but I think ___.", zh: '委婉表达观点', fills: ["it's on the second floor", 'the meeting is on Friday', "we should wait", "she's right"] },
 ];
-const fill = (frame: string, f: string) => { const parts = f.split(' / '); let i = 0; return frame.replace(/___/g, () => parts[i++] ?? parts[0]); };
+const fill = (frame: string, f: string) => { const parts = f.split(' / '); let i = 0; return frame.replace(/___/g, () => parts[i++] ?? parts[0] ?? ''); };
 
 // Phrase chunks: one sentence frame, swap the blank, say each full sentence aloud.
 export function ChunkDrill({ speak, onExit, onRecord }: P) {
   const [ci, setCi] = useState(0);
   const [fi, setFi] = useState(0);
-  const c = CHUNKS[ci]; const sentence = fill(c.frame, c.fills[fi]);
+  const c = CHUNKS[ci] ?? CHUNKS[0]!; const sentence = fill(c.frame, c.fills[fi] ?? '');
   return <div className="adv-hub">
     <div className="detail-heading"><Button variant="ghost" size="icon" aria-label={tr('返回上一级')} onClick={onExit}><ArrowLeft /></Button><span>{tr('短语块 · 句型替换')}</span><span className="w-9" /></div>
     <div className="flex flex-wrap gap-1 mb-3">{CHUNKS.map((x, i) => <Button key={x.frame} size="sm" variant={i === ci ? 'default' : 'outline'} onClick={() => { setCi(i); setFi(0); }}>{tr(x.zh)}</Button>)}</div>
