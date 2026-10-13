@@ -104,14 +104,15 @@ const instructions = `你是严格而友善的英语口语教练。你会收到�
 - 你只能根据识别文字判断，无法听到语调细节；不要编造识别结果中没有体现的问题。
 - 除英文单词和音标外，全部用简体中文，语气简洁。`;
 
-export async function analyzeSpeech(apiKey: string, target: string, heard: string, signal: AbortSignal) {
+const LANG_NAME: Record<string, string> = { zh: '简体中文', vi: '越南语（Tiếng Việt）', ja: '日语（日本語）' };
+export async function analyzeSpeech(apiKey: string, target: string, heard: string, signal: AbortSignal, lang = 'zh') {
   const res = await fetch(`${GATEWAY}/v1/responses`, {
     method: "POST",
     signal,
     headers: { "Content-Type": "application/json", "Lovable-API-Key": apiKey, "X-Lovable-AIG-SDK": "fetch" },
     body: JSON.stringify({
       model: ANALYSIS_MODEL,
-      instructions,
+      instructions: lang === 'zh' ? instructions : instructions + `\n- 重要：所有说明文字（summary、problem、fix、suggestions、next_try）必须改用${LANG_NAME[lang] ?? '简体中文'}书写，不要用中文。`,
       input: [{ role: "user", content: `目标句子：${target}\n识别到的录音文字：${heard}` }],
       stream: true,
       store: false,

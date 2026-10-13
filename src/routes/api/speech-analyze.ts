@@ -24,7 +24,8 @@ export const Route = createFileRoute("/api/speech-analyze")({
           if (!target) return json({ error: "缺少目标句子" }, 400);
           const heard = await transcribeAudio(apiKey, file, request.signal);
           if (!heard.replace(/[^a-zA-Z]/g, "")) return json({ status: "no_speech", heard });
-          const analysis = await analyzeSpeech(apiKey, target, heard, request.signal);
+          const lang = ['zh', 'vi', 'ja'].includes(String(form.get('lang'))) ? String(form.get('lang')) : 'zh';
+          const analysis = await analyzeSpeech(apiKey, target, heard, request.signal, lang);
           return json({ status: "ok", heard, analysis });
         } catch (error) {
           if (request.signal.aborted) return new Response(null, { status: 499 });
