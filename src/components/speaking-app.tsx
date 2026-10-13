@@ -88,6 +88,7 @@ export function SpeakingApp() {
   const featuredScene = scenes[0] ?? kidScene;
   const childrenScenes: Scene[] = [kidScene, toyScene];
   const currentWord = wordIndex === null ? null : activeWords[wordIndex];
+  useEffect(() => { const q = new URLSearchParams(window.location.search); if (q.get('checkout') === 'success') { setNotice('付款成功！会员身份通常几秒内生效，可在「我的账号」查看。'); window.history.replaceState(null, '', '/'); } }, []);
   useEffect(() => { bottom.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, [messages]);
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current); window.speechSynthesis?.cancel(); }, []);
   useEffect(() => { if (!notice) return; const t = setTimeout(() => setNotice(''), 4000); return () => clearTimeout(t); }, [notice]);
