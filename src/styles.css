@@ -395,3 +395,36 @@ h1,h2,h3,p { margin:0; }
 .word-photo { width: 100%; max-width: 9.5rem; aspect-ratio: 1; border-radius: 1.25rem; object-fit: cover; box-shadow: 0 12px 30px -14px color-mix(in oklab, var(--foreground) 45%, transparent); }
 .brand-logo { width: 36px; height: 36px; border-radius: 10px; }
 .app-logo-img { width: 28px; height: 28px; border-radius: 8px; }
+
+/* SayUp bubble + sprout visual language */
+.coach { display:flex; flex-direction:column; gap:10px; }
+.coach-hint { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted-foreground); }
+.rec-dot { width:8px; height:8px; border-radius:50%; background:var(--destructive); animation:pulse 1s infinite; }
+.coach-alert { display:flex; gap:8px; align-items:flex-start; font-size:13px; line-height:1.6; padding:10px 12px; border-radius:14px 14px 14px 4px; border:1px solid color-mix(in oklch,var(--amber) 45%,var(--border)); background:color-mix(in oklch,var(--amber) 12%,transparent); color:var(--foreground); }
+.coach-alert.error { border-color:color-mix(in oklch,var(--destructive) 50%,var(--border)); background:color-mix(in oklch,var(--destructive) 12%,transparent); }
+.coach-verdict { display:flex; align-items:center; gap:6px; font-weight:600; color:var(--teal); }
+.coach-verdict.mid, .feedback-score.mid { color:var(--amber); }
+.coach-verdict.low, .feedback-score.low { color:var(--destructive); }
+.feedback-score.good { color:var(--teal); }
+.coach-heard { margin-top:10px; font-size:12px; color:var(--muted-foreground); }
+.coach-issues { margin-top:10px; display:flex; flex-direction:column; gap:8px; }
+.coach-issues li { display:flex; flex-direction:column; gap:2px; padding:8px 10px; border-radius:12px 12px 12px 4px; background:color-mix(in oklch,var(--destructive) 9%,transparent); font-size:12px; line-height:1.55; }
+.coach-issues b { font-size:14px; color:var(--foreground); }
+.coach-issues em { font-style:normal; color:var(--teal); }
+.coach-sub { margin-top:12px; font-size:12px; font-weight:600; }
+.coach-tips { margin-top:4px; padding-left:18px; list-style:decimal; font-size:12px; line-height:1.7; color:var(--muted-foreground); }
+.coach-next { margin-top:10px; display:flex; gap:6px; align-items:center; font-size:12px; color:var(--primary); }
+.feedback-box { border-radius:18px 18px 18px 6px; }
+.empty-state { display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px; padding:24px 18px; border:1px dashed var(--border); border-radius:20px 20px 20px 6px; }
+.empty-state p { font-size:12px; line-height:1.7; color:var(--muted-foreground); }
+.empty-bubble { display:grid; place-items:center; width:54px; height:54px; margin-bottom:4px; border-radius:18px 18px 18px 5px; color:var(--background); background:linear-gradient(135deg,var(--teal),color-mix(in oklch,var(--teal) 55%,var(--primary))); }
+.record-list { display:flex; flex-direction:column; gap:10px; }
+.record-item { display:flex; flex-direction:column; gap:4px; padding:12px; border:1px solid var(--border); background:var(--surface); border-radius:16px 16px 16px 5px; font-size:13px; }
+.record-heard, .record-fix { font-size:12px; color:var(--muted-foreground); }
+.record-score { min-width:34px; text-align:center; font-weight:700; border-radius:10px 10px 10px 3px; padding:2px 6px; background:color-mix(in oklch,currentColor 14%,transparent); }
+.record-score.good { color:var(--teal); } .record-score.mid { color:var(--amber); } .record-score.low { color:var(--destructive); }
+.nav-item.active { border-radius:14px 14px 14px 4px; }
+.filter-button.active { border-radius:12px 12px 12px 3px; }
+.topic-card, .role-card, .weak-card, .lesson-card, .continue-lesson, .memory-card, .tip-panel, .sentence-panel { border-radius:18px 18px 18px 6px; }
+.phone-screen button[data-slot="button"]:not(.nav-item):not(.filter-button):not(.audio-button), .featured-cta { border-radius:14px 14px 14px 4px; }
+.topic-icon { border-radius:14px 14px 14px 4px; }
