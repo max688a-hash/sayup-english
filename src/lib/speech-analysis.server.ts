@@ -13,7 +13,7 @@ export class GatewayError extends Error {
 
 async function readSSE(response: Response, onEvent: (data: Record<string, unknown>) => void) {
   if (!response.ok || !response.body) {
-    const text = await response.text().catch(() => "");
+    const text = await response['text']().catch(() => "");
     let message = text;
     try {
       const j = JSON.parse(text);
@@ -54,9 +54,9 @@ export async function transcribeAudio(apiKey: string, file: File, signal: AbortS
   let final: string | null = null;
   let failed: string | null = null;
   await readSSE(res, (e) => {
-    if (e.type === "transcript.text.delta" && typeof e.delta === "string") deltas += e.delta;
-    else if (e.type === "transcript.text.done" && typeof e.text === "string") final = e.text;
-    else if (e.type === "error") failed = String((e as { message?: string }).message ?? "识别失败");
+    if (e['type'] === "transcript.text.delta" && typeof e['delta'] === "string") deltas += e['delta'];
+    else if (e['type'] === "transcript.text.done" && typeof e['text'] === "string") final = e['text'];
+    else if (e['type'] === "error") failed = String((e as { message?: string }).message ?? "识别失败");
   });
   if (failed) throw new GatewayError(502, failed);
   return (final ?? deltas).trim();
@@ -122,8 +122,8 @@ export async function analyzeSpeech(apiKey: string, target: string, heard: strin
   let text = "";
   let failed: string | null = null;
   await readSSE(res, (e) => {
-    if (e.type === "response.output_text.delta" && typeof e.delta === "string") text += e.delta;
-    else if (e.type === "response.failed" || e.type === "error") failed = "分析失败，请稍后再试";
+    if (e['type'] === "response.output_text.delta" && typeof e['delta'] === "string") text += e['delta'];
+    else if (e['type'] === "response.failed" || e['type'] === "error") failed = "分析失败，请稍后再试";
   });
   if (failed) throw new GatewayError(502, failed);
   const parsed = JSON.parse(text) as SpeechAnalysis;

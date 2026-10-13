@@ -10,7 +10,7 @@ export const Route = createFileRoute("/api/speech-analyze")({
         const { transcribeAudio, analyzeSpeech, GatewayError, MAX_AUDIO_BYTES } = await import(
           "@/lib/speech-analysis.server"
         );
-        const apiKey = process.env.LOVABLE_API_KEY;
+        const apiKey = process.env['LOVABLE_API_KEY'];
         if (!apiKey) return json({ error: "分析服务未配置" }, 500);
         const length = Number(request.headers.get("content-length") ?? 0);
         if (length > MAX_AUDIO_BYTES + 64 * 1024) return json({ error: "录音太长，请控制在 30 秒以内" }, 413);
