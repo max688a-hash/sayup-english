@@ -34,3 +34,5 @@
 - [ ] Meta 连接 → 广告账户 → Pixel → $50 测试广告（用户决定：等收款等全部打通后再投）
 - [ ] 公司注册后 Paddle 正式认证，打开真实收款（阻塞：营业执照、对公账户）
 - [x] 会员坚持奖自动推迟 Paddle 下次扣费 1 个月
+- [x] AI 自由对话（原 AIFreeChat/BotChat/FreeSpeak）
+- [ ] 继续搬原代码：重音练习 StressDrill、跟读 RepeatDrill、沉浸实验室 ImmersionLab、儿童课程 KidsLesson、每日交流 DailyExchange、每日路径 DailyPath、词汇复习 VocabReview、世界素材 WorldMaterials、法律条款页 LegalScreen
