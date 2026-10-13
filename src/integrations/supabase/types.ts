@@ -130,6 +130,8 @@ export type Database = {
       }
       reward_grants: {
         Row: {
+          billing_applied_at: string | null
+          billing_note: string | null
           created_at: string
           ends_at: string
           id: string
@@ -139,6 +141,8 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          billing_applied_at?: string | null
+          billing_note?: string | null
           created_at?: string
           ends_at: string
           id?: string
@@ -148,6 +152,8 @@ export type Database = {
           user_id: string
         }
         Update: {
+          billing_applied_at?: string | null
+          billing_note?: string | null
           created_at?: string
           ends_at?: string
           id?: string
