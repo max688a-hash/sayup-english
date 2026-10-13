@@ -1,0 +1,2 @@
+create policy "own proof delete" on storage.objects for delete to authenticated using (bucket_id = 'aid-proofs' and (storage.foldername(name))[1] = auth.uid()::text);
+create policy "Admins delete aid proofs" on storage.objects for delete to authenticated using (bucket_id = 'aid-proofs' and public.has_role(auth.uid(), 'admin'::public.app_role));
