@@ -14,10 +14,10 @@ function Head({ title, onExit }: { title: string; onExit: () => void }) {
 
 // ---------- Stress practice: word stress + sentence stress that changes meaning ----------
 const WORD_STRESS: { group: string; words: string[] }[] = [
-  { group: '同根词重音会移动', words: ['PHO-to-graph', 'pho-TO-gra-pher', 'pho-to-GRA-phic', 'E-co-nomy|e-CO-no-my', 'e-co-NO-mic'] },
+  { group: '同根词重音会移动', words: ['PHO-to-graph', 'pho-TO-gra-pher', 'pho-to-GRA-phic', 'e-CO-no-my', 'e-co-NO-mic'] },
   { group: '名词前重，动词后重', words: ['PRE-sent (礼物)', 'pre-SENT (呈现)', 'RE-cord (记录)', 're-CORD (录制)', 'OB-ject (物体)', 'ob-JECT (反对)'] },
   { group: '工作常用词', words: ['MEE-ting', 'COM-pa-ny', 'MA-na-ger', 'de-VE-lop', 'PRE-sen-TA-tion', 'IN-ter-view', 're-PORT', 'SCHE-dule'] },
-  { group: '生活常用词', words: ['BA-na-na', 'TO-ma-to|to-MA-to', 'HO-tel|ho-TEL', 'ho-TEL', 'COF-fee', 'res-TAU-rant', 'su-per-MAR-ket', 'be-CAUSE'] },
+  { group: '生活常用词', words: ['BA-na-na', 'to-MA-to', 'ho-TEL', 'COF-fee', 'res-TAU-rant', 'su-per-MAR-ket', 'be-CAUSE'] },
 ];
 const SENT_STRESS: { base: string; options: { stress: string; meaning: string }[] }[] = [
   { base: "I didn't say she took the money.", options: [
