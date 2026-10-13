@@ -13,3 +13,5 @@ export function tr(zh: string | null | undefined, ...args: unknown[]): string {
   const base = current === 'zh' ? zh : (maps[current]?.[zh] ?? zh);
   return args.length ? base.replace(/\{(\d+)\}/g, (_, i) => String(args[Number(i)] ?? '')) : base;
 }
+// Translate a value only when it is a string (data fields rendered in JSX).
+export function trn<T>(v: T): T | string { return typeof v === 'string' ? tr(v) : v; }

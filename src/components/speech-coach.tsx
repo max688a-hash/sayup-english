@@ -1,4 +1,4 @@
-import { tr, getContentLang } from '@/lib/tr';
+import { tr, getContentLang , trn} from '@/lib/tr';
 import { useEffect, useRef, useState } from 'react';
 import { AlertTriangle, CheckCheck, Loader2, Mic, Play, RotateCcw, Square, Sprout } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -73,10 +73,10 @@ export function SpeechCoach({ target, onPassed, onRecord }: { target: string; on
     {phase === 'recording' && <p className="coach-hint"><span className="rec-dot" />{tr('正在录音，请读：{0}', target)}</p>}
     {(phase === 'retry' || phase === 'error') && <div className={cn('coach-alert', phase)} role="alert"><AlertTriangle size={16} /><span>{message}</span></div>}
     {analysis && <div className="feedback-box">
-      <div className="flex items-center justify-between gap-3"><span className={cn('coach-verdict', tone)}>{analysis.verdict === 'good' ? <CheckCheck size={17} /> : <Sprout size={17} />}{analysis.verdict === 'good' ? tr('说得准确') : analysis.verdict === 'retry' ? tr('需要重说') : tr('还有要纠正的地方')}</span><span className={cn('feedback-score', tone)}>{analysis.score}<span>/100</span></span></div>
+      <div className="flex items-center justify-between gap-3"><span className={cn('coach-verdict', tone)}>{analysis.verdict === 'good' ? <CheckCheck size={17} /> : <Sprout size={17} />}{analysis.verdict === 'good' ? tr('说得准确') : analysis.verdict === 'retry' ? tr('需要重说') : tr('还有要纠正的地方')}</span><span className={cn('feedback-score', tone)}>{trn(analysis.score)}<span>/100</span></span></div>
       <p className="coach-heard"><b>{tr('识别到：')}</b>{heard || tr('（无）')}</p>
-      <p className="mt-2 text-sm">{analysis.summary}</p>
-      {analysis.issues.length > 0 && <ul className="coach-issues">{analysis.issues.map((i, k) => <li key={k}><b>{i.word}</b><span>{i.problem}</span><em>{tr('纠正：{0}', i.fix)}</em></li>)}</ul>}
+      <p className="mt-2 text-sm">{trn(analysis.summary)}</p>
+      {analysis.issues.length > 0 && <ul className="coach-issues">{analysis.issues.map((i, k) => <li key={k}><b>{trn(i.word)}</b><span>{trn(i.problem)}</span><em>{tr('纠正：{0}', i.fix)}</em></li>)}</ul>}
       {analysis.suggestions.length > 0 && <><p className="coach-sub">{tr('改进建议')}</p><ol className="coach-tips">{analysis.suggestions.map((s, k) => <li key={k}>{s}</li>)}</ol></>}
       <p className="coach-next"><RotateCcw size={13} />{tr('下次注意：{0}', analysis.next_try)}</p>
       <div className="flex items-center justify-between mt-3">{audioUrl && <Button variant="ghost" size="sm" onClick={() => void new Audio(audioUrl).play()}><Play size={14} />{tr('听我的录音')}</Button>}<span className="text-[10px] text-muted-foreground">{tr('AI 根据语音识别结果判断，无法识别的词会被指出')}</span></div>
