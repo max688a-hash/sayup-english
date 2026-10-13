@@ -12,6 +12,7 @@ export function SpeakingApp() {
   const [tab, setTab] = useState<Tab>('对话');
   const [kids, setKids] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
+  const [previewInfo, setPreviewInfo] = useState(false);
   const [category, setCategory] = useState('全部');
   const [scene, setScene] = useState<Scene | null>(null);
   const [rolePlay, setRolePlay] = useState(false);
@@ -34,6 +35,8 @@ export function SpeakingApp() {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const bottom = useRef<HTMLDivElement>(null);
   const activeWords = (kids ? kidWords : words).filter(w => wordLevel === '全部' || w.level === wordLevel);
+  const featuredScene = scenes[0] ?? kidScene;
+  const childrenScenes: Scene[] = [kidScene, { ...(scenes[3] ?? kidScene), title: '我的玩具商店', english: 'Let’s play together' }];
   const currentWord = wordIndex === null ? null : activeWords[wordIndex];
   useEffect(() => { bottom.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, [messages]);
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current); window.speechSynthesis?.cancel(); }, []);
@@ -57,12 +60,15 @@ export function SpeakingApp() {
     window.speechSynthesis?.cancel(); setSpeaking(false);
   }
   function openScene(item: Scene, role = false) {
-    resetDetail(); setScene(item); setRolePlay(role); setTurn(0); setMessages([{ text: item.turns[0], user: false }]); setInput('');
+    const opening = item.turns[0];
+    if (!opening) return;
+    resetDetail(); setScene(item); setRolePlay(role); setTurn(0); setMessages([{ text: opening, user: false }]); setInput('');
   }
   function send(text: string) {
     if (!scene || !text.trim() || turn >= scene.turns.length) return;
     const next = turn + 1;
-    setMessages(old => [...old, { text: text.trim(), user: true }, ...(next < scene.turns.length ? [{ text: scene.turns[next], user: false }] : [{ text: 'Lovely talking to you. Have a wonderful day!', user: false }])]);
+    const nextLine = scene.turns[next] ?? 'Lovely talking to you. Have a wonderful day!';
+    setMessages(old => [...old, { text: text.trim(), user: true }, { text: nextLine, user: false }]);
     setTurn(next); setInput(''); setFeedback(false);
   }
   function simulate() {
@@ -82,7 +88,9 @@ export function SpeakingApp() {
   function PracticeControl() { return <><Button className={cn('w-full h-12', recording && 'recording')} onClick={simulate}><Mic size={18} />{recording ? '正在模拟跟读…' : '模拟跟读评测'}</Button>{feedback && <Feedback />}</>; }
 
   return <div className={cn('preview-workspace', fullscreen && 'is-fullscreen')}>
-    <header className="workspace-header"><div className="workspace-brand"><div className="brand-mark"><Sprout size={21} /></div><span>语芽<span className="workspace-brand-en"> yuya</span></span><span className="preview-tag">WEB PREVIEW</span></div><div className="workspace-actions"><span className="live-label"><i /> 实时预览</span><Button variant="ghost" size="icon" title={fullscreen ? '退出全屏' : '全屏预览'} aria-label={fullscreen ? '退出全屏' : '全屏预览'} onClick={() => setFullscreen(!fullscreen)}>{fullscreen ? <Minimize2 /> : <Maximize2 />}</Button></div></header>
+    <header className="workspace-header"><div className="workspace-brand"><div className="brand-mark"><Sprout size={21} /></div><span>语芽<span className="workspace-brand-en"> yuya</span></span><span className="preview-tag">WEB PREVIEW</span></div><div className="workspace-actions"><span className="live-label"><i /> 实时预览</span><Button variant="ghost" size="icon" title="预览说明" aria-label="预览说明" onClick={() => setPreviewInfo(true)}><CircleHelp /></Button><Button variant="ghost" size="icon" title={fullscreen ? '退出全屏' : '全屏预览'} aria-label={fullscreen ? '退出全屏' : '全屏预览'} onClick={() => setFullscreen(!fullscreen)}>{fullscreen ? <Minimize2 /> : <Maximize2 />}</Button></div></header>
+    {fullscreen && <Button variant="secondary" size="icon" className="fullscreen-exit" aria-label="退出全屏" title="退出全屏" onClick={() => setFullscreen(false)}><Minimize2 /></Button>}
+    {previewInfo && <div className="preview-info-backdrop" onClick={() => setPreviewInfo(false)}><section role="dialog" aria-modal="true" aria-label="在线预览说明" className="preview-info" onClick={e => e.stopPropagation()}><div className="flex justify-between items-center"><h2>在线预览说明</h2><Button variant="ghost" size="icon" aria-label="关闭说明" onClick={() => setPreviewInfo(false)}><X /></Button></div><p>这是浏览器中的手机样式 Web 预览，不是原生手机 App 或手机系统模拟器。</p><h3>可交互体验</h3><p>五个栏目切换、情景筛选、输入回复、角色回合提示、三步学习与返回、词卡翻转与记忆、强化练习、儿童主题及全屏切换。</p><h3>浏览器朗读与模拟功能</h3><p>英语朗读由浏览器 Web Speech API 提供，声音因设备而异。对话为预设回合；跟读与评测为模拟，不访问麦克风，不识别或评分真实发音。</p><h3>仅静态展示</h3><p>手机边框、灵动岛、9:41 时间、电量、信号和底部横条；首页连续天数与练习时长、错题记录为示例数据。</p><p className="preview-info-foot">本次学习状态仅保留在当前页面，刷新会重置；预览不包含登录、云端同步、真实录音、系统通知或后台运行。</p></section></div>}
     <div className={cn('phone-shell', kids && 'kids-theme')}>
       <div className="phone-screen">
         <div className="status-bar"><span>9:41</span><div className="dynamic-island" /><div className="flex items-center gap-1.5"><Signal size={14} /><Wifi size={14} /><BatteryFull size={21} /></div></div>
