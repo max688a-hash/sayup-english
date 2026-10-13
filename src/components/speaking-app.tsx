@@ -72,13 +72,20 @@ export function SpeakingApp() {
     if (!scene || !text.trim() || turn >= scene.turns.length) return;
     const next = turn + 1;
     const nextLine = scene.turns[next] ?? 'Lovely talking to you. Have a wonderful day!';
+    const tip = scene.tips[turn] ?? '';
     setMessages(old => [...old, { text: text.trim(), user: true }, { text: nextLine, user: false }]);
-    setTurn(next); setInput(''); setFeedback(false); setTurnTip(scene.tips[turn] ?? ''); setLastReply(text.trim());
+    setTurn(next); setInput(''); setFeedback(false); setTurnTip(tip); setLastReply(text.trim());
+    setAttempts(old => [...old, { turn, reply: text.trim(), tip }]);
   }
   function retryTurn() {
     if (!scene || turn === 0) return;
     setMessages(old => old.slice(0, -2));
     setTurn(turn - 1); setTurnTip(''); setLastReply(''); setFeedback(false);
+  }
+  function rewindTo(target: number) {
+    if (!scene) return;
+    setMessages(old => old.slice(0, target * 2 + 1));
+    setTurn(target); setTurnTip(''); setLastReply(''); setFeedback(false); setShowReview(false);
   }
   function simulate() {
     if (recording) return;
