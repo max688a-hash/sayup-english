@@ -303,6 +303,9 @@ h1,h2,h3,p { margin:0; }
 .reply-option:hover { border-color:var(--primary); background:color-mix(in oklch,var(--primary) 12%,var(--surface)); }
 .turn-feedback { display:flex; gap:8px; align-items:flex-start; margin:4px 0 10px; padding:10px 12px; font-size:12px; line-height:1.5; color:var(--teal); background:color-mix(in oklch,var(--teal) 8%,var(--surface)); border:1px solid color-mix(in oklch,var(--teal) 28%,var(--border)); border-radius:7px; }
 .turn-feedback svg { flex-shrink:0; margin-top:2px; }
+.turn-feedback-actions { display:flex; gap:4px; margin-left:auto; flex-shrink:0; }
+.turn-feedback-actions button { height:26px; padding:0 8px; font-size:11px; color:var(--teal); }
+.turn-feedback-actions button:hover { color:var(--teal); background:color-mix(in oklch,var(--teal) 12%,transparent); }
 .chat-input { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:5px; background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:4px; margin-top:14px; }
 .chat-input input { width:100%; outline:none; background:transparent; border:none; padding:0 8px; font-size:11px; color:var(--foreground); }
 .chat-input input::placeholder { color:var(--muted-foreground); }
