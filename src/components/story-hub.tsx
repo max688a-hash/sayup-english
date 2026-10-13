@@ -62,7 +62,7 @@ export function PlacementTest({ speak, onExit, onStart }: { speak: Speak; onExit
 
 type Phase = 'list' | 'pqa' | 'read' | 'echo' | 'circling' | 'done';
 
-export function StoryReader({ speak, onRecord, onExit, initialLevel }: { speak: Speak; onRecord: (r: PracticeRecord) => void; onExit: () => void; initialLevel?: string }) {
+export function StoryReader({ speak, onRecord, onExit, initialLevel }: { speak: Speak; onRecord: (r: PracticeRecord) => void; onExit: () => void; initialLevel?: string | undefined }) {
   const [level, setLevel] = useState(initialLevel ?? 'A1');
   const [story, setStory] = useState<any>(null);
   const [phase, setPhase] = useState<Phase>('list');
