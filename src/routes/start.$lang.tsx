@@ -1,7 +1,7 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useState } from "react";
 import { SpeakingApp } from '@/components/speaking-app';
-import logoImage from '@/assets/sayup-logo.png';
+import logoImage from '@/assets/logo-small.png';
 
 const COPY = {
   vi: {
