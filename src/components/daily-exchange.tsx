@@ -27,7 +27,7 @@ function Head({ title, onExit }: { title: string; onExit: () => void }) {
 }
 
 /** 每日交流：听对方一句 → 选一句回应 → 真实录音达意评分 → 下一轮。 */
-export function DailyExchange({ speak, onExit, onRecord, initialId, onFinished }: { speak: Speak; onExit: () => void; onRecord: (r: PracticeRecord) => void; initialId?: string; onFinished?: (id: string) => void }) {
+export function DailyExchange({ speak, onExit, onRecord, initialId, onFinished }: { speak: Speak; onExit: () => void; onRecord: (r: PracticeRecord) => void; initialId?: string | undefined; onFinished?: (id: string) => void }) {
   const [level, setLevel] = useState(() => EXCHANGES.find(e => e.id === initialId)?.level ?? 'a1');
   const [openId, setOpenId] = useState<string | undefined>(initialId);
   const [done, setDone] = useState<string[]>([]);
