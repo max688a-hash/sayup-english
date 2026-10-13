@@ -1,5 +1,5 @@
-import { tr, trn } from '@/lib/tr';
 // @ts-nocheck -- renders untyped content ported from the original data files
+import { tr, trn } from '@/lib/tr';
 import { useMemo, useState } from 'react';
 import { ArrowLeft, BookOpen, Check, ChevronRight, ExternalLink, Headphones, Library, ListChecks, Mic, PenLine, Radio, Turtle, Volume2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
