@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, AudioLines, BookOpen, Check, CheckCheck, ChevronRight, Coffee, Flame, GraduationCap, Headphones, Leaf, Maximize2, MessageCircle, Mic, Minimize2, MoreHorizontal, Plane, RotateCcw, ShoppingBag, Sparkles, Sprout, Target, Volume2, X, Zap, Briefcase, Users, Signal, Wifi, BatteryFull, Sun, Moon, Star, CircleHelp, Turtle, Gauge, Cat } from 'lucide-react';
+import { ArrowLeft, ArrowRight, AudioLines, BookOpen, Check, CheckCheck, ChevronRight, Coffee, Flame, GraduationCap, Headphones, Leaf, Maximize2, MessageCircle, Mic, Minimize2, MoreHorizontal, Plane, RotateCcw, ShoppingBag, Sparkles, Sprout, Target, Volume2, X, Zap, Briefcase, Users, Signal, Wifi, BatteryFull, Sun, Moon, Star, CircleHelp, Turtle, Gauge, Cat, ClipboardCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SpeechCoach, type PracticeRecord } from '@/components/speech-coach';
 import { AdvancedHub } from '@/components/advanced-hub';
