@@ -1,6 +1,6 @@
 import { resolvePaddlePrice } from '@/utils/payments.functions';
 
-const clientToken = import.meta.env.VITE_PAYMENTS_CLIENT_TOKEN as string | undefined;
+const clientToken = import.meta.env['VITE_PAYMENTS_CLIENT_TOKEN'] as string | undefined;
 
 declare global {
   interface Window { Paddle: any }
@@ -28,7 +28,7 @@ export function initializePaddle() {
   return ready;
 }
 
-export async function openMemberCheckout(planId: string, user: { id: string; email?: string }) {
+export async function openMemberCheckout(planId: string, user: { id: string; email?: string | undefined }) {
   await initializePaddle();
   const priceId = await resolvePaddlePrice({ data: { priceId: `sayup_${planId}`, environment: getPaddleEnvironment() } });
   window.Paddle.Checkout.open({
