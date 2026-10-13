@@ -66,7 +66,7 @@ function SentenceList({ sentences, speak }: { sentences: Pair[]; speak: Speak })
   </div>;
 }
 
-export function AdvancedHub({ speak, onRecord, onExit, focus }: { speak: Speak; onRecord: (r: PracticeRecord) => void; onExit: () => void; focus?: 'listen' }) {
+export function AdvancedHub({ speak, onRecord, onExit, focus }: { speak: Speak; onRecord: (r: PracticeRecord) => void; onExit: () => void; focus?: 'listen' | undefined }) {
   const [mod, setMod] = useState<Module | null>(null);
   const [item, setItem] = useState<number | null>(null);
   const [group, setGroup] = useState(0);
