@@ -15,7 +15,15 @@ import w_cat from '@/assets/words/cat.jpg';
 import w_apple from '@/assets/words/apple.jpg';
 import w_happy from '@/assets/words/happy.jpg';
 import w_sunshine from '@/assets/words/sunshine.jpg';
-const wordImages: Record<string, string> = { coffee: w_coffee, please: w_please, delicious: w_delicious, recommend: w_recommend, cat: w_cat, apple: w_apple, happy: w_happy, sunshine: w_sunshine };
+import w_menu from '@/assets/words/menu.jpg';
+import w_ticket from '@/assets/words/ticket.jpg';
+import w_passport from '@/assets/words/passport.jpg';
+import w_colleague from '@/assets/words/colleague.jpg';
+import w_dog from '@/assets/words/dog.jpg';
+import w_ball from '@/assets/words/ball.jpg';
+import w_banana from '@/assets/words/banana.jpg';
+import w_flower from '@/assets/words/flower.jpg';
+const wordImages: Record<string, string> = { coffee: w_coffee, please: w_please, delicious: w_delicious, recommend: w_recommend, cat: w_cat, apple: w_apple, happy: w_happy, sunshine: w_sunshine, menu: w_menu, ticket: w_ticket, passport: w_passport, colleague: w_colleague, dog: w_dog, ball: w_ball, banana: w_banana, flower: w_flower };
 
 const tabs: { name: Tab; icon: typeof MessageCircle }[] = [{ name: '对话', icon: MessageCircle }, { name: '角色', icon: Users }, { name: '学习', icon: GraduationCap }, { name: '词汇', icon: BookOpen }, { name: '加强', icon: Zap }];
 const sceneIcons = { coffee: Coffee, plane: Plane, briefcase: Briefcase, shopping: ShoppingBag };
