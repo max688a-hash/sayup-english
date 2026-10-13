@@ -86,7 +86,7 @@ export function SpeakingApp() {
     utterance.onerror = () => { setSpeaking(''); setNotice('朗读暂不可用，请检查浏览器音频设置后重试。'); };
     window.speechSynthesis.speak(utterance);
   }
-  function resetDetail() {
+  function resetDetail() { setAdvanced(null);
     if (timer.current) clearTimeout(timer.current);
     setScene(null); setLearning(-1); setWordIndex(null); setPractice(null); setFeedback(false); setRecording(false); setCompleted(false); setAnswer(''); setChecked(false); setTurnTip(''); setLastReply(''); setAttempts([]); setShowReview(false);
     window.speechSynthesis?.cancel(); setSpeaking('');
