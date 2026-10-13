@@ -463,3 +463,22 @@ h1,h2,h3,p { margin:0; }
 .story-line small { color:var(--muted-foreground); font-size:12px; }
 .app-tagline { font-size:10px; color:var(--muted-foreground); letter-spacing:.02em; }
 .course-entry { border-color:color-mix(in oklch,var(--teal) 45%,var(--border)); }
+
+.member-backdrop { position: absolute; inset: 0; z-index: 60; background: color-mix(in oklab, var(--foreground) 35%, transparent); display: flex; align-items: flex-end; }
+.member-sheet { width: 100%; max-height: 88%; overflow-y: auto; background: var(--background); color: var(--foreground); border-radius: 22px 22px 0 0; padding: 18px 18px 26px; }
+.member-sheet h2 { font-size: 18px; font-weight: 700; }
+.member-sub, .member-note { font-size: 12px; color: var(--muted-foreground); margin-bottom: 10px; }
+.member-note { text-align: center; margin-top: 6px; }
+.plan-list { display: grid; gap: 8px; margin-bottom: 10px; }
+.plan-card { height: auto; justify-content: space-between; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 14px; }
+.plan-card.active { border-color: var(--primary); background: color-mix(in oklab, var(--primary) 8%, transparent); }
+.plan-card b { display: block; font-size: 14px; } .plan-card span { font-size: 11px; color: var(--muted-foreground); font-weight: 400; }
+.plan-price { font-size: 20px; font-weight: 800; color: var(--primary); } .plan-price small { font-size: 11px; font-weight: 400; color: var(--muted-foreground); margin-left: 2px; }
+.perk-list { display: grid; gap: 5px; margin: 6px 0 12px; font-size: 12px; } .perk-list li { display: flex; gap: 6px; align-items: flex-start; } .perk-list svg { color: var(--primary); flex-shrink: 0; margin-top: 2px; }
+.member-box { display: flex; gap: 10px; margin-top: 12px; padding: 12px; border-radius: 14px; background: var(--muted); font-size: 12px; } .member-box svg { color: var(--primary); flex-shrink: 0; } .member-box p { color: var(--muted-foreground); margin-top: 2px; }
+.aid-form { display: grid; gap: 10px; font-size: 13px; } .aid-form label { display: grid; gap: 4px; } .aid-form input:not([type=radio]) { border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; background: var(--background); font-size: 13px; }
+.aid-form fieldset { display: grid; gap: 6px; } .aid-form legend { margin-bottom: 4px; font-weight: 600; }
+.aid-option { display: flex !important; grid-auto-flow: column; align-items: center; gap: 8px; padding: 9px 10px; border: 1.5px solid var(--border); border-radius: 12px; } .aid-option.active { border-color: var(--primary); }
+.header-tools { display: flex; align-items: center; gap: 4px; }
+.lang-select { font-size: 11px; border: 1px solid var(--border); border-radius: 999px; padding: 3px 6px; background: var(--background); color: var(--foreground); }
+.member-cta { display: flex; gap: 8px; margin-bottom: 14px; } .member-cta > * { flex: 1; }
