@@ -491,3 +491,11 @@ h1,h2,h3,p { margin:0; }
 .promo-points span { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: hsl(var(--primary)); font-weight: 600; }
 .promo-link { align-self: flex-start; padding: 0; height: auto; font-size: 12px; color: hsl(var(--primary)); }
 .test-banner { font-size: 10px; text-align: center; padding: 3px 8px; background: var(--accent); color: var(--accent-foreground); }
+.app-header > div:first-child { min-width:0; }
+.app-header > div:first-child > div { min-width:0; }
+.app-logo { font-size:20px; gap:6px; line-height:1.1; }
+.app-logo > span { font-size:10px; letter-spacing:.04em; }
+.app-tagline { font-size:9.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
+.header-tools { flex-shrink:0; }
+.promo-card { display:flex; flex-direction:column; gap:8px; }
+.promo-card p { line-height:1.55; }
