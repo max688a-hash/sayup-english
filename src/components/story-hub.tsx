@@ -56,7 +56,7 @@ export function PlacementTest({ speak, onExit, onStart }: { speak: Speak; onExit
   return <div className="adv-hub"><Head title={`入门水平测试 · ${idx + 1} / ${qs.length}`} onBack={onExit} />
     <div className="placement-bar"><span style={{ width: `${(idx / qs.length) * 100}%` }} /></div>
     <div className="adv-card"><span className="level-tag">{TIER[q.tier].cefr}</span><p className="adv-q-title mt-2">{q.prompt}</p><Button size="sm" variant="ghost" onClick={() => speak(q.prompt, 'normal')}><Volume2 size={14} /> 听题</Button></div>
-    <div className="adv-options">{q.shuffled.map(opt => <Button key={opt} variant="outline" disabled={!!picked} className={cn('adv-option', picked && opt === answer && 'right', picked === opt && opt !== answer && 'wrong')} onClick={() => pick(opt)}>{opt}</Button>)}</div>
+    <div className="adv-options col">{q.shuffled.map(opt => <Button key={opt} variant="outline" disabled={!!picked} className={cn('adv-option', picked && opt === answer && 'right', picked === opt && opt !== answer && 'wrong')} onClick={() => pick(opt)}>{opt}</Button>)}</div>
   </div>;
 }
 
@@ -116,7 +116,7 @@ export function StoryReader({ speak, onRecord, onExit, initialLevel }: { speak: 
     return <div className="adv-hub"><Head title={story.titleZh} onBack={back} />{steps}
       <p className="adv-zh">第 {i + 1} / {story.circling.length} 题 · {TYPE_LABEL[item.type] ?? '问答'}。听问题，选出故事里的说法。</p>
       <div className="adv-card"><p className="adv-q-title">{item.question}</p><p className="adv-zh">{item.questionZh}</p><Button size="sm" variant="ghost" onClick={() => speak(item.question, 'normal')}><Volume2 size={14} /> 听问题</Button></div>
-      <div className="adv-options">{item.choices.map((c: string) => <Button key={c} variant="outline" className={cn('adv-option', r && c === item.answer && 'right')} onClick={() => pick(c)}>{r && c === item.answer && <Check size={16} />}{c}</Button>)}</div>
+      <div className="adv-options col">{item.choices.map((c: string) => <Button key={c} variant="outline" className={cn('adv-option', r && c === item.answer && 'right')} onClick={() => pick(c)}>{r && c === item.answer && <Check size={16} />}{c}</Button>)}</div>
       {r && <div className="adv-card"><b>{r.correct ? '答对了' : '地道的说法是'}</b><p>{item.answer}</p><p className="adv-zh">{item.answerZh}</p><Button size="sm" variant="ghost" onClick={() => speak(item.answer, 'current')}><Volume2 size={14} /> 再听一遍</Button></div>}
       {r && <Button className="w-full" onClick={() => last ? setPhase('done') : setI(i + 1)}>{last ? '完成' : '下一题'}</Button>}
     </div>;
