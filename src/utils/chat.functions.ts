@@ -10,7 +10,7 @@ export const freeChat = createServerFn({ method: "POST" })
     return { scene: String(d.scene).slice(0, 80), lang: String(d.lang), messages: d.messages.map(m => ({ role: m.role === "assistant" ? "assistant" as const : "user" as const, content: String(m.content).slice(0, 600) })) };
   })
   .handler(async ({ data }) => {
-    const key = process.env.LOVABLE_API_KEY;
+    const key = process.env['LOVABLE_API_KEY'];
     if (!key) throw new Error("AI 暂不可用");
     const native = LANG_NAME[data.lang] ?? "简体中文";
     const res = await fetch("https://ai.gateway.lovable.dev/v1/responses", {
