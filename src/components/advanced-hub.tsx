@@ -194,7 +194,7 @@ export function AdvancedHub({ speak, onRecord, onExit, focus }: { speak: Speak; 
   const res = EXTERNAL_RESOURCES[level] ?? [];
   return <div className="adv-hub">{head('在线听力资源')}
     <div className="filter-row">{RESOURCE_LEVELS.map((l: string) => <Button key={l} size="sm" variant={l === level ? 'default' : 'outline'} className="filter-button" onClick={() => setLevel(l)}>{levelLabel(l)}</Button>)}</div>
-    <div className="weak-list">{res.map((r: { id: string; title: string; titleZh: string; desc: string; url: string; restricted?: boolean }) => <a key={r.id} href={r.url} target="_blank" rel="noreferrer" className="weak-card adv-link"><div className="text-left min-w-0"><h3>{r.titleZh}</h3><p>{r.title} · {r.desc}</p>{r.restricted && <span className="text-xs text-amber">部分地区可能无法直接访问</span>}</div><ExternalLink size={16} className="ml-auto shrink-0" /></a>)}</div>
+    <div className="weak-list">{res.map((r: { id: string; title: string; titleZh: string; desc: string; url: string; restricted?: boolean; altUrl?: string }) => <div key={r.id} className="flex flex-col gap-1"><a href={r.url} target="_blank" rel="noreferrer" className="weak-card adv-link"><div className="text-left min-w-0"><h3>{r.titleZh}</h3><p>{r.title} · {r.desc}</p>{r.restricted && <span className="text-xs text-amber">部分地区可能无法直接访问</span>}</div><ExternalLink size={16} className="ml-auto shrink-0" /></a>{r.altUrl && <a href={r.altUrl} target="_blank" rel="noreferrer" className="text-xs text-teal pl-3">打不开？试试备用链接 →</a>}</div>)}</div>
     <p className="adv-zh mt-3">以上为第三方公开资源链接，点击在新窗口打开，版权归各自所有者。</p>
   </div>;
 }

@@ -461,3 +461,4 @@ h1,h2,h3,p { margin:0; }
 .story-line { text-align:left; display:flex; flex-direction:column; gap:2px; padding:6px 8px; border-radius:10px; opacity:.7; }
 .story-line.now { opacity:1; background:color-mix(in oklch,var(--teal) 8%,transparent); }
 .story-line small { color:var(--muted-foreground); font-size:12px; }
+.app-tagline { font-size:10px; color:var(--muted-foreground); letter-spacing:.02em; }
