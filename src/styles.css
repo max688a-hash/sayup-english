@@ -498,3 +498,6 @@ h1,h2,h3,p { margin:0; }
 .app-tagline { font-size:9.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
 .header-tools { flex-shrink:0; }
 .promo-card { display:flex; flex-direction:column; gap:8px; }
+.lang-select { max-width:72px; padding:3px 4px; }
+.header-tools { gap:3px; }
+.story-steps span { font-size:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
