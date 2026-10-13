@@ -10,6 +10,14 @@ export function getPaddleEnvironment(): 'sandbox' | 'live' {
   return clientToken?.startsWith('test_') ? 'sandbox' : 'live';
 }
 
+// 正式收款开关：只在沙盒环境或预览网址上开放真实收银台。
+// 公司主体与对公账户审核完成前，正式发布站一律显示「即将开放」。
+export function isPaymentsOpen(): boolean {
+  if (getPaddleEnvironment() === 'sandbox') return true;
+  if (typeof window === 'undefined') return false;
+  return window.location.hostname.includes('id-preview');
+}
+
 let ready: Promise<void> | null = null;
 export function initializePaddle() {
   if (ready) return ready;
