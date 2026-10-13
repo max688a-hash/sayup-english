@@ -56,6 +56,7 @@ export function AidDialog({ lang, userId, onClose }: { lang: Lang; userId: strin
       <label>{t.chsi}<input value={form.chsi} onChange={e => setForm({ ...form, chsi: e.target.value })} placeholder="如：A1B2C3D4E5F6" /></label>
       <p className="member-note">{t.chsiHint}</p>
       <label>{t.proof}<input type="file" accept="image/*,application/pdf" onChange={e => setFile(e.target.files?.[0] ?? null)} /></label>
+      <p className="member-note">证件仅用于核实身份，永不保存：审核员查看 5 秒后自动焚毁，审核结束也会立即删除。</p>
       {err && <p className="member-note" role="alert">{err}</p>}
       <Button type="submit" className="w-full h-11" disabled={!ready}>{busy ? '提交中…' : t.submit}</Button>
     </form>
