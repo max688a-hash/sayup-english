@@ -14,10 +14,18 @@ export const words = [
   { word: 'please', phonetic: '/pliːz/', meaning: '请；劳驾', example: 'A latte, please.', level: 'A1' },
   { word: 'delicious', phonetic: '/dɪˈlɪʃəs/', meaning: '美味的', example: 'This coffee is delicious.', level: 'A2' },
   { word: 'recommend', phonetic: '/ˌrekəˈmend/', meaning: '推荐', example: 'What would you recommend?', level: 'B1' },
+  { word: 'menu', phonetic: '/ˈmenjuː/', meaning: '菜单', example: 'Can I see the menu, please?', level: 'A1' },
+  { word: 'ticket', phonetic: '/ˈtɪkɪt/', meaning: '票', example: 'One ticket to London, please.', level: 'A1' },
+  { word: 'passport', phonetic: '/ˈpɑːspɔːt/', meaning: '护照', example: 'Here is my passport.', level: 'A2' },
+  { word: 'colleague', phonetic: '/ˈkɒliːɡ/', meaning: '同事', example: 'She is my new colleague.', level: 'B1' },
 ];
 export const kidWords = [
   { word: 'cat', phonetic: '/kæt/', meaning: '小猫', example: 'I like the orange cat.', level: 'A1' },
   { word: 'apple', phonetic: '/ˈæpəl/', meaning: '苹果', example: 'This is a red apple.', level: 'A1' },
   { word: 'happy', phonetic: '/ˈhæpi/', meaning: '开心的', example: 'I am happy today.', level: 'A2' },
   { word: 'sunshine', phonetic: '/ˈsʌnʃaɪn/', meaning: '阳光', example: 'I love the sunshine.', level: 'B1' },
+  { word: 'dog', phonetic: '/dɒɡ/', meaning: '小狗', example: 'My dog is very cute.', level: 'A1' },
+  { word: 'ball', phonetic: '/bɔːl/', meaning: '球', example: 'Let’s play with the ball.', level: 'A1' },
+  { word: 'banana', phonetic: '/bəˈnɑːnə/', meaning: '香蕉', example: 'I eat a banana every day.', level: 'A1' },
+  { word: 'flower', phonetic: '/ˈflaʊə/', meaning: '花', example: 'This flower is pink.', level: 'A2' },
 ];
