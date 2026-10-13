@@ -1,0 +1,1 @@
+ALTER TABLE public.reward_grants ADD COLUMN IF NOT EXISTS billing_applied_at timestamptz, ADD COLUMN IF NOT EXISTS billing_note text;

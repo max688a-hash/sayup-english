@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/use-auth';
 import { tr } from '@/lib/tr';
+import { applyStreakBilling } from '@/utils/rewards.functions';
 
 // Check-in days come only from real scored recordings (3+ per day), computed in the database.
 export function CheckinCalendar({ onExit }: { onExit: () => void }) {
@@ -24,7 +25,11 @@ export function CheckinCalendar({ onExit }: { onExit: () => void }) {
   async function claim() {
     const r = await supabase.rpc('claim_rewards');
     if (r.data === 'newcomer') setMsg(tr('恭喜！新人挑战达成，已送你 1 个月会员。'));
-    else if (r.data === 'streak') setMsg(tr('恭喜！连续 3 个月达标，已送你 1 个月会员。'));
+    else if (r.data === 'streak') {
+      const b = await applyStreakBilling().catch(() => ({ status: 'error' as const }));
+      if (b.status === 'applied') setMsg(tr('恭喜！连续 3 个月达标，下一次扣费已自动推迟 1 个月，这个月不扣钱。') + ' ' + new Date((b as { nextBilledAt: string }).nextBilledAt).toLocaleDateString());
+      else setMsg(tr('恭喜！连续 3 个月达标，已送你 1 个月会员。扣费推迟暂未成功，我们会人工处理，不会多扣你的钱。'));
+    }
     else setMsg(tr('还没达到领取条件，继续加油。'));
     void load();
   }

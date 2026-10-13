@@ -29,6 +29,13 @@
       "when": 1791873211090,
       "tag": "0003_checkin_rewards",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791874468985,
+      "tag": "0004_reward_paddle_applied",
+      "breakpoints": true
     }
   ]
 }

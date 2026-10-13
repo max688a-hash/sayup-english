@@ -1,3 +1,4 @@
+import { openBillingPortal } from '@/utils/portal.functions';
 import { tr, trn } from '@/lib/tr';
 import { useEffect, useState } from 'react';
 import type { User } from '@supabase/supabase-js';
@@ -62,12 +63,12 @@ export function AccountSheet({ user, onClose }: { user: User; onClose: () => voi
   const [slot, setSlot] = useState(false);
   const [review, setReview] = useState(false);
   const [gift, setGift] = useState(false);
-  const [subs, setSubs] = useState<{ product_id: string; status: string }[]>([]);
+  const [subs, setSubs] = useState<{ product_id: string; status: string; current_period_end: string | null; cancel_at_period_end: boolean | null }[]>([]);
   useEffect(() => {
     supabase.from('aid_applications').select('aid_type,status,created_at,chsi_code,review_note').eq('user_id', user.id).order('created_at', { ascending: false }).then(r => setAid(r.data ?? []));
     supabase.from('practice_records').select('id,target,score,main_issue,created_at').order('created_at', { ascending: false }).limit(20).then(r => setRecs(r.data ?? []));
     supabase.from('learning_progress').select('item_key', { count: 'exact', head: true }).like('item_key', 'course:%').then(r => setWeeks(r.count ?? 0));
-    supabase.from('subscriptions').select('product_id,status').eq('user_id', user.id).eq('environment', getPaddleEnvironment()).order('created_at', { ascending: false }).limit(1).then(r => setSubs(r.data ?? []));
+    supabase.from('subscriptions').select('product_id,status,current_period_end,cancel_at_period_end').eq('user_id', user.id).eq('environment', getPaddleEnvironment()).order('created_at', { ascending: false }).limit(1).then(r => setSubs(r.data ?? []));
     supabase.from('user_roles').select('role').eq('user_id', user.id).eq('role', 'admin').then(r => setAdmin((r.data ?? []).length > 0));
     supabase.from('reward_grants').select('ends_at').gt('ends_at', new Date().toISOString()).limit(1).then(r => setGift((r.data ?? []).length > 0));
     supabase.rpc('admin_slot_open').then(r => setSlot(r.data === true));
@@ -76,6 +77,11 @@ export function AccountSheet({ user, onClose }: { user: User; onClose: () => voi
   return <Sheet title={tr("我的学员账号")} onClose={onClose}>
     <p className="member-sub">{trn(user.email)}</p>
     <div className="member-box"><Sprout size={18} /><div><b>{tr("身份：")}{member}</b><p>{tr("12 周课程已完成")} {weeks} {tr("周 · 云端录音记录")} {trn(recs.length)} {tr("条")}</p></div></div>
+    {subs[0] && ['active', 'trialing', 'past_due'].includes(subs[0].status) && (() => { const s0 = subs[0]!; const end = s0.current_period_end ? new Date(s0.current_period_end) : null; const soon = end && end.getTime() - Date.now() < 3 * 864e5; return <div className="member-box"><Sprout size={18} /><div>
+      <b>{s0.cancel_at_period_end ? tr('已取消自动续费') : tr('自动续费已开启')}</b>
+      {end && <p className={soon && !s0.cancel_at_period_end ? 'text-destructive font-semibold' : ''}>{s0.cancel_at_period_end ? tr('会员到期日：') : tr('下次扣费日期：')}{end.toLocaleDateString()}{soon && !s0.cancel_at_period_end ? ' · ' + tr('3 天内将自动扣费') : ''}</p>}
+      {!s0.cancel_at_period_end && <Button size="sm" variant="outline" className="mt-1" onClick={async () => { const w = window.open('', '_blank'); try { const r = await openBillingPortal(); if (w) w.location.href = r.url; } catch { w?.close(); alert(tr('暂时打不开，请稍后再试。')); } }}>{tr('取消自动续费 / 管理付款')}</Button>}
+    </div></div>; })()}
     {aid.length > 0 && <div className="member-box"><Sprout size={18} /><div><b>{tr("助学申请")}</b>{aid.map(a => <p key={a.created_at}>{a.aid_type === 'poor' ? tr("贫困学生") : tr("普通学生")} · {trn(STATUS[a.status])}{a.review_note && a.status === 'rejected' ? `（${a.review_note}）` : ''} · {new Date(a.created_at).toLocaleDateString('zh-CN')}{a.chsi_code && <> {tr("· 学信网验证码")} {trn(a.chsi_code)} <a className="text-primary underline" href="https://www.chsi.com.cn/xlcx/bgys.jsp" target="_blank" rel="noreferrer">{tr("去核真")}</a></>}</p>)}</div></div>}
     <h3 className="font-semibold mt-3 mb-2 text-sm">{tr("最近的口语记录")}</h3>
     {recs.length === 0 ? <p className="text-xs text-muted-foreground">{tr("还没有录音记录，去跟读一句试试。")}</p> : <div className="record-list">{recs.map(r => <div className="record-item" key={r.id}><div className="flex items-center justify-between gap-2"><b className="truncate">{trn(r.target)}</b><span className="record-score">{trn(r.score)}</span></div>{r.main_issue && <p className="record-fix">{tr("待纠正：")}{trn(r.main_issue)}</p>}<span className="text-[10px] text-muted-foreground">{new Date(r.created_at).toLocaleString('zh-CN')}</span></div>)}</div>}
