@@ -61,6 +61,7 @@ export function AccountSheet({ user, onClose }: { user: User; onClose: () => voi
   const [admin, setAdmin] = useState(false);
   const [slot, setSlot] = useState(false);
   const [review, setReview] = useState(false);
+  const [gift, setGift] = useState(false);
   const [subs, setSubs] = useState<{ product_id: string; status: string }[]>([]);
   useEffect(() => {
     supabase.from('aid_applications').select('aid_type,status,created_at,chsi_code,review_note').eq('user_id', user.id).order('created_at', { ascending: false }).then(r => setAid(r.data ?? []));
@@ -68,9 +69,10 @@ export function AccountSheet({ user, onClose }: { user: User; onClose: () => voi
     supabase.from('learning_progress').select('item_key', { count: 'exact', head: true }).like('item_key', 'course:%').then(r => setWeeks(r.count ?? 0));
     supabase.from('subscriptions').select('product_id,status').eq('user_id', user.id).eq('environment', getPaddleEnvironment()).order('created_at', { ascending: false }).limit(1).then(r => setSubs(r.data ?? []));
     supabase.from('user_roles').select('role').eq('user_id', user.id).eq('role', 'admin').then(r => setAdmin((r.data ?? []).length > 0));
+    supabase.from('reward_grants').select('ends_at').gt('ends_at', new Date().toISOString()).limit(1).then(r => setGift((r.data ?? []).length > 0));
     supabase.rpc('admin_slot_open').then(r => setSlot(r.data === true));
   }, []);
-  const member = aid.some(a => a.status === 'approved') ? tr("助学名额") : subs[0] && ['active', 'trialing'].includes(subs[0].status) ? tr("付费会员") : tr("免费试学");
+  const member = aid.some(a => a.status === 'approved') ? tr("助学名额") : subs[0] && ['active', 'trialing'].includes(subs[0].status) ? tr("付费会员") : gift ? tr("奖励会员") : tr("免费试学");
   return <Sheet title={tr("我的学员账号")} onClose={onClose}>
     <p className="member-sub">{trn(user.email)}</p>
     <div className="member-box"><Sprout size={18} /><div><b>{tr("身份：")}{member}</b><p>{tr("12 周课程已完成")} {weeks} {tr("周 · 云端录音记录")} {trn(recs.length)} {tr("条")}</p></div></div>
