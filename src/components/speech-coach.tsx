@@ -69,12 +69,12 @@ export function SpeechCoach({ target, onPassed, onRecord }: { target: string; on
   return <div className="coach">
     {phase === 'recording'
       ? <Button className="w-full h-12 recording" onClick={() => void stop()}><Square size={16} />{tr('说完了，开始分析 · {0}s', seconds)}</Button>
-      : <Button className="w-full h-12" disabled={phase === 'analyzing'} onClick={() => void start()}>{phase === 'analyzing' ? <><Loader2 className="animate-spin" size={18} />{tr('正在听你的发音…')}</> : <><Mic size={18} />{tr('{0}', analysis || phase === 'retry' ? tr('再录一次') : tr('开始跟读录音'))}</>}</Button>}
+      : <Button className="w-full h-12" disabled={phase === 'analyzing'} onClick={() => void start()}>{phase === 'analyzing' ? <><Loader2 className="animate-spin" size={18} />{tr('正在听你的发音…')}</> : <><Mic size={18} />{analysis || phase === 'retry' ? tr('再录一次') : tr('开始跟读录音')}</>}</Button>}
     {phase === 'recording' && <p className="coach-hint"><span className="rec-dot" />{tr('正在录音，请读：{0}', target)}</p>}
     {(phase === 'retry' || phase === 'error') && <div className={cn('coach-alert', phase)} role="alert"><AlertTriangle size={16} /><span>{message}</span></div>}
     {analysis && <div className="feedback-box">
       <div className="flex items-center justify-between gap-3"><span className={cn('coach-verdict', tone)}>{analysis.verdict === 'good' ? <CheckCheck size={17} /> : <Sprout size={17} />}{analysis.verdict === 'good' ? tr('说得准确') : analysis.verdict === 'retry' ? tr('需要重说') : tr('还有要纠正的地方')}</span><span className={cn('feedback-score', tone)}>{analysis.score}<span>/100</span></span></div>
-      <p className="coach-heard"><b>{tr('识别到：')}</b>{tr('{0}', heard || tr('（无）'))}</p>
+      <p className="coach-heard"><b>{tr('识别到：')}</b>{heard || tr('（无）')}</p>
       <p className="mt-2 text-sm">{analysis.summary}</p>
       {analysis.issues.length > 0 && <ul className="coach-issues">{analysis.issues.map((i, k) => <li key={k}><b>{i.word}</b><span>{i.problem}</span><em>{tr('纠正：{0}', i.fix)}</em></li>)}</ul>}
       {analysis.suggestions.length > 0 && <><p className="coach-sub">{tr('改进建议')}</p><ol className="coach-tips">{analysis.suggestions.map((s, k) => <li key={k}>{s}</li>)}</ol></>}

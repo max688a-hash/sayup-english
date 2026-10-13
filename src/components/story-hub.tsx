@@ -88,7 +88,7 @@ export function StoryReader({ speak, onRecord, onExit, initialLevel }: { speak: 
       <p className="adv-zh">{tr('先用跟你自己有关的问题热身，想一想你会怎么回答（{0} / {1}）。', i + 1, story.pqa.length)}</p>
       <div className="adv-card"><p className="adv-q-title">{q.en}</p><p className="adv-zh">{tr(q.zh)}</p><Button size="sm" variant="ghost" onClick={() => speak(q.en, 'normal')}><Volume2 size={14} />{tr('听问题')}</Button></div>
       <div className="adv-card"><b>{tr('本篇要学的说法')}</b>{story.targetPhrases.map((p: any) => <p key={p.en}><span className="story-key">{p.en}</span> <span className="adv-zh">{tr(p.zh)}</span></p>)}</div>
-      <Button className="w-full" onClick={() => last ? go('read') : setI(i + 1)}>{tr('{0}', last ? tr('开始读故事') : tr('下一个问题'))}<ChevronRight size={16} /></Button>
+      <Button className="w-full" onClick={() => last ? go('read') : setI(i + 1)}>{last ? tr('开始读故事') : tr('下一个问题')} <ChevronRight size={16} /></Button>
     </div>;
   }
 
@@ -97,7 +97,7 @@ export function StoryReader({ speak, onRecord, onExit, initialLevel }: { speak: 
     return <div className="adv-hub"><Head title={tr(story.titleZh)} onBack={back} />{steps}
       <p className="adv-zh">{tr('一句一句往下读，点句子可以听朗读。（{0} / {1}）', i + 1, story.sentences.length)}</p>
       <div className="adv-card story-text">{shown.map((s: any, k: number) => <button type="button" key={k} className={cn('story-line', k === i && 'now')} onClick={() => speak(s.en, 'current')}><span>{s.keyPhrase ? highlight(s.en, s.keyPhrase) : s.en}</span><small>{tr(s.zh)}</small></button>)}</div>
-      <div className="flex gap-2"><Button variant="outline" className="flex-1" onClick={() => speak(story.sentences.map((s: any) => s.en).join(' '), 'current')}><Volume2 size={14} />{tr('听全文')}</Button><Button className="flex-1" onClick={() => { if (last) go('echo'); else { setI(i + 1); speak(story.sentences[i + 1].en, 'current'); } }}>{tr('{0}', last ? tr('去跟读') : tr('下一句'))}</Button></div>
+      <div className="flex gap-2"><Button variant="outline" className="flex-1" onClick={() => speak(story.sentences.map((s: any) => s.en).join(' '), 'current')}><Volume2 size={14} />{tr('听全文')}</Button><Button className="flex-1" onClick={() => { if (last) go('echo'); else { setI(i + 1); speak(story.sentences[i + 1].en, 'current'); } }}>{last ? tr('去跟读') : tr('下一句')}</Button></div>
     </div>;
   }
 
@@ -107,7 +107,7 @@ export function StoryReader({ speak, onRecord, onExit, initialLevel }: { speak: 
       <p className="adv-zh">{tr('跟读含关键说法的句子（{0} / {1}），录音后 AI 逐词纠正。', i + 1, Math.max(keys.length, 1))}</p>
       <div className="adv-card"><p className="adv-q-title">{highlight(s.en, s.keyPhrase)}</p><p className="adv-zh">{tr(s.zh)}</p><Button size="sm" variant="ghost" onClick={() => speak(s.en, 'slow')}><Volume2 size={14} />{tr('慢速示范')}</Button></div>
       <SpeechCoach key={s.en} target={s.en} onPassed={() => {}} onRecord={onRecord} />
-      <Button className="w-full mt-3" variant={last ? 'default' : 'outline'} onClick={() => last ? go('circling') : setI(i + 1)}>{tr('{0}', last ? tr('进入问答') : tr('下一句'))}</Button>
+      <Button className="w-full mt-3" variant={last ? 'default' : 'outline'} onClick={() => last ? go('circling') : setI(i + 1)}>{last ? tr('进入问答') : tr('下一句')}</Button>
     </div>;
   }
 
@@ -118,8 +118,8 @@ export function StoryReader({ speak, onRecord, onExit, initialLevel }: { speak: 
       <p className="adv-zh">{tr('第 {0} / {1} 题 · {2}。听问题，选出故事里的说法。', i + 1, story.circling.length, TYPE_LABEL[item.type] ?? tr('问答'))}</p>
       <div className="adv-card"><p className="adv-q-title">{item.question}</p><p className="adv-zh">{tr(item.questionZh)}</p><Button size="sm" variant="ghost" onClick={() => speak(item.question, 'normal')}><Volume2 size={14} />{tr('听问题')}</Button></div>
       <div className="adv-options col">{item.choices.map((c: string) => <Button key={c} variant="outline" className={cn('adv-option', r && c === item.answer && 'right')} onClick={() => pick(c)}>{r && c === item.answer && <Check size={16} />}{c}</Button>)}</div>
-      {r && <div className="adv-card"><b>{tr('{0}', r.correct ? tr('答对了') : tr('地道的说法是'))}</b><p>{item.answer}</p><p className="adv-zh">{tr(item.answerZh)}</p><Button size="sm" variant="ghost" onClick={() => speak(item.answer, 'current')}><Volume2 size={14} />{tr('再听一遍')}</Button></div>}
-      {r && <Button className="w-full" onClick={() => last ? setPhase('done') : setI(i + 1)}>{tr('{0}', last ? tr('完成') : tr('下一题'))}</Button>}
+      {r && <div className="adv-card"><b>{r.correct ? tr('答对了') : tr('地道的说法是')}</b><p>{item.answer}</p><p className="adv-zh">{tr(item.answerZh)}</p><Button size="sm" variant="ghost" onClick={() => speak(item.answer, 'current')}><Volume2 size={14} />{tr('再听一遍')}</Button></div>}
+      {r && <Button className="w-full" onClick={() => last ? setPhase('done') : setI(i + 1)}>{last ? tr('完成') : tr('下一题')}</Button>}
     </div>;
   }
 
