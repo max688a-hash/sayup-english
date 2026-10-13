@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useAuth, saveProgress } from '@/hooks/use-auth';
+import { supabase } from '@/integrations/supabase/client';
 import { ArrowLeft, Check, ChevronRight, Volume2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SpeechCoach, type PracticeRecord } from '@/components/speech-coach';
@@ -13,10 +15,12 @@ export function CourseHub({ speak, onRecord, onExit }: { speak: Speak; onRecord:
   const [step, setStep] = useState(0);
   const [k, setK] = useState(0);
   const [done, setDone] = useState<number[]>([]);
+  const { user } = useAuth();
+  useEffect(() => { if (!user) return; supabase.from('learning_progress').select('item_key').like('item_key', 'course:%').then(r => setDone((r.data ?? []).map(x => Number(x.item_key.split(':')[1])))); }, [user]);
   const head = (title: string, back: () => void) => <div className="detail-heading"><Button variant="ghost" size="icon" aria-label="返回上一级" onClick={back}><ArrowLeft /></Button><span>{title}</span><span className="w-9" /></div>;
 
   if (!week) return <div className="adv-hub">{head('12 周主线课程', onExit)}
-    <div className="strength-summary"><div><span className="eyebrow">A2 → B1+ · 约 3 个月</span><h2>日常与职场英语</h2><p>每周一个真实场景：先听懂，再跟读，再替换句型，最后开口完成任务。每天约 20 分钟。</p></div></div>
+    <div className="strength-summary"><div><span className="eyebrow">A2 → B1+ · 约 3 个月</span><h2>日常与职场英语</h2><p>每周一个真实场景：先听懂，再跟读，再替换句型，最后开口完成任务。每天约 20 分钟。</p>{!user && <p className="text-xs text-amber mt-1">未登录：完成记录只保存到刷新前。点右上角头像登录即可长期保存。</p>}</div></div>
     {STAGES.map(s => <div key={s.name}><div className="section-heading"><h2>{s.name}</h2><span>{s.weeks}</span></div><p className="adv-zh mb-2">{s.desc}</p>
       <div className="weak-list">{COURSE.filter(w => w.stage === s.name).map(w => <Button variant="ghost" className="weak-card" key={w.week} onClick={() => { setWeek(w); setStep(0); setK(0); }}><span className={cn('path-number', done.includes(w.week) && 'active')}>{done.includes(w.week) ? <Check size={18} /> : String(w.week).padStart(2, '0')}</span><div className="text-left min-w-0"><h3>{w.title}</h3><p>{w.goal}</p></div><ChevronRight className="ml-auto" /></Button>)}</div></div>)}
   </div>;
@@ -63,7 +67,7 @@ export function CourseHub({ speak, onRecord, onExit }: { speak: Speak; onRecord:
     <div className="adv-card"><b>本周任务</b><p className="adv-q-title">{week.task.en}</p><p className="adv-zh">{week.task.zh}</p></div>
     <p className="adv-zh">不看稿，用本周学的句子自由说。AI 会对照本周的示范句帮你找出问题。</p>
     <SpeechCoach key={`task-${week.week}`} target={week.phrases.map(p => p.en).join(' ')} onPassed={() => {}} onRecord={onRecord} />
-    <Button className="w-full mt-3" onClick={() => { setDone(d => d.includes(week.week) ? d : [...d, week.week]); setWeek(null); }}>完成第 {week.week} 周</Button>
+    <Button className="w-full mt-3" onClick={() => { setDone(d => d.includes(week.week) ? d : [...d, week.week]); if (user) void saveProgress(user.id, `course:${week.week}`); setWeek(null); }}>完成第 {week.week} 周</Button>
   </div>;
 }
 
