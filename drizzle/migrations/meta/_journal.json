@@ -15,6 +15,13 @@
       "when": 1791869001446,
       "tag": "0001_add_chsi_code_to_aid_applications",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791871233659,
+      "tag": "0002_aid_admin_review",
+      "breakpoints": true
     }
   ]
 }

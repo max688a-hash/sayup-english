@@ -4,6 +4,7 @@ import { LogOut, Sprout, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { lovable } from '@/integrations/lovable/index';
+import { AdminReview } from '@/components/admin-review';
 
 function Sheet({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
   return <div className="member-backdrop" onClick={onClose}><section role="dialog" aria-modal="true" aria-label={title} className="member-sheet" onClick={e => e.stopPropagation()}><div className="flex items-center justify-between mb-3"><h2>{title}</h2><Button variant="ghost" size="icon" aria-label="关闭" onClick={onClose}><X /></Button></div>{children}</section></div>;
@@ -47,7 +48,7 @@ export function AuthDialog({ reason, onClose }: { reason?: string; onClose: () =
   </Sheet>;
 }
 
-type Aid = { aid_type: string; status: string; created_at: string; chsi_code: string | null };
+type Aid = { aid_type: string; status: string; created_at: string; chsi_code: string | null; review_note: string | null };
 type Rec = { id: string; target: string; score: number; main_issue: string | null; created_at: string };
 const STATUS: Record<string, string> = { pending: '审核中', approved: '已通过，名额已开通', rejected: '未通过' };
 
@@ -55,20 +56,28 @@ export function AccountSheet({ user, onClose }: { user: User; onClose: () => voi
   const [aid, setAid] = useState<Aid[]>([]);
   const [recs, setRecs] = useState<Rec[]>([]);
   const [weeks, setWeeks] = useState(0);
+  const [admin, setAdmin] = useState(false);
+  const [slot, setSlot] = useState(false);
+  const [review, setReview] = useState(false);
   const [subs, setSubs] = useState<{ product_id: string; status: string }[]>([]);
   useEffect(() => {
-    supabase.from('aid_applications').select('aid_type,status,created_at,chsi_code').order('created_at', { ascending: false }).then(r => setAid(r.data ?? []));
+    supabase.from('aid_applications').select('aid_type,status,created_at,chsi_code,review_note').eq('user_id', user.id).order('created_at', { ascending: false }).then(r => setAid(r.data ?? []));
     supabase.from('practice_records').select('id,target,score,main_issue,created_at').order('created_at', { ascending: false }).limit(20).then(r => setRecs(r.data ?? []));
     supabase.from('learning_progress').select('item_key', { count: 'exact', head: true }).like('item_key', 'course:%').then(r => setWeeks(r.count ?? 0));
     supabase.from('subscriptions').select('product_id,status').order('created_at', { ascending: false }).limit(1).then(r => setSubs(r.data ?? []));
+    supabase.from('user_roles').select('role').eq('user_id', user.id).eq('role', 'admin').then(r => setAdmin((r.data ?? []).length > 0));
+    supabase.rpc('admin_slot_open').then(r => setSlot(r.data === true));
   }, []);
   const member = aid.some(a => a.status === 'approved') ? '助学名额' : subs[0] && ['active', 'trialing'].includes(subs[0].status) ? '付费会员' : '免费试学';
   return <Sheet title="我的学员账号" onClose={onClose}>
     <p className="member-sub">{user.email}</p>
     <div className="member-box"><Sprout size={18} /><div><b>身份：{member}</b><p>12 周课程已完成 {weeks} 周 · 云端录音记录 {recs.length} 条</p></div></div>
-    {aid.length > 0 && <div className="member-box"><Sprout size={18} /><div><b>助学申请</b>{aid.map(a => <p key={a.created_at}>{a.aid_type === 'poor' ? '贫困学生' : '普通学生'} · {STATUS[a.status]} · {new Date(a.created_at).toLocaleDateString('zh-CN')}{a.chsi_code && <> · 学信网验证码 {a.chsi_code} <a className="text-primary underline" href="https://www.chsi.com.cn/xlcx/bgys.jsp" target="_blank" rel="noreferrer">去核真</a></>}</p>)}</div></div>}
+    {aid.length > 0 && <div className="member-box"><Sprout size={18} /><div><b>助学申请</b>{aid.map(a => <p key={a.created_at}>{a.aid_type === 'poor' ? '贫困学生' : '普通学生'} · {STATUS[a.status]}{a.review_note && a.status === 'rejected' ? `（${a.review_note}）` : ''} · {new Date(a.created_at).toLocaleDateString('zh-CN')}{a.chsi_code && <> · 学信网验证码 {a.chsi_code} <a className="text-primary underline" href="https://www.chsi.com.cn/xlcx/bgys.jsp" target="_blank" rel="noreferrer">去核真</a></>}</p>)}</div></div>}
     <h3 className="font-semibold mt-3 mb-2 text-sm">最近的口语记录</h3>
     {recs.length === 0 ? <p className="text-xs text-muted-foreground">还没有录音记录，去跟读一句试试。</p> : <div className="record-list">{recs.map(r => <div className="record-item" key={r.id}><div className="flex items-center justify-between gap-2"><b className="truncate">{r.target}</b><span className="record-score">{r.score}</span></div>{r.main_issue && <p className="record-fix">待纠正：{r.main_issue}</p>}<span className="text-[10px] text-muted-foreground">{new Date(r.created_at).toLocaleString('zh-CN')}</span></div>)}</div>}
+    {admin && <Button className="w-full mt-4" onClick={() => setReview(true)}>审核助学申请</Button>}
+    {!admin && slot && <Button variant="outline" className="w-full mt-4" onClick={async () => { const r = await supabase.rpc('claim_first_admin'); if (r.data) { setAdmin(true); setSlot(false); } }}>设为创始人管理员（仅第一位可领取）</Button>}
+    {review && <AdminReview onClose={() => setReview(false)} />}
     <Button variant="outline" className="w-full mt-4" onClick={async () => { await supabase.auth.signOut(); onClose(); }}><LogOut size={15} /> 退出登录</Button>
   </Sheet>;
 }
