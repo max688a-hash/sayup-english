@@ -4,6 +4,7 @@ import { LogOut, Sprout, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { lovable } from '@/integrations/lovable/index';
+import { getPaddleEnvironment } from '@/lib/paddle';
 import { AdminReview } from '@/components/admin-review';
 
 function Sheet({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
@@ -64,7 +65,7 @@ export function AccountSheet({ user, onClose }: { user: User; onClose: () => voi
     supabase.from('aid_applications').select('aid_type,status,created_at,chsi_code,review_note').eq('user_id', user.id).order('created_at', { ascending: false }).then(r => setAid(r.data ?? []));
     supabase.from('practice_records').select('id,target,score,main_issue,created_at').order('created_at', { ascending: false }).limit(20).then(r => setRecs(r.data ?? []));
     supabase.from('learning_progress').select('item_key', { count: 'exact', head: true }).like('item_key', 'course:%').then(r => setWeeks(r.count ?? 0));
-    supabase.from('subscriptions').select('product_id,status').order('created_at', { ascending: false }).limit(1).then(r => setSubs(r.data ?? []));
+    supabase.from('subscriptions').select('product_id,status').eq('user_id', user.id).eq('environment', getPaddleEnvironment()).order('created_at', { ascending: false }).limit(1).then(r => setSubs(r.data ?? []));
     supabase.from('user_roles').select('role').eq('user_id', user.id).eq('role', 'admin').then(r => setAdmin((r.data ?? []).length > 0));
     supabase.rpc('admin_slot_open').then(r => setSlot(r.data === true));
   }, []);

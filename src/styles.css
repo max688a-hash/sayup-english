@@ -490,3 +490,4 @@ h1,h2,h3,p { margin:0; }
 .promo-points { display: flex; flex-wrap: wrap; gap: 6px 12px; }
 .promo-points span { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: hsl(var(--primary)); font-weight: 600; }
 .promo-link { align-self: flex-start; padding: 0; height: auto; font-size: 12px; color: hsl(var(--primary)); }
+.test-banner { font-size: 10px; text-align: center; padding: 3px 8px; background: var(--accent); color: var(--accent-foreground); }
