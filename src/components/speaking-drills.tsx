@@ -117,7 +117,7 @@ export function ImmersionDrill({ speak, onExit, onRecord }: P) {
     <Head title={tr('沉浸练习')} onExit={onExit} />
     <p className="text-sm text-muted-foreground mb-3">{tr('像在国外生活一样：先只听不看，再答题，最后看原文并用自己的话复述。')}</p>
     <div className="flex flex-wrap gap-1 mb-3">{IMMERSE.map((x, k) => <Button key={x.title} size="sm" variant={k === i ? 'default' : 'outline'} onClick={() => { setI(k); setStep('listen'); setAns({}); }}>{x.title}</Button>)}</div>
-    <div className="flex gap-1 mb-3 text-xs">{(['listen', 'quiz', 'read'] as const).map((k, n) => <span key={k} className={cn('level-tag', step === k && 'bg-primary text-primary-foreground')}>{n + 1}. {tr(k === 'listen' ? '盲听' : k === 'quiz' ? '答题' : '看原文 · 复述')}</span>)}</div>
+    <div className="flex gap-1 mb-3 text-xs">{(['listen', 'quiz', 'read'] as const).map((k, n) => <span key={k} className={cn('level-tag', step === k && 'ring-1 ring-primary text-primary font-semibold')}>{n + 1}. {tr(k === 'listen' ? '盲听' : k === 'quiz' ? '答题' : '看原文 · 复述')}</span>)}</div>
     {step === 'listen' && <div className="rounded-lg border border-border bg-card p-4 space-y-2">
       <p className="text-sm">{tr('先别看字，听 2 遍，抓住人物、事情和结果。')}</p>
       <div className="flex gap-2"><Button size="sm" onClick={() => speak(s.text, 'slow')}><Volume2 size={14} /> {tr('慢速听')}</Button><Button size="sm" variant="outline" onClick={() => speak(s.text, 'normal')}><Volume2 size={14} /> {tr('正常速听')}</Button></div>
