@@ -20,6 +20,7 @@ export function SpeakingApp() {
   const [messages, setMessages] = useState<{ text: string; user: boolean }[]>([]);
   const [input, setInput] = useState('');
   const [feedback, setFeedback] = useState(false);
+  const [turnTip, setTurnTip] = useState('');
   const [recording, setRecording] = useState(false);
   const [notice, setNotice] = useState('');
   const [speaking, setSpeaking] = useState(false);
@@ -56,7 +57,7 @@ export function SpeakingApp() {
   }
   function resetDetail() {
     if (timer.current) clearTimeout(timer.current);
-    setScene(null); setLearning(-1); setWordIndex(null); setPractice(null); setFeedback(false); setRecording(false); setCompleted(false); setAnswer(''); setChecked(false);
+    setScene(null); setLearning(-1); setWordIndex(null); setPractice(null); setFeedback(false); setRecording(false); setCompleted(false); setAnswer(''); setChecked(false); setTurnTip('');
     window.speechSynthesis?.cancel(); setSpeaking(false);
   }
   function openScene(item: Scene, role = false) {
@@ -69,7 +70,7 @@ export function SpeakingApp() {
     const next = turn + 1;
     const nextLine = scene.turns[next] ?? 'Lovely talking to you. Have a wonderful day!';
     setMessages(old => [...old, { text: text.trim(), user: true }, { text: nextLine, user: false }]);
-    setTurn(next); setInput(''); setFeedback(false);
+    setTurn(next); setInput(''); setFeedback(false); setTurnTip(scene.tips[turn] ?? '');
   }
   function simulate() {
     if (recording) return;
