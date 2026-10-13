@@ -36,6 +36,6 @@
 - [x] 会员坚持奖自动推迟 Paddle 下次扣费 1 个月
 - [x] AI 自由对话（原 AIFreeChat/BotChat/FreeSpeak）
 - [ ] 继续搬原代码：重音练习 StressDrill、跟读 RepeatDrill、沉浸实验室 ImmersionLab、儿童课程 KidsLesson、每日交流 DailyExchange、每日路径 DailyPath、词汇复习 VocabReview、世界素材 WorldMaterials、法律条款页 LegalScreen
-- [ ] 自动续费提醒：扣费前提醒 + 一键取消入口
-- [ ] 录音使用说明：首次录音前弹窗同意
+- [x] 自动续费提醒：扣费前提醒 + 一键取消入口
+- [x] 录音使用说明：首次录音前弹窗同意
 - [ ] 助学政策去留：等用户决定（保留/简化为不收证件/取消）
