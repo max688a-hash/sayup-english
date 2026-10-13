@@ -35,6 +35,8 @@
 - [ ] 公司注册后 Paddle 正式认证，打开真实收款（阻塞：营业执照、对公账户）
 - [x] 会员坚持奖自动推迟 Paddle 下次扣费 1 个月
 - [x] AI 自由对话（原 AIFreeChat/BotChat/FreeSpeak）
+- [x] 句型替换扩充到 27 组（There is my…/Are you here for…, too?/What a…! 等）
+- [ ] 助学证件方案待用户二选一
 - [ ] 继续搬原代码：重音练习 StressDrill、跟读 RepeatDrill、沉浸实验室 ImmersionLab、儿童课程 KidsLesson、每日交流 DailyExchange、每日路径 DailyPath、词汇复习 VocabReview、世界素材 WorldMaterials、法律条款页 LegalScreen
 - [x] 自动续费提醒：扣费前提醒 + 一键取消入口
 - [x] 录音使用说明：首次录音前弹窗同意
