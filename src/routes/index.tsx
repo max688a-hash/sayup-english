@@ -1,24 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+import { SpeakingApp } from '@/components/speaking-app';
 export const Route = createFileRoute("/")({
+  head: () => ({ meta: [
+    { title: '语芽英语口语 · 每天一点，自然开口' },
+    { name: 'description', content: '体验语芽英语口语：情景对话、角色扮演、分级学习、词卡记忆与强化练习，支持儿童模式和英语朗读。' },
+    { property: 'og:title', content: '语芽英语口语 · 每天一点，自然开口' },
+    { property: 'og:description', content: '从熟悉的生活开始，练出自然的英语。在线体验五大学习栏目与儿童课程。' },
+    { property: 'og:type', content: 'website' },
+    { name: 'twitter:card', content: 'summary_large_image' },
+  ] }),
   component: Index,
 });
-
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
+  return <SpeakingApp />;
 }
