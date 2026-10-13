@@ -128,6 +128,36 @@ export type Database = {
         }
         Relationships: []
       }
+      reward_grants: {
+        Row: {
+          created_at: string
+          ends_at: string
+          id: string
+          kind: string
+          period_key: string
+          starts_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          ends_at: string
+          id?: string
+          kind: string
+          period_key: string
+          starts_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          ends_at?: string
+          id?: string
+          kind?: string
+          period_key?: string
+          starts_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
           cancel_at_period_end: boolean | null
@@ -200,7 +230,14 @@ export type Database = {
     }
     Functions: {
       admin_slot_open: { Args: never; Returns: boolean }
+      checkin_days: {
+        Args: { _from: string; _to: string }
+        Returns: {
+          day: string
+        }[]
+      }
       claim_first_admin: { Args: never; Returns: boolean }
+      claim_rewards: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
