@@ -393,3 +393,5 @@ h1,h2,h3,p { margin:0; }
 .word-thumb { width: 3.25rem; height: 3.25rem; border-radius: 0.875rem; object-fit: cover; flex-shrink: 0; box-shadow: 0 4px 12px -6px color-mix(in oklab, var(--foreground) 35%, transparent); }
 .word-open { gap: 0.875rem; }
 .word-photo { width: 100%; max-width: 9.5rem; aspect-ratio: 1; border-radius: 1.25rem; object-fit: cover; box-shadow: 0 12px 30px -14px color-mix(in oklab, var(--foreground) 45%, transparent); }
+.brand-logo { width: 36px; height: 36px; border-radius: 10px; }
+.app-logo-img { width: 28px; height: 28px; border-radius: 8px; }
