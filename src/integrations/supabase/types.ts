@@ -17,6 +17,7 @@ export type Database = {
       aid_applications: {
         Row: {
           aid_type: string
+          chsi_code: string | null
           created_at: string
           full_name: string
           id: string
@@ -30,6 +31,7 @@ export type Database = {
         }
         Insert: {
           aid_type: string
+          chsi_code?: string | null
           created_at?: string
           full_name: string
           id?: string
@@ -43,6 +45,7 @@ export type Database = {
         }
         Update: {
           aid_type?: string
+          chsi_code?: string | null
           created_at?: string
           full_name?: string
           id?: string

@@ -1,0 +1,1 @@
+alter table public.aid_applications add column if not exists chsi_code text;
