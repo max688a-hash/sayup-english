@@ -26,6 +26,10 @@ export function SpeechCoach({ target, onPassed, onRecord }: { target: string; on
 
   async function start() {
     setAnalysis(null); setHeard(''); setMessage('');
+    if (localStorage.getItem('sayup-mic-consent') !== '1') {
+      if (!window.confirm(tr('跟读打分需要使用麦克风。你的录音只用来转成文字并打分，不会长期保存，也不会给别人。同意吗？'))) return;
+      localStorage.setItem('sayup-mic-consent', '1');
+    }
     if (!navigator.mediaDevices?.getUserMedia) { setPhase('error'); setMessage(tr('当前浏览器不支持录音，请使用最新版 Chrome 或 Safari。')); return; }
     try {
       rec.current = await recordWav();
