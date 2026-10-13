@@ -44,8 +44,8 @@ const sceneIcons = { coffee: Coffee, plane: Plane, briefcase: Briefcase, shoppin
 
 type SpeakSpeed = 'slow' | 'normal' | 'current';
 
-export function SpeakingApp() {
-  const [tab, setTab] = useState<Tab>('对话');
+export function SpeakingApp({ initialLang, initialTab }: { initialLang?: Lang; initialTab?: Tab } = {}) {
+  const [tab, setTab] = useState<Tab>(initialTab ?? '对话');
   const [kids, setKids] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
   const [previewInfo, setPreviewInfo] = useState(false);
@@ -77,7 +77,7 @@ export function SpeakingApp() {
   const [practice, setPractice] = useState<string | null>(null);
   const [advanced, setAdvanced] = useState<null | 'all' | 'listen' | 'stories' | 'placement' | 'course' | 'checkin' | 'pron'>(null);
   const [storyLevel, setStoryLevel] = useState<string | undefined>(undefined);
-  const [lang, setLang] = useState<Lang>('zh');
+  const [lang, setLang] = useState<Lang>(initialLang ?? 'zh');
   setContentLang(lang);
   const [sheet, setSheet] = useState<null | 'sub' | 'aid' | 'auth' | 'account'>(null);
   const [authReason, setAuthReason] = useState('');
