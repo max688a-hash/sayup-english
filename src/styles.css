@@ -462,3 +462,4 @@ h1,h2,h3,p { margin:0; }
 .story-line.now { opacity:1; background:color-mix(in oklch,var(--teal) 8%,transparent); }
 .story-line small { color:var(--muted-foreground); font-size:12px; }
 .app-tagline { font-size:10px; color:var(--muted-foreground); letter-spacing:.02em; }
+.course-entry { border-color:color-mix(in oklch,var(--teal) 45%,var(--border)); }
