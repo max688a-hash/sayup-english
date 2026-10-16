@@ -183,7 +183,7 @@ function Words(p: P & { onExit: () => void }) {
   const TM = TIER_META as Record<string, any>;
   if (g) {
     if (g.items) return <div className="space-y-3"><Head title={g.themeZh} onExit={() => setG(null)} />
-      <div className="grid grid-cols-3 gap-2">{A(g.items).map(it => <button type="button" key={it.word} className="rounded-xl border border-border p-3 text-center hover:border-primary" onClick={() => p.speak(it.word, 'slow')}><div className="text-3xl">{it.emoji}</div><b className="block">{it.word}</b><span className="text-xs text-muted-foreground">{it.zh}</span></button>)}</div>
+      <div className="grid grid-cols-3 gap-2">{A(g.items).map(it => <button type="button" key={it.word} className="rounded-xl border border-border p-3 text-center hover:border-primary" onClick={() => p.speak(it.word, 'slow')}>{WORD_IMAGES[it.word] ? <img src={WORD_IMAGES[it.word]} alt={it.word} loading="lazy" className="mx-auto mb-1 h-16 w-16 rounded-lg object-cover" /> : <div className="text-3xl">{it.emoji}</div>}<b className="block">{it.word}</b><span className="text-xs text-muted-foreground">{it.zh}</span></button>)}</div>
       <p className="text-sm text-muted-foreground">{tr('点图片听发音，再把单词放进句子说：')}</p>
       <SpeechCoach target={`I like the ${A(g.items)[0].word}.`} onRecord={p.onRecord} onPassed={() => {}} /></div>;
     const full = String(g.sentence).replace('___', g.answer);
