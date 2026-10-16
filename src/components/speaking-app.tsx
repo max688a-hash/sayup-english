@@ -94,7 +94,7 @@ const CORE_ENTRIES: Record<string, { title: string; sub: string; icon: ReactNode
 const LEARN_GROUPS: { title: string; items: string[] }[] = [
   { title: '起步与计划', items: ['placement', 'course', 'checkin', 'mistakes'] },
   { title: '听', items: ['listen', 'daily', 'scenes'] },
-  { title: '说', items: ['gym', 'pron', 'free', 'chat', 'bots', 'repeat', 'beats'] },
+  { title: '说', items: ['gym', 'pron', 'free', 'chat', 'bots'] },
   { title: '读写', items: ['stories', 'reading', 'cloze', 'all'] },
   { title: '词汇与句型', items: ['vocab', 'words', 'chunks', 'phrases', 'patterns'] },
 ];
