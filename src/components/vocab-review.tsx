@@ -1,4 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/use-auth';
 import { ArrowLeft, ChevronRight, Repeat, Volume2, Snail, BookOpen, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -64,6 +66,23 @@ function Head({ title, onExit }: { title: string; onExit: () => void }) {
 export function VocabReview({ speak, onExit, onRecord }: { speak: Speak; onExit: () => void; onRecord: (r: PracticeRecord) => void }) {
   const [srs, setSrs] = useState<Srs>(() => (typeof window === 'undefined' ? {} : load()));
   const [level, setLevel] = useState('a1');
+  const { user } = useAuth();
+  const [synced, setSynced] = useState(false);
+  useEffect(() => {
+    if (!user) { setSynced(false); return; }
+    (async () => {
+      const rows: { word: string; box: number; due_day: number }[] = [];
+      for (let from = 0; ; from += 1000) {
+        const { data, error } = await supabase.from('vocab_reviews').select('word,box,due_day').range(from, from + 999);
+        if (error || !data) break; rows.push(...data); if (data.length < 1000) break;
+      }
+      const local = load(); const merged: Srs = { ...local };
+      for (const r of rows) merged[r.word] = { b: r.box, due: r.due_day };
+      const missing = Object.entries(local).filter(([w]) => !rows.some(r => r.word === w)).map(([word, v]) => ({ user_id: user.id, word, box: v.b, due_day: v.due }));
+      if (missing.length) await supabase.from('vocab_reviews').upsert(missing);
+      save(merged); setSrs(merged); setSynced(true);
+    })();
+  }, [user]);
   const [queue, setQueue] = useState<{ words: Word[]; title: string } | null>(null);
   const total = useMemo(() => THEMES.reduce((n, t) => n + t.words.length, 0), []);
   const mastered = Object.values(srs).filter(x => x.b >= 4).length;
@@ -71,7 +90,8 @@ export function VocabReview({ speak, onExit, onRecord }: { speak: Speak; onExit:
 
   function rate(w: string, ok: 0 | 1 | 2) {
     const cur = srs[w]?.b ?? 0; const b = ok === 0 ? 0 : ok === 1 ? Math.max(1, cur) : Math.min(5, cur + 1);
-    const n = { ...srs, [w]: { b, due: today() + (GAP[b] ?? 15) } }; setSrs(n); save(n);
+    const due = today() + (GAP[b] ?? 15); const n = { ...srs, [w]: { b, due } }; setSrs(n); save(n);
+    if (user) void supabase.from('vocab_reviews').upsert({ user_id: user.id, word: w, box: b, due_day: due, updated_at: new Date().toISOString() });
   }
 
   if (queue) return <Session title={queue.title} words={queue.words} srs={srs} speak={speak} onRecord={onRecord} onRate={rate} onExit={() => setQueue(null)} />;
@@ -80,6 +100,7 @@ export function VocabReview({ speak, onExit, onRecord }: { speak: Speak; onExit:
   return <div className="space-y-4">
     <Head title={tr('词汇复习')} onExit={onExit} />
     <div className="tip-panel"><BookOpen size={18} /><div><b>{tr('单词放进句子里记')}</b><p>{tr('每个词都配例句，并从每日交流、故事阅读里找出它真实出现的句子；说出整句才算会用。')}</p></div></div>
+    <p className="text-xs text-muted-foreground">{user ? (synced ? tr('复习进度已保存到你的学员账号，换设备也能接着学') : tr('正在同步复习进度…')) : tr('登录学员账号后，复习进度会保存到账号里，换设备也不会丢')}</p>
     <div className="grid grid-cols-3 gap-2 text-center">
       <div className="rounded-xl border border-border p-2"><b className="block text-lg">{total}</b><span className="text-xs text-muted-foreground">{tr('词库总量')}</span></div>
       <div className="rounded-xl border border-border p-2"><b className="block text-lg">{Object.keys(srs).length}</b><span className="text-xs text-muted-foreground">{tr('已学')}</span></div>
