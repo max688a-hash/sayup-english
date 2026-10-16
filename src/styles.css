@@ -501,3 +501,26 @@ h1,h2,h3,p { margin:0; }
 .lang-select { max-width:72px; padding:3px 4px; }
 .header-tools { gap:3px; }
 .story-steps span { font-size:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+/* Native-app readiness: on real phones drop the mock frame and use the whole screen with safe areas. */
+@media (max-width:600px) {
+  .preview-workspace { padding:0 !important; }
+  .phone-shell { max-width:none !important; height:calc(100dvh - 51px) !important; min-height:0 !important; padding:0 !important; border-radius:0 !important; box-shadow:none !important; }
+  .phone-screen { border-radius:0 !important; padding-bottom:env(safe-area-inset-bottom); }
+  .phone-screen::after { display:none; }
+  .preview-tag { font-size:9px; }
+  .speed-bar-hint { font-size:11px; }
+  .phone-screen input, .phone-screen textarea, .phone-screen select { font-size:16px; }
+  .phone-screen button[data-slot="button"] { min-height:40px; }
+  .phone-screen .text-xs { font-size:13px; line-height:1.45; }
+  .phone-screen .text-sm { font-size:15px; line-height:1.55; }
+}
+@media (display-mode: standalone) {
+  .workspace-header, .workspace-footer { display:none !important; }
+  .phone-shell { width:100% !important; max-width:none !important; height:100dvh !important; margin:0 !important; padding:env(safe-area-inset-top) 0 0 !important; border-radius:0 !important; box-shadow:none !important; }
+  .phone-shell::before, .phone-shell::after { display:none; }
+  .phone-screen { border-radius:0 !important; }
+}
+.drag-word { touch-action:none; user-select:none; cursor:grab; }
+.drop-card { transition:transform .15s, box-shadow .15s; }
+.drop-card.hot { transform:scale(1.04); box-shadow:0 0 0 3px var(--primary); }
