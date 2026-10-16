@@ -45,6 +45,30 @@ import bed from '@/assets/words/bed.jpg';
 import door from '@/assets/words/door.jpg';
 import key from '@/assets/words/key.jpg';
 import clock from '@/assets/words/clock.jpg';
+import orange from '@/assets/words/orange.jpg';
+import grape from '@/assets/words/grape.jpg';
+import pizza from '@/assets/words/pizza.jpg';
+import soup from '@/assets/words/soup.jpg';
+import cake from '@/assets/words/cake.jpg';
+import cup from '@/assets/words/cup.jpg';
+import bowl from '@/assets/words/bowl.jpg';
+import spoon from '@/assets/words/spoon.jpg';
+import window from '@/assets/words/window.jpg';
+import shirt from '@/assets/words/shirt.jpg';
+import pants from '@/assets/words/pants.jpg';
+import socks from '@/assets/words/socks.jpg';
+import house from '@/assets/words/house.jpg';
+import school from '@/assets/words/school.jpg';
+import park from '@/assets/words/park.jpg';
+import tree from '@/assets/words/tree.jpg';
+import bird from '@/assets/words/bird.jpg';
+import fish from '@/assets/words/fish.jpg';
+import duck from '@/assets/words/duck.jpg';
+import rabbit from '@/assets/words/rabbit.jpg';
+import sun from '@/assets/words/sun.jpg';
+import moon from '@/assets/words/moon.jpg';
+import star from '@/assets/words/star.jpg';
+import rain from '@/assets/words/rain.jpg';
 
 type Speak = (t: string, s?: 'slow' | 'normal' | 'current') => void;
 type P = { speak: Speak; onExit: () => void; onRecord: (r: PracticeRecord) => void };
@@ -91,6 +115,30 @@ const CARDS: { word: string; img: string; say: string; alt: string }[] = [
   { word: 'door', img: door, say: 'Could you open the door, please?', alt: 'Could you close the window, please?' },
   { word: 'key', img: key, say: "I can't find my key.", alt: "I can't find my phone." },
   { word: 'clock', img: clock, say: 'The clock on the wall is new.', alt: 'The clock on the wall is slow.' },
+  { word: 'orange', img: orange, say: 'I eat an orange after lunch.', alt: 'I eat an apple after lunch.' },
+  { word: 'grape', img: grape, say: 'These grapes are very sweet.', alt: 'These bananas are very sweet.' },
+  { word: 'pizza', img: pizza, say: 'We ordered a pizza for dinner.', alt: 'We ordered some noodles for dinner.' },
+  { word: 'soup', img: soup, say: 'The soup is hot, be careful.', alt: 'The tea is hot, be careful.' },
+  { word: 'cake', img: cake, say: 'She made a cake for my birthday.', alt: 'She made some bread for breakfast.' },
+  { word: 'cup', img: cup, say: 'This cup is full of milk.', alt: 'This cup is full of tea.' },
+  { word: 'bowl', img: bowl, say: 'I need a bowl for the rice.', alt: 'I need a plate for the cake.' },
+  { word: 'spoon', img: spoon, say: 'Give me a spoon, please.', alt: 'Give me a fork, please.' },
+  { word: 'window', img: window, say: 'Please open the window.', alt: 'Please close the door.' },
+  { word: 'shirt', img: shirt, say: 'This shirt is too big for me.', alt: 'This hat is too big for me.' },
+  { word: 'pants', img: pants, say: 'These pants are very comfortable.', alt: 'These shoes are very comfortable.' },
+  { word: 'socks', img: socks, say: 'I need a pair of warm socks.', alt: 'I need a pair of new shoes.' },
+  { word: 'house', img: house, say: 'Our house has a small garden.', alt: 'Our house has a big window.' },
+  { word: 'school', img: school, say: 'The school is near my home.', alt: 'The park is near my home.' },
+  { word: 'park', img: park, say: 'We play in the park on weekends.', alt: 'We walk in the park after dinner.' },
+  { word: 'tree', img: tree, say: 'There is a big tree behind our house.', alt: 'There is a small garden behind our house.' },
+  { word: 'bird', img: bird, say: 'A little bird is singing in the tree.', alt: 'A little cat is sleeping in the sun.' },
+  { word: 'fish', img: fish, say: 'The fish swims very fast.', alt: 'The bird flies very high.' },
+  { word: 'duck', img: duck, say: 'The duck is swimming in the pond.', alt: 'The dog is running in the park.' },
+  { word: 'rabbit', img: rabbit, say: 'The rabbit likes to eat carrots.', alt: 'The cat likes to drink milk.' },
+  { word: 'sun', img: sun, say: 'The sun is very bright today.', alt: 'The wind is very strong today.' },
+  { word: 'moon', img: moon, say: 'The moon is big and round tonight.', alt: 'The sky is very clear tonight.' },
+  { word: 'star', img: star, say: 'You can see many stars at night.', alt: 'You can see the moon at night.' },
+  { word: 'rain', img: rain, say: 'The rain is getting heavy.', alt: 'The wind is getting strong.' },
 ];
 const ROUNDS = Array.from({ length: Math.ceil(CARDS.length / 4) }, (_, r) => CARDS.slice(r * 4, r * 4 + 4));
 
