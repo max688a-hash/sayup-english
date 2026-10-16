@@ -773,7 +773,7 @@ export const WORD_SETS = [
     words: [
       { word: 'breath', zh: '呼吸(名词)' }, { word: 'breathe', zh: '呼吸(动词)' },
     ],
-    answer: 'breathe',
+    answer: 'breath',
     sentence: 'Take a deep ___ and relax for a moment.',
     sentenceZh: '深呼吸，放松一下。',
     followUp: "You seem stressed. Is everything okay at work?",

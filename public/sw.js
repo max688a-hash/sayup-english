@@ -1,6 +1,6 @@
 // Audio-only offline cache: built-in voice files are cached the first time they play,
 // so lessons already heard keep working without network. App pages are never cached.
-const CACHE = "sayup-audio-v1";
+const CACHE = "sayup-audio-v2";
 self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", (e) => e.waitUntil(self.clients.claim()));
 self.addEventListener("fetch", (event) => {
