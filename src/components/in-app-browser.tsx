@@ -7,10 +7,17 @@ import { tr } from '@/lib/tr';
 const NO_EMBED = ['youtube.com','storynory.com','ted.com','thisamericanlife.org','voanews.com','americanliterature.com','etc.usf.edu','standardebooks.org'];
 const blocked = (u: string) => { try { const h = new URL(u).hostname; return NO_EMBED.some(d => h === d || h.endsWith('.' + d)); } catch { return true; } };
 
+const isNative = () => typeof window !== 'undefined' && !!(window as unknown as { Capacitor?: { isNativePlatform?: () => boolean } }).Capacitor?.isNativePlatform?.();
+
 export function InAppLink({ url, title, className, children }: { url: string; title: string; className?: string; children: ReactNode }) {
   const [open, setOpen] = useState(false);
+  // 手机 App 内：用系统内置浏览器（iOS SFSafariViewController / Android Custom Tabs）打开，点「完成」回到声芽，所有网站都能显示
+  const onOpen = async () => {
+    if (isNative()) { try { const { Browser } = await import('@capacitor/browser'); await Browser.open({ url, presentationStyle: 'popover' }); return; } catch { /* 回退到页内 */ } }
+    setOpen(true);
+  };
   return <>
-    <button type="button" className={className} onClick={() => setOpen(true)}>{children}</button>
+    <button type="button" className={className} onClick={onOpen}>{children}</button>
     {open && <div className="fixed inset-0 z-[100] flex flex-col bg-background">
       <div className="flex items-center gap-2 border-b border-border px-3 py-2">
         <button type="button" onClick={() => setOpen(false)} className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-sm font-semibold text-primary-foreground"><ArrowLeft size={16} />{tr('返回学习')}</button>

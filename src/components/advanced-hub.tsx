@@ -60,11 +60,16 @@ function Questions({ questions, onScore }: { questions: Q[]; onScore?: (c: numbe
   </div>;
 }
 
-function SentenceList({ sentences, speak }: { sentences: Pair[]; speak: Speak }) {
+function SentenceList({ sentences, speak, onRecord }: { sentences: Pair[]; speak: Speak; onRecord?: (r: PracticeRecord) => void }) {
   const [showZh, setShowZh] = useState(false);
+  const [practice, setPractice] = useState<number | null>(null);
   return <div className="adv-sentences">
     <div className="flex gap-2"><Button size="sm" onClick={() => speak(sentences.map(s => s.en).join(' '), 'normal')}><Volume2 size={14} /> {tr("整段听")}</Button><Button size="sm" variant="outline" onClick={() => setShowZh(v => !v)}>{showZh ? tr("隐藏中文") : tr("显示中文")}</Button></div>
-    {sentences.map((s, i) => <div className="adv-sentence" key={i}><div className="min-w-0 flex-1"><p>{trn(s.en)}</p>{showZh && <p className="adv-zh">{trn(s.zh)}</p>}</div><Button variant="ghost" size="icon" aria-label={tr("慢速朗读")} onClick={() => speak(s.en, 'slow')}><Turtle size={15} /></Button><Button variant="ghost" size="icon" aria-label={tr("朗读")} onClick={() => speak(s.en, 'normal')}><Volume2 size={15} /></Button></div>)}
+    <p className="adv-zh">{tr("点句子听录音，点麦克风逐句跟读，AI 按你的真实录音评分。")}</p>
+    {sentences.map((s, i) => <div key={i}>
+      <div className={cn('adv-sentence', practice === i && 'ring-2 ring-primary')}><div className="min-w-0 flex-1 cursor-pointer" onClick={() => speak(s.en, 'normal')}><p>{trn(s.en)}</p>{showZh && <p className="adv-zh">{trn(s.zh)}</p>}</div><Button variant="ghost" size="icon" aria-label={tr("慢速朗读")} onClick={() => speak(s.en, 'slow')}><Turtle size={15} /></Button><Button variant="ghost" size="icon" aria-label={tr("朗读")} onClick={() => speak(s.en, 'normal')}><Volume2 size={15} /></Button>{onRecord && <Button variant={practice === i ? 'default' : 'ghost'} size="icon" aria-label={tr("跟读这一句")} onClick={() => setPractice(p => p === i ? null : i)}><Mic size={15} /></Button>}</div>
+      {onRecord && practice === i && <div className="mt-2 mb-3"><SpeechCoach key={s.en} target={s.en} onPassed={() => { if (i < sentences.length - 1) setPractice(i + 1); }} onRecord={onRecord} /></div>}
+    </div>)}
   </div>;
 }
 
@@ -129,7 +134,7 @@ export function AdvancedHub({ speak, onRecord, onExit, focus }: { speak: Speak; 
     const l = item === null ? null : listening[item];
     if (l) return <div className="adv-hub">{head(l.titleZh)}
       <p className="adv-zh">{trn(l.fieldZh)} · {levelLabel(l.level)} · {trn(l.sentences.length)} {tr("句")}</p>
-      <SentenceList sentences={l.sentences} speak={speak} />
+      <SentenceList sentences={l.sentences} speak={speak} onRecord={onRecord} />
       <div className="adv-card"><b>{tr("关键词")}</b><div className="flex flex-wrap gap-2 mt-1">{l.keyWords.map((k: { w: string; zh: string }) => <span key={k.w} className="level-tag">{trn(k.w)} · {trn(k.zh)}</span>)}</div></div>
       <div className="section-heading"><h2>{tr("开口复述第一句")}</h2></div>{coach(l.sentences[0].en)}
     </div>;
@@ -186,7 +191,7 @@ export function AdvancedHub({ speak, onRecord, onExit, focus }: { speak: Speak; 
   if (mod === 'packs') {
     const packs = LISTENING_PACKS.filter((p: { level: string }) => p.level === level);
     const p = item === null ? null : packs[item];
-    if (p) return <div className="adv-hub">{head(p.titleZh)}<SentenceList sentences={p.sentences} speak={speak} /><div className="section-heading"><h2>{tr("跟读第一句")}</h2></div>{coach(p.sentences[0].en)}</div>;
+    if (p) return <div className="adv-hub">{head(p.titleZh)}<SentenceList sentences={p.sentences} speak={speak} onRecord={onRecord} /><div className="section-heading"><h2>{tr("跟读第一句")}</h2></div>{coach(p.sentences[0].en)}</div>;
     return <div className="adv-hub">{head('分级听力练习')}
       <div className="filter-row">{LEVELS.map((l: string) => <Button key={l} size="sm" variant={l === level ? 'default' : 'outline'} className="filter-button" onClick={() => { setLevel(l); setItem(null); }}>{levelLabel(l)}</Button>)}</div>
       {list(packs.map((x: { titleZh: string; title: string; sentences: unknown[] }) => ({ title: x.titleZh, sub: `${x.title} · ${x.sentences.length} 句` })))}
