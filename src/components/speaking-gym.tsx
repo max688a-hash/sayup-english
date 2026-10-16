@@ -21,6 +21,30 @@ import please from '@/assets/words/please.jpg';
 import recommend from '@/assets/words/recommend.jpg';
 import sunshine from '@/assets/words/sunshine.jpg';
 import ticket from '@/assets/words/ticket.jpg';
+import milk from '@/assets/words/milk.jpg';
+import water from '@/assets/words/water.jpg';
+import bread from '@/assets/words/bread.jpg';
+import egg from '@/assets/words/egg.jpg';
+import rice from '@/assets/words/rice.jpg';
+import tea from '@/assets/words/tea.jpg';
+import juice from '@/assets/words/juice.jpg';
+import bus from '@/assets/words/bus.jpg';
+import car from '@/assets/words/car.jpg';
+import train from '@/assets/words/train.jpg';
+import plane from '@/assets/words/plane.jpg';
+import bike from '@/assets/words/bike.jpg';
+import phone from '@/assets/words/phone.jpg';
+import book from '@/assets/words/book.jpg';
+import pen from '@/assets/words/pen.jpg';
+import bag from '@/assets/words/bag.jpg';
+import shoes from '@/assets/words/shoes.jpg';
+import hat from '@/assets/words/hat.jpg';
+import chair from '@/assets/words/chair.jpg';
+import table from '@/assets/words/table.jpg';
+import bed from '@/assets/words/bed.jpg';
+import door from '@/assets/words/door.jpg';
+import key from '@/assets/words/key.jpg';
+import clock from '@/assets/words/clock.jpg';
 
 type Speak = (t: string, s?: 'slow' | 'normal' | 'current') => void;
 type P = { speak: Speak; onExit: () => void; onRecord: (r: PracticeRecord) => void };
@@ -43,8 +67,32 @@ const CARDS: { word: string; img: string; say: string; alt: string }[] = [
   { word: 'flower', img: flower, say: 'What a beautiful flower!', alt: 'What a beautiful day!' },
   { word: 'happy', img: happy, say: "I'm so happy to see you.", alt: "I'm so glad to see you." },
   { word: 'sunshine', img: sunshine, say: 'I love the morning sunshine.', alt: 'I love the evening breeze.' },
+  { word: 'milk', img: milk, say: 'I drink a glass of milk for breakfast.', alt: 'I drink a glass of juice for breakfast.' },
+  { word: 'water', img: water, say: 'Could I have some water, please?', alt: 'Could I have some juice, please?' },
+  { word: 'bread', img: bread, say: 'This bread is fresh and warm.', alt: 'This cake is fresh and warm.' },
+  { word: 'egg', img: egg, say: 'I usually have an egg in the morning.', alt: 'I usually have some bread in the morning.' },
+  { word: 'rice', img: rice, say: 'We eat rice with every meal.', alt: 'We eat bread with every meal.' },
+  { word: 'tea', img: tea, say: 'Would you like a cup of tea?', alt: 'Would you like a cup of coffee?' },
+  { word: 'juice', img: juice, say: 'A glass of orange juice, please.', alt: 'A glass of milk, please.' },
+  { word: 'bus', img: bus, say: 'I take the bus to work every day.', alt: 'I take the train to work every day.' },
+  { word: 'car', img: car, say: 'My car is parked outside.', alt: 'My bike is parked outside.' },
+  { word: 'train', img: train, say: 'The train leaves at nine.', alt: 'The bus leaves at nine.' },
+  { word: 'plane', img: plane, say: 'Our plane lands at six.', alt: 'Our train arrives at six.' },
+  { word: 'bike', img: bike, say: 'I ride my bike to school.', alt: 'I ride my bike to work.' },
+  { word: 'phone', img: phone, say: 'My phone is on the table.', alt: 'My bag is on the table.' },
+  { word: 'book', img: book, say: 'This book is really interesting.', alt: 'This story is really interesting.' },
+  { word: 'pen', img: pen, say: 'Can I borrow your pen?', alt: 'Can I borrow your phone?' },
+  { word: 'bag', img: bag, say: 'My bag is heavy today.', alt: 'My bag is new.' },
+  { word: 'shoes', img: shoes, say: 'These shoes are very comfortable.', alt: 'These shoes are brand new.' },
+  { word: 'hat', img: hat, say: 'Wear a hat, the sun is strong.', alt: 'Wear a coat, the wind is cold.' },
+  { word: 'chair', img: chair, say: 'Please take a chair.', alt: 'Please take a seat.' },
+  { word: 'table', img: table, say: 'The table by the window, please.', alt: 'A table for two, please.' },
+  { word: 'bed', img: bed, say: 'I go to bed at eleven.', alt: 'I wake up at seven.' },
+  { word: 'door', img: door, say: 'Could you open the door, please?', alt: 'Could you close the window, please?' },
+  { word: 'key', img: key, say: "I can't find my key.", alt: "I can't find my phone." },
+  { word: 'clock', img: clock, say: 'The clock on the wall is new.', alt: 'The clock on the wall is slow.' },
 ];
-const ROUNDS = [0, 1, 2, 3].map(r => CARDS.slice(r * 4, r * 4 + 4));
+const ROUNDS = Array.from({ length: Math.ceil(CARDS.length / 4) }, (_, r) => CARDS.slice(r * 4, r * 4 + 4));
 
 export function PictureMatch({ speak, onExit, onRecord }: P) {
   const [round, setRound] = useState(0);
