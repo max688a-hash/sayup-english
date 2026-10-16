@@ -63,6 +63,11 @@ import sun from '@/assets/words/sun.jpg';
 import moon from '@/assets/words/moon.jpg';
 import star from '@/assets/words/star.jpg';
 import rain from '@/assets/words/rain.jpg';
+import watermelon from '@/assets/words/watermelon.jpg';
+import strawberry from '@/assets/words/strawberry.jpg';
+import peach from '@/assets/words/peach.jpg';
+import pear from '@/assets/words/pear.jpg';
+import cherry from '@/assets/words/cherry.jpg';
 
 export const WORD_IMAGES: Record<string, string> = {
   apple, ball, banana, cat, coffee, colleague, delicious, dog, flower, happy,

@@ -69,6 +69,11 @@ import sun from '@/assets/words/sun.jpg';
 import moon from '@/assets/words/moon.jpg';
 import star from '@/assets/words/star.jpg';
 import rain from '@/assets/words/rain.jpg';
+import watermelon from '@/assets/words/watermelon.jpg';
+import strawberry from '@/assets/words/strawberry.jpg';
+import peach from '@/assets/words/peach.jpg';
+import pear from '@/assets/words/pear.jpg';
+import cherry from '@/assets/words/cherry.jpg';
 
 type Speak = (t: string, s?: 'slow' | 'normal' | 'current') => void;
 type P = { speak: Speak; onExit: () => void; onRecord: (r: PracticeRecord) => void };
