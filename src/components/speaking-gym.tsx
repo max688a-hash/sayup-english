@@ -65,7 +65,7 @@ export function PictureMatch({ speak, onExit, onRecord }: P) {
       setDone(d => [...d, word]); setPicked(null); speak(`${word}. ${c.say}`);
     } else { setWrong(target); setTimeout(() => setWrong(null), 600); speak(word, 'slow'); }
   }
-  const dropAt = (x: number, y: number) => (document.elementFromPoint(x, y)?.closest('[data-drop]') as HTMLElement | null)?.dataset.drop ?? null;
+  const dropAt = (x: number, y: number) => (document.elementFromPoint(x, y)?.closest('[data-drop]') as HTMLElement | null)?.dataset['drop'] ?? null;
 
   return <div className="adv-hub">
     <div className="detail-heading"><Button variant="ghost" size="icon" aria-label={tr('返回上一级')} onClick={onExit}><ArrowLeft /></Button><span>{tr('看图拖拽 · 听词说句')}</span><span className="w-9" /></div>
