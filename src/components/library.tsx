@@ -38,7 +38,7 @@ function Say({ en, zh, speak }: { en: string; zh?: string; speak: Speak }) {
   return <div className="rounded-xl border border-border p-3 flex items-start gap-2">
     <Button size="icon" variant="ghost" aria-label={tr('播放')} onClick={() => speak(en, 'current')}><Volume2 size={16} /></Button>
     <Button size="icon" variant="ghost" aria-label={tr('慢速播放')} onClick={() => speak(en, 'slow')}><Snail size={16} /></Button>
-    <div className="flex-1"><p>{en}</p>{zh && <p className="text-sm text-muted-foreground">{zh}</p>}</div>
+    <div className="flex-1"><p>{en}</p>{zh && <p className="text-sm text-muted-foreground">{tr(zh)}</p>}</div>
   </div>;
 }
 function AddWord({ w, z }: { w: string; z?: string }) {
