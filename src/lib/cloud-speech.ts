@@ -13,7 +13,15 @@ export type SpeakHooks = { onstart?: () => void; onend?: () => void; onerror?: (
 // Built-in neural recordings shipped with the app (public/audio). Offline, no server cost.
 let localIndex: Promise<Record<string, string>> | null = null;
 export const loosenKey = (t: string) => (t || "").toLowerCase().replace(/[’‘]/g, "'").replace(/[^a-z0-9\s']/g, " ").replace(/\s+/g, " ").trim();
+let swTried = false;
+function registerAudioCache() {
+  if (swTried || typeof navigator === "undefined" || !("serviceWorker" in navigator)) return;
+  swTried = true;
+  try { if (window.self !== window.top) return; } catch { return; }
+  navigator.serviceWorker.register("/sw.js").catch(() => {});
+}
 function loadIndex() {
+  registerAudioCache();
   if (!localIndex) localIndex = fetch("/audio/index.json").then(r => (r.ok ? r.json() : {})).catch(() => { localIndex = null; return {}; });
   return localIndex;
 }
