@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { CheckCircle2, ChevronRight, Circle, Route } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { tr } from '@/lib/tr';
-import { EXCHANGES, readDone } from '@/components/daily-exchange';
+import { EXCHANGES, readDone, syncDone } from '@/components/daily-exchange';
+import { pullKeys, pushKey, dropKey } from '@/lib/cloud-progress';
 
 export type PlanTarget = 'daily' | 'chunks' | 'shadow' | 'stories' | 'pron';
 const KEY = 'sayup-today-plan';
@@ -23,9 +24,25 @@ export function TodayPlan({ open }: { open: (t: PlanTarget, sceneId?: string) =>
   const [scene, setScene] = useState<ReturnType<typeof todaysScene> | null>(null);
   useEffect(() => {
     setScene(todaysScene());
-    try { const s = JSON.parse(localStorage.getItem(KEY) || '{}'); setTicks(s.day === dayKey() ? s.ticks : []); } catch { /* ignore */ }
+    let local: string[] = [];
+    try { const s = JSON.parse(localStorage.getItem(KEY) || '{}'); local = s.day === dayKey() ? s.ticks : []; setTicks(local); } catch { /* ignore */ }
+    const prefix = `plan:${dayKey()}:`;
+    void pullKeys(prefix).then(async cloud => {
+      if (!cloud) return;
+      for (const t of local) if (!cloud.includes(t)) await pushKey(prefix + t);
+      const merged = [...new Set([...cloud, ...local])];
+      localStorage.setItem(KEY, JSON.stringify({ day: dayKey(), ticks: merged }));
+      setTicks(merged);
+    });
+    void syncDone().then(() => setScene(todaysScene()));
   }, []);
-  const toggle = (id: string) => setTicks(t => { const n = t.includes(id) ? t.filter(x => x !== id) : [...t, id]; localStorage.setItem(KEY, JSON.stringify({ day: dayKey(), ticks: n })); return n; });
+  const toggle = (id: string) => setTicks(t => {
+    const on = !t.includes(id);
+    const n = on ? [...t, id] : t.filter(x => x !== id);
+    localStorage.setItem(KEY, JSON.stringify({ day: dayKey(), ticks: n }));
+    void (on ? pushKey(`plan:${dayKey()}:${id}`) : dropKey(`plan:${dayKey()}:${id}`));
+    return n;
+  });
   const steps: { id: PlanTarget; title: string; desc: string; min: number }[] = [
     { id: 'shadow', title: tr('① 听懂 + 跟读'), desc: tr('一段日常对话，逐句影子跟读'), min: 5 },
     { id: 'chunks', title: tr('② 句型替换'), desc: tr('选一组同类句，换词开口说 5 遍'), min: 5 },
