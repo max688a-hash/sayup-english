@@ -69,6 +69,6 @@ export const WORD_IMAGES: Record<string, string> = {
   menu, passport, please, recommend, sunshine, ticket, milk, water, bread, egg,
   rice, tea, juice, bus, car, train, plane, bike, phone, book, pen, bag, shoes,
   hat, chair, table, bed, door, key, clock, orange, grape, pizza, soup, cake,
-  cup, bowl, spoon, window, shirt, pants, socks, house, school, park, tree,
+  cup, bowl, spoon, window: windowImg, shirt, pants, socks, house, school, park, tree,
   bird, fish, duck, rabbit, sun, moon, star, rain,
 };
