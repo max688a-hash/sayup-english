@@ -79,6 +79,5 @@ export const WORD_IMAGES: Record<string, string> = {
   watermelon, strawberry, peach, pear, cherry,
   // 复数/常见别名指向同一张图
   grapes: grape, bananas: banana, apples: apple, oranges: orange, strawberries: strawberry,
-  cherries: cherry, peaches: peach, pears: pear, eggs: egg, socks2: socks,
-  shoes2: shoes,
+  cherries: cherry, peaches: peach, pears: pear, eggs: egg,
 };
