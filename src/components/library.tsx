@@ -18,6 +18,7 @@ import { AI_BOTS } from '@/lib/advanced/aiBots';
 import { PHRASE_CHUNKS } from '@/lib/advanced/phraseChunks';
 import { STRESS_DRILLS } from '@/lib/advanced/stressDrills';
 import { WORD_IMAGES } from '@/lib/word-images';
+import { CARDS } from '@/components/speaking-gym';
 
 type Speak = (t: string, s?: 'slow' | 'normal' | 'current') => void;
 type P = { speak: Speak; onRecord: (r: PracticeRecord) => void };
@@ -179,14 +180,33 @@ function Reading(p: P & { onExit: () => void }) {
 }
 
 /* ---------- 7 主题单词组 / 儿童看图（含句中填空与追问对话） ---------- */
+function WordDetail({ it, themeZh, speak, onRecord, onExit }: { it: any; themeZh: string; speak: Speak; onRecord: (r: PracticeRecord) => void; onExit: () => void }) {
+  const card = CARDS.find(c => c.word === it.word);
+  const say = card?.say ?? `I like the ${it.word}.`;
+  const alt = card?.alt ?? `I see a ${it.word}.`;
+  const [target, setTarget] = useState(say);
+  return <div className="space-y-3"><Head title={`${it.word} · ${it.zh ?? themeZh}`} onExit={onExit} />
+    {WORD_IMAGES[it.word] && <img src={WORD_IMAGES[it.word]} alt={it.word} loading="lazy" className="mx-auto w-full max-w-64 rounded-2xl object-cover" />}
+    <div className="text-center"><b className="text-2xl">{it.word}</b>{it.zh && <p className="text-muted-foreground">{it.zh}</p>}</div>
+    <div className="flex justify-center gap-2"><Button size="sm" variant="outline" onClick={() => speak(it.word, 'slow')}><Snail size={14} /> {tr('慢速听单词')}</Button><Button size="sm" variant="outline" onClick={() => speak(it.word, 'normal')}><Volume2 size={14} /> {tr('正常语速')}</Button></div>
+    <div className="section-heading"><h2>{tr('放进句子里听')}</h2></div>
+    <Say en={say} speak={speak} />
+    <Say en={alt} speak={speak} />
+    <div className="section-heading"><h2>{tr('轮到你说')}</h2></div>
+    <div className="flex gap-2"><Button size="sm" variant={target === say ? 'default' : 'outline'} onClick={() => { setTarget(say); speak(say, 'current'); }}>{tr('练例句')}</Button><Button size="sm" variant={target === alt ? 'default' : 'outline'} onClick={() => { setTarget(alt); speak(alt, 'current'); }}>{tr('练替换句')}</Button></div>
+    <SpeechCoach key={target} target={target} onRecord={onRecord} onPassed={() => {}} />
+  </div>;
+}
 function Words(p: P & { onExit: () => void }) {
-  const [tier, setTier] = useState('kids'); const [g, setG] = useState<any>(null); const [pick, setPick] = useState<string | null>(null);
+  const [tier, setTier] = useState('kids'); const [g, setG] = useState<any>(null); const [pick, setPick] = useState<string | null>(null); const [w, setW] = useState<any>(null);
   const TM = TIER_META as Record<string, any>;
   if (g) {
-    if (g.items) return <div className="space-y-3"><Head title={g.themeZh} onExit={() => setG(null)} />
-      <div className="grid grid-cols-3 gap-2">{A(g.items).map(it => <button type="button" key={it.word} className="rounded-xl border border-border p-3 text-center hover:border-primary" onClick={() => p.speak(it.word, 'slow')}>{WORD_IMAGES[it.word] ? <img src={WORD_IMAGES[it.word]} alt={it.word} loading="lazy" className="mx-auto mb-1 h-16 w-16 rounded-lg object-cover" /> : <div className="text-3xl">{it.emoji}</div>}<b className="block">{it.word}</b><span className="text-xs text-muted-foreground">{it.zh}</span></button>)}</div>
-      <p className="text-sm text-muted-foreground">{tr('点图片听发音，再把单词放进句子说：')}</p>
-      <SpeechCoach target={`I like the ${A(g.items)[0].word}.`} onRecord={p.onRecord} onPassed={() => {}} /></div>;
+    if (g.items) {
+      if (w) return <WordDetail it={w} themeZh={g.themeZh} speak={p.speak} onRecord={p.onRecord} onExit={() => setW(null)} />;
+      return <div className="space-y-3"><Head title={g.themeZh} onExit={() => setG(null)} />
+      <div className="grid grid-cols-3 gap-2">{A(g.items).map(it => <button type="button" key={it.word} className="rounded-xl border border-border p-3 text-center hover:border-primary" onClick={() => { setW(it); p.speak(it.word, 'slow'); }}>{WORD_IMAGES[it.word] ? <img src={WORD_IMAGES[it.word]} alt={it.word} loading="lazy" className="mx-auto mb-1 h-16 w-16 rounded-lg object-cover" /> : <div className="text-3xl">{it.emoji}</div>}<b className="block">{it.word}</b><span className="text-xs text-muted-foreground">{it.zh}</span></button>)}</div>
+      <p className="text-sm text-muted-foreground">{tr('点一个单词进去，听一听、跟着说、再换成自己的句子。')}</p></div>;
+    }
     const full = String(g.sentence).replace('___', g.answer);
     return <div className="space-y-3"><Head title={TM[g.tier]?.label ?? ''} onExit={() => setG(null)} />
       <p className="text-lg">{g.sentence}</p><p className="text-sm text-muted-foreground">{g.sentenceZh}</p>
@@ -200,7 +220,7 @@ function Words(p: P & { onExit: () => void }) {
   return <div className="space-y-4"><Head title={tr('主题单词组 · 看图识词')} onExit={p.onExit} />
     <div className="flex flex-wrap gap-2">{(TIER_ORDER as string[]).map(t => <Button key={t} size="sm" variant={tier === t ? 'default' : 'outline'} onClick={() => setTier(t)}>{TM[t]?.emoji} {TM[t]?.label}</Button>)}</div>
     <p className="text-xs text-muted-foreground">{TM[tier]?.desc}</p>
-    <div className="weak-list">{groups.map((x, k) => <Row key={x.id} icon={x.themeEmoji ?? '🔤'} title={x.themeZh ?? x.sentenceZh ?? `${tr('第')} ${k + 1} ${tr('组')}`} sub={x.theme ?? A(x.words).map(w => w.word).join(' / ')} onClick={() => { setG(x); setPick(null); }} />)}</div></div>;
+    <div className="weak-list">{groups.map((x, k) => <Row key={x.id} icon={x.themeEmoji ?? '🔤'} title={x.themeZh ?? x.sentenceZh ?? `${tr('第')} ${k + 1} ${tr('组')}`} sub={x.theme ?? A(x.words).map(w => w.word).join(' / ')} onClick={() => { setG(x); setPick(null); setW(null); }} />)}</div></div>;
 }
 
 /* ---------- 8 AI 陪练角色（按关键词走分支） ---------- */

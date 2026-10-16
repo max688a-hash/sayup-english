@@ -68,6 +68,50 @@ import strawberry from '@/assets/words/strawberry.jpg';
 import peach from '@/assets/words/peach.jpg';
 import pear from '@/assets/words/pear.jpg';
 import cherry from '@/assets/words/cherry.jpg';
+import carrot from '@/assets/words/carrot.jpg';
+import potato from '@/assets/words/potato.jpg';
+import tomato from '@/assets/words/tomato.jpg';
+import cucumber from '@/assets/words/cucumber.jpg';
+import onion from '@/assets/words/onion.jpg';
+import corn from '@/assets/words/corn.jpg';
+import cheese from '@/assets/words/cheese.jpg';
+import mushroom from '@/assets/words/mushroom.jpg';
+import sofa from '@/assets/words/sofa.jpg';
+import lamp from '@/assets/words/lamp.jpg';
+import mirror from '@/assets/words/mirror.jpg';
+import pillow from '@/assets/words/pillow.jpg';
+import blanket from '@/assets/words/blanket.jpg';
+import desk from '@/assets/words/desk.jpg';
+import towel from '@/assets/words/towel.jpg';
+import soap from '@/assets/words/soap.jpg';
+import toothbrush from '@/assets/words/toothbrush.jpg';
+import truck from '@/assets/words/truck.jpg';
+import taxi from '@/assets/words/taxi.jpg';
+import ship from '@/assets/words/ship.jpg';
+import helicopter from '@/assets/words/helicopter.jpg';
+import motorcycle from '@/assets/words/motorcycle.jpg';
+import dress from '@/assets/words/dress.jpg';
+import jacket from '@/assets/words/jacket.jpg';
+import lion from '@/assets/words/lion.jpg';
+import elephant from '@/assets/words/elephant.jpg';
+import monkey from '@/assets/words/monkey.jpg';
+import panda from '@/assets/words/panda.jpg';
+import bear from '@/assets/words/bear.jpg';
+import tiger from '@/assets/words/tiger.jpg';
+import horse from '@/assets/words/horse.jpg';
+import sheep from '@/assets/words/sheep.jpg';
+import cow from '@/assets/words/cow.jpg';
+import pig from '@/assets/words/pig.jpg';
+import chicken from '@/assets/words/chicken.jpg';
+import frog from '@/assets/words/frog.jpg';
+import turtle from '@/assets/words/turtle.jpg';
+import penguin from '@/assets/words/penguin.jpg';
+import giraffe from '@/assets/words/giraffe.jpg';
+import fox from '@/assets/words/fox.jpg';
+import owl from '@/assets/words/owl.jpg';
+import butterfly from '@/assets/words/butterfly.jpg';
+import sandwich from '@/assets/words/sandwich.jpg';
+import cookie from '@/assets/words/cookie.jpg';
 
 export const WORD_IMAGES: Record<string, string> = {
   apple, ball, banana, cat, coffee, colleague, delicious, dog, flower, happy,
@@ -77,6 +121,12 @@ export const WORD_IMAGES: Record<string, string> = {
   cup, bowl, spoon, window: windowImg, shirt, pants, socks, house, school, park, tree,
   bird, fish, duck, rabbit, sun, moon, star, rain,
   watermelon, strawberry, peach, pear, cherry,
+  carrot, potato, tomato, cucumber, onion, corn, cheese, mushroom,
+  sofa, lamp, mirror, pillow, blanket, desk, towel, soap, toothbrush,
+  truck, taxi, ship, helicopter, motorcycle, dress, jacket,
+  lion, elephant, monkey, panda, bear, tiger, horse, sheep,
+  cow, pig, chicken, frog, turtle, penguin, giraffe, fox, owl, butterfly,
+  sandwich, cookie,
   // 复数/常见别名指向同一张图
   grapes: grape, bananas: banana, apples: apple, oranges: orange, strawberries: strawberry,
   cherries: cherry, peaches: peach, pears: pear, eggs: egg,
