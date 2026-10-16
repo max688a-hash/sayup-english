@@ -144,6 +144,11 @@ const CARDS: { word: string; img: string; say: string; alt: string }[] = [
   { word: 'moon', img: moon, say: 'The moon is big and round tonight.', alt: 'The sky is very clear tonight.' },
   { word: 'star', img: star, say: 'You can see many stars at night.', alt: 'You can see the moon at night.' },
   { word: 'rain', img: rain, say: 'The rain is getting heavy.', alt: 'The wind is getting strong.' },
+  { word: 'watermelon', img: watermelon, say: 'This watermelon is very sweet.', alt: 'This apple is very sweet.' },
+  { word: 'strawberry', img: strawberry, say: 'The strawberries look fresh.', alt: 'The bananas look fresh.' },
+  { word: 'peach', img: peach, say: 'I bought some peaches at the market.', alt: 'I bought some bread at the market.' },
+  { word: 'pear', img: pear, say: 'This pear is juicy and sweet.', alt: 'This soup is hot and fresh.' },
+  { word: 'cherry', img: cherry, say: 'The cherries are sweet and red.', alt: 'The grapes are sweet and red.' },
 ];
 const ROUNDS = Array.from({ length: Math.ceil(CARDS.length / 4) }, (_, r) => CARDS.slice(r * 4, r * 4 + 4));
 
