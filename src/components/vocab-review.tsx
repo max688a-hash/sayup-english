@@ -18,6 +18,12 @@ import { VOCAB_EXAMPLES_C1_REVIEWED } from '@/lib/advanced/vocabExamples_c1_revi
 import { getIPA } from '@/lib/advanced/wordIPA';
 import { DAILY_EXCHANGES } from '@/lib/advanced/dailyExchanges';
 import { TPRS_STORIES } from '@/lib/advanced/tprsStories';
+import { ROLE_PLAY_DIALOGUES } from '@/lib/advanced/rolePlayDialogues';
+import { DIALOGUES } from '@/lib/advanced/dialogues';
+import { SENTENCE_PATTERN_FAMILIES } from '@/lib/advanced/sentencePatterns';
+import { PHRASE_CHUNKS } from '@/lib/advanced/phraseChunks';
+import { REPEAT_DRILLS } from '@/lib/advanced/repeatDrills';
+import { READING_MATERIALS } from '@/lib/advanced/readingMaterials';
 
 type Speak = (t: string, s?: 'slow' | 'normal' | 'current') => void;
 type Word = { w: string; z: string };
@@ -40,6 +46,12 @@ function pool(): Ctx[] {
     if (t.bot) out.push({ en: t.bot, zh: t.botZh ?? '', src });
     for (const l of [...(t.altBots ?? []), ...(t.options ?? []), ...(t.hints ?? [])]) if (l?.en) out.push({ en: l.en, zh: l.zh ?? '', src });
   }
+  const add = (en: unknown, zh: unknown, src: string) => { if (typeof en === 'string' && en) out.push({ en, zh: typeof zh === 'string' ? zh : '', src }); };
+  for (const d of [...(ROLE_PLAY_DIALOGUES as any[]), ...(DIALOGUES as any[])]) for (const t of d.turns ?? []) add(t.text ?? t.en, t.zh, `${tr('角色对话')} · ${d.titleZh ?? d.title}`);
+  for (const f of SENTENCE_PATTERN_FAMILIES as any[]) for (const i of f.items ?? []) add(i.en, i.zh, `${tr('句型家族')} · ${f.titleZh}`);
+  for (const c of PHRASE_CHUNKS as any[]) for (const i of c.chunks ?? []) add(i.en, i.zh, `${tr('场景短语块')} · ${c.themeZh}`);
+  for (const r of REPEAT_DRILLS as any[]) add(r.phrase, r.zh, `${tr('跟读复述')} · ${r.category}`);
+  for (const r of READING_MATERIALS as any[]) for (const v of r.vocab ?? []) add(v.exampleEn, v.exampleZh, `${tr('分级阅读')} · ${r.titleZh}`);
   for (const st of TPRS_STORIES as any[]) for (const l of st.sentences ?? []) if (l?.en) out.push({ en: l.en, zh: l.zh ?? '', src: `${tr('故事阅读')} · ${st.titleZh ?? st.title ?? ''}` });
   return (POOL = out);
 }
@@ -58,6 +70,11 @@ type Srs = Record<string, { b: number; due: number }>;
 function load(): Srs { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch { return {}; } }
 function save(s: Srs) { localStorage.setItem(KEY, JSON.stringify(s)); }
 const today = () => Math.floor(Date.now() / 86400000);
+/** 从阅读、单词组等任意栏目把生词加入复习（本机 + 已登录则同步账号）。 */
+export function addToReview(word: string, _zh?: string) {
+  const s = load(); if (!s[word]) { s[word] = { b: 0, due: today() }; save(s); }
+  void supabase.auth.getUser().then(({ data }) => { if (data.user) void supabase.from('vocab_reviews').upsert({ user_id: data.user.id, word, box: s[word]!.b, due_day: s[word]!.due }); });
+}
 
 function Head({ title, onExit }: { title: string; onExit: () => void }) {
   return <div className="detail-heading"><Button variant="ghost" size="icon" aria-label={tr('返回上一级')} onClick={onExit}><ArrowLeft /></Button><span>{title}</span><span className="w-9" /></div>;
@@ -86,7 +103,7 @@ export function VocabReview({ speak, onExit, onRecord }: { speak: Speak; onExit:
   const [queue, setQueue] = useState<{ words: Word[]; title: string } | null>(null);
   const total = useMemo(() => THEMES.reduce((n, t) => n + t.words.length, 0), []);
   const mastered = Object.values(srs).filter(x => x.b >= 4).length;
-  const due = useMemo(() => { const d = today(); const all = THEMES.flatMap(t => t.words); return all.filter(w => (srs[w.w]?.due ?? Infinity) <= d); }, [srs]);
+  const due = useMemo(() => { const d = today(); const all = [...THEMES.flatMap(t => t.words)]; const known = new Set(all.map(w => w.w)); for (const k of Object.keys(srs)) if (!known.has(k)) all.push({ w: k, z: '' }); return all.filter(w => (srs[w.w]?.due ?? Infinity) <= d); }, [srs]);
 
   function rate(w: string, ok: 0 | 1 | 2) {
     const cur = srs[w]?.b ?? 0; const b = ok === 0 ? 0 : ok === 1 ? Math.max(1, cur) : Math.min(5, cur + 1);

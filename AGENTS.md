@@ -15,3 +15,5 @@
 - Scope adult and child semantic theme tokens to the phone screen and keep the desktop preview shell independent so mode changes do not recolor the workspace.
 - Never render a button or other interactive control inside another button; keep secondary controls as siblings in a flex row, because nested buttons break SSR hydration and make early clicks dead.
 - Content ported from the original GitHub repo (max688a-hash/yuya-english-speaking-app) lives verbatim in src/lib/advanced/*.ts with @ts-nocheck; keep user-facing labels free of exam brand names (use 进阶 / 1–6 级), to avoid trademark issues.
+- Extra learning modules (scenes, patterns, reading, cloze, free-speak, word groups, bots…) live in src/components/library.tsx keyed by LibKind; vocab review builds its "real context" sentence pool from all module data and syncs to the vocab_reviews table, so words are always learned inside sentences used elsewhere in the app.
+- Open-ended speaking prompts send targets prefixed with [FREE] to /api/speech-analyze, which judges relevance and grammar instead of word-by-word matching.

@@ -74,7 +74,7 @@ export function SpeechCoach({ target, onPassed, onRecord }: { target: string; on
     {phase === 'recording'
       ? <Button className="w-full h-12 recording" onClick={() => void stop()}><Square size={16} />{tr('说完了，开始分析 · {0}s', seconds)}</Button>
       : <Button className="w-full h-12" disabled={phase === 'analyzing'} onClick={() => void start()}>{phase === 'analyzing' ? <><Loader2 className="animate-spin" size={18} />{tr('正在听你的发音…')}</> : <><Mic size={18} />{analysis || phase === 'retry' ? tr('再录一次') : tr('开始跟读录音')}</>}</Button>}
-    {phase === 'recording' && <p className="coach-hint"><span className="rec-dot" />{tr('正在录音，请读：{0}', target)}</p>}
+    {phase === 'recording' && <p className="coach-hint"><span className="rec-dot" />{target.startsWith('[FREE]') ? tr('正在录音，请用英语回答') : tr('正在录音，请读：{0}', target)}</p>}
     {(phase === 'retry' || phase === 'error') && <div className={cn('coach-alert', phase)} role="alert"><AlertTriangle size={16} /><span>{message}</span></div>}
     {analysis && <div className="feedback-box">
       <div className="flex items-center justify-between gap-3"><span className={cn('coach-verdict', tone)}>{analysis.verdict === 'good' ? <CheckCheck size={17} /> : <Sprout size={17} />}{analysis.verdict === 'good' ? tr('说得准确') : analysis.verdict === 'retry' ? tr('需要重说') : tr('还有要纠正的地方')}</span><span className={cn('feedback-score', tone)}>{trn(analysis.score)}<span>/100</span></span></div>

@@ -102,7 +102,8 @@ const instructions = `你是严格而友善的英语口语教练。你会收到�
 - suggestions 给 2-3 条可以马上执行的练习建议。
 - next_try 给一句下一次跟读时最该注意的提示。
 - 你只能根据识别文字判断，无法听到语调细节；不要编造识别结果中没有体现的问题。
-- 除英文单词和音标外，全部用简体中文，语气简洁。`;
+- 除英文单词和音标外，全部用简体中文，语气简洁。
+- 特殊情况：如果目标句子以 [FREE] 开头，它是一道开放口语题，没有标准答案。此时不要逐词对比，而是判断学习者是否切题回答、语法和用词是否正确自然、句子是否完整；识别结果为空、离题或少于 3 个词时 verdict 为 "retry"。issues 列出用错的词或语法并给出更地道的说法，next_try 给出一句可直接模仿的更好回答。`;
 
 const LANG_NAME: Record<string, string> = { zh: '简体中文', vi: '越南语（Tiếng Việt）', ja: '日语（日本語）' };
 export async function analyzeSpeech(apiKey: string, target: string, heard: string, signal: AbortSignal, lang = 'zh') {
