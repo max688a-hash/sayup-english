@@ -73,3 +73,8 @@
 - [done] 1,664 synthesized clips re-made in en-US-AvaNeural (same voice as old repo); learn page now switches by skill (起步/听力/口语/阅读/词汇); listening has per-sentence shadowing + AI scoring; native in-app browser via @capacitor/browser; all 101 adult confusable photos checked (all match); fixed b1-7 answer breath.
 - [blocked] IPA/APK build + real-device test: needs Apple/Google developer accounts (after company registration).
 - [open] Cloud-sync check-in & daily-route progress to account.
+- [x] 进阶/加强内容拆入五个分类；听力逐句跟读过关自动下一句直到整篇完成
+- [x] 每日路线、每日交流完成记录存进学员账号（打卡本来就按账号云端计算）
+- [x] 越南语/日语界面 AI 母语标准通读（主题词组、每日路线、训练营等 1,600 条，改 395 条）
+- [ ] 真人母语者审校（需外聘越南语/日语译者）
+- [ ] 可选发音音色（帅气男声等）——待用户确认音色和安装包体积取舍

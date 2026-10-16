@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { tr } from '@/lib/tr';
 import { SpeechCoach, type PracticeRecord } from '@/components/speech-coach';
+import { pullKeys, pushKey } from '@/lib/cloud-progress';
 import { DAILY_EXCHANGES, DAILY_LEVELS, DAILY_LEVEL_LABELS } from '@/lib/advanced/dailyExchanges';
 
 type Speak = (t: string, s?: 'slow' | 'normal' | 'current') => void;
@@ -20,6 +21,17 @@ export function readDone(): string[] {
 }
 function markDone(id: string) {
   const d = readDone(); if (!d.includes(id)) localStorage.setItem(DONE_KEY, JSON.stringify([...d, id]));
+  void pushKey(`daily:${id}`);
+}
+/** Merge local and account records both ways, so finished scenes follow the learner across phones. */
+export async function syncDone(): Promise<string[]> {
+  const local = readDone();
+  const cloud = await pullKeys('daily:');
+  if (!cloud) return local;
+  for (const id of local) if (!cloud.includes(id)) await pushKey(`daily:${id}`);
+  const merged = [...new Set([...cloud, ...local])];
+  localStorage.setItem(DONE_KEY, JSON.stringify(merged));
+  return merged;
 }
 
 function Head({ title, onExit }: { title: string; onExit: () => void }) {
@@ -31,7 +43,7 @@ export function DailyExchange({ speak, onExit, onRecord, initialId, onFinished }
   const [level, setLevel] = useState(() => EXCHANGES.find(e => e.id === initialId)?.level ?? 'a1');
   const [openId, setOpenId] = useState<string | undefined>(initialId);
   const [done, setDone] = useState<string[]>([]);
-  useEffect(() => setDone(readDone()), [openId]);
+  useEffect(() => { setDone(readDone()); void syncDone().then(setDone); }, [openId]);
   const scene = EXCHANGES.find(e => e.id === openId);
   if (scene) return <Scene key={scene.id} scene={scene} speak={speak} onRecord={onRecord} onBack={() => setOpenId(undefined)} onFinished={() => { markDone(scene.id); onFinished?.(scene.id); }} />;
   const list = EXCHANGES.filter(e => e.level === level);
