@@ -18,3 +18,4 @@
 - Extra learning modules (scenes, patterns, reading, cloze, free-speak, word groups, bots…) live in src/components/library.tsx keyed by LibKind; vocab review builds its "real context" sentence pool from all module data and syncs to the vocab_reviews table, so words are always learned inside sentences used elsewhere in the app.
 - Open-ended speaking prompts send targets prefixed with [FREE] to /api/speech-analyze, which judges relevance and grammar instead of word-by-word matching.
 - Speaking drills (picture-drag, shadow, stress, immersion) are grouped under src/components/speaking-gym.tsx as one ordered module; add new speaking drills there, not as separate Learn-page entries, to keep the acquisition order in one place.
+- Demo audio plays built-in neural MP3s from public/audio (index.json maps loosened text → hash) first, then /api/tts cloud synthesis, then device speech; keeps learning offline and cuts server cost.
