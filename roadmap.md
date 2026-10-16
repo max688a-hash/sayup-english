@@ -46,3 +46,5 @@
 - [x] 口语训练营：看图拖拽 + 跟读 + 重音 + 沉浸合成一套（2026-10-16）
 - [x] 手机字号/按钮/全屏布局优化，可添加到手机桌面
 - [x] 新板块说明补越南语/日语（板块列表里带数字的小字仍为中文）
+- [ ] 配图词库从 16 扩到 40（生成中：milk/water/bread/egg/rice/tea/juice/bus/car/train/plane/bike/phone/book/pen/bag/shoes/hat/chair/table/bed/door/key/clock），接入拖图游戏与词汇复习
+- [ ] 端到端验收：注册测试账号 → 复习几个词 → 换设备登录确认进度同步 → 打卡送月卡 → 会员续费推迟
