@@ -17,6 +17,7 @@ import { ALL_GROUPS, TIER_META, TIER_ORDER } from '@/lib/advanced/wordSets';
 import { AI_BOTS } from '@/lib/advanced/aiBots';
 import { PHRASE_CHUNKS } from '@/lib/advanced/phraseChunks';
 import { STRESS_DRILLS } from '@/lib/advanced/stressDrills';
+import { WORD_IMAGES } from '@/lib/word-images';
 
 type Speak = (t: string, s?: 'slow' | 'normal' | 'current') => void;
 type P = { speak: Speak; onRecord: (r: PracticeRecord) => void };
