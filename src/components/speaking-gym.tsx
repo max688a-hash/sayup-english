@@ -74,12 +74,13 @@ import strawberry from '@/assets/words/strawberry.jpg';
 import peach from '@/assets/words/peach.jpg';
 import pear from '@/assets/words/pear.jpg';
 import cherry from '@/assets/words/cherry.jpg';
+import { WORD_IMAGES } from '@/lib/word-images';
 
 type Speak = (t: string, s?: 'slow' | 'normal' | 'current') => void;
 type P = { speak: Speak; onExit: () => void; onRecord: (r: PracticeRecord) => void };
 
 // Each word lives inside a sentence and a same-pattern variant, so the learner hears it in context.
-const CARDS: { word: string; img: string; say: string; alt: string }[] = [
+export const CARDS: { word: string; img: string; say: string; alt: string }[] = [
   { word: 'apple', img: apple, say: 'I have an apple every morning.', alt: 'I have a banana every morning.' },
   { word: 'banana', img: banana, say: 'Can I have a banana, please?', alt: 'Can I have an apple, please?' },
   { word: 'cat', img: cat, say: 'My cat likes to sleep in the sun.', alt: 'My dog likes to sleep in the sun.' },
@@ -149,6 +150,50 @@ const CARDS: { word: string; img: string; say: string; alt: string }[] = [
   { word: 'peach', img: peach, say: 'I bought some peaches at the market.', alt: 'I bought some bread at the market.' },
   { word: 'pear', img: pear, say: 'This pear is juicy and sweet.', alt: 'This soup is hot and fresh.' },
   { word: 'cherry', img: cherry, say: 'The cherries are sweet and red.', alt: 'The grapes are sweet and red.' },
+  { word: 'carrot', img: WORD_IMAGES.carrot!, say: 'The rabbit is eating a carrot.', alt: 'The rabbit is eating some corn.' },
+  { word: 'potato', img: WORD_IMAGES.potato!, say: 'This potato is big and round.', alt: 'This tomato is big and round.' },
+  { word: 'tomato', img: WORD_IMAGES.tomato!, say: 'I need a tomato for the salad.', alt: 'I need an onion for the soup.' },
+  { word: 'cucumber', img: WORD_IMAGES.cucumber!, say: 'The cucumber is green and fresh.', alt: 'The carrot is orange and fresh.' },
+  { word: 'onion', img: WORD_IMAGES.onion!, say: 'Cut the onion into small pieces.', alt: 'Cut the potato into small pieces.' },
+  { word: 'corn', img: WORD_IMAGES.corn!, say: 'The corn is sweet and yellow.', alt: 'The rice is white and warm.' },
+  { word: 'cheese', img: WORD_IMAGES.cheese!, say: 'I like cheese on my bread.', alt: 'I like honey on my bread.' },
+  { word: 'mushroom', img: WORD_IMAGES.mushroom!, say: 'The soup has mushrooms in it.', alt: 'The salad has tomatoes in it.' },
+  { word: 'sofa', img: WORD_IMAGES.sofa!, say: 'The cat is sleeping on the sofa.', alt: 'The cat is sleeping on the bed.' },
+  { word: 'lamp', img: WORD_IMAGES.lamp!, say: 'Please turn on the lamp.', alt: 'Please open the window.' },
+  { word: 'mirror', img: WORD_IMAGES.mirror!, say: 'There is a mirror in the bathroom.', alt: 'There is a clock in the kitchen.' },
+  { word: 'pillow', img: WORD_IMAGES.pillow!, say: 'This pillow is very soft.', alt: 'This blanket is very warm.' },
+  { word: 'blanket', img: WORD_IMAGES.blanket!, say: 'I need a warm blanket at night.', alt: 'I need a soft pillow at night.' },
+  { word: 'desk', img: WORD_IMAGES.desk!, say: 'My books are on the desk.', alt: 'My bag is on the chair.' },
+  { word: 'towel', img: WORD_IMAGES.towel!, say: 'Here is a clean towel for you.', alt: 'Here is a warm blanket for you.' },
+  { word: 'soap', img: WORD_IMAGES.soap!, say: 'Wash your hands with soap.', alt: 'Wash your hands with warm water.' },
+  { word: 'toothbrush', img: WORD_IMAGES.toothbrush!, say: 'I brush my teeth with my toothbrush.', alt: 'I wash my face with warm water.' },
+  { word: 'truck', img: WORD_IMAGES.truck!, say: 'The truck carries food to the store.', alt: 'The bus carries people to work.' },
+  { word: 'taxi', img: WORD_IMAGES.taxi!, say: 'Let us take a taxi to the airport.', alt: 'Let us take a bus to the airport.' },
+  { word: 'ship', img: WORD_IMAGES.ship!, say: 'The ship is sailing on the sea.', alt: 'The train is running on the track.' },
+  { word: 'helicopter', img: WORD_IMAGES.helicopter!, say: 'The helicopter is flying over the city.', alt: 'The plane is flying over the sea.' },
+  { word: 'motorcycle', img: WORD_IMAGES.motorcycle!, say: 'He rides his motorcycle to work.', alt: 'He rides his bike to school.' },
+  { word: 'dress', img: WORD_IMAGES.dress!, say: 'She is wearing a red dress.', alt: 'She is wearing a blue jacket.' },
+  { word: 'jacket', img: WORD_IMAGES.jacket!, say: 'Put on your jacket, it is cold.', alt: 'Put on your hat, the sun is strong.' },
+  { word: 'lion', img: WORD_IMAGES.lion!, say: 'The lion is the king of the animals.', alt: 'The tiger is a strong animal.' },
+  { word: 'elephant', img: WORD_IMAGES.elephant!, say: 'The elephant has a long nose.', alt: 'The giraffe has a long neck.' },
+  { word: 'monkey', img: WORD_IMAGES.monkey!, say: 'The monkey likes to eat bananas.', alt: 'The rabbit likes to eat carrots.' },
+  { word: 'panda', img: WORD_IMAGES.panda!, say: 'The panda is black and white.', alt: 'The bear is big and brown.' },
+  { word: 'bear', img: WORD_IMAGES.bear!, say: 'The bear sleeps all winter.', alt: 'The turtle walks very slowly.' },
+  { word: 'tiger', img: WORD_IMAGES.tiger!, say: 'The tiger runs very fast.', alt: 'The lion is very strong.' },
+  { word: 'horse', img: WORD_IMAGES.horse!, say: 'She rides a horse on the farm.', alt: 'She rides a bike in the park.' },
+  { word: 'sheep', img: WORD_IMAGES.sheep!, say: 'The sheep eats grass on the hill.', alt: 'The cow eats grass on the farm.' },
+  { word: 'cow', img: WORD_IMAGES.cow!, say: 'The cow gives us milk.', alt: 'The chicken gives us eggs.' },
+  { word: 'pig', img: WORD_IMAGES.pig!, say: 'The pig is pink and round.', alt: 'The sheep is white and fluffy.' },
+  { word: 'chicken', img: WORD_IMAGES.chicken!, say: 'The chicken laid an egg.', alt: 'The duck is swimming in the pond.' },
+  { word: 'frog', img: WORD_IMAGES.frog!, say: 'The frog jumps into the water.', alt: 'The fish swims in the water.' },
+  { word: 'turtle', img: WORD_IMAGES.turtle!, say: 'The turtle walks very slowly.', alt: 'The rabbit runs very fast.' },
+  { word: 'penguin', img: WORD_IMAGES.penguin!, say: 'The penguin lives in the cold.', alt: 'The duck swims in the pond.' },
+  { word: 'giraffe', img: WORD_IMAGES.giraffe!, say: 'The giraffe has a very long neck.', alt: 'The elephant has a very long nose.' },
+  { word: 'fox', img: WORD_IMAGES.fox!, say: 'The fox has a big tail.', alt: 'The rabbit has long ears.' },
+  { word: 'owl', img: WORD_IMAGES.owl!, say: 'The owl comes out at night.', alt: 'The bird sings in the morning.' },
+  { word: 'butterfly', img: WORD_IMAGES.butterfly!, say: 'The butterfly has beautiful wings.', alt: 'The flower has beautiful colors.' },
+  { word: 'sandwich', img: WORD_IMAGES.sandwich!, say: 'I made a sandwich for lunch.', alt: 'I made some soup for lunch.' },
+  { word: 'cookie', img: WORD_IMAGES.cookie!, say: 'The cookie is sweet and crunchy.', alt: 'The cake is sweet and soft.' },
 ];
 const ROUNDS = Array.from({ length: Math.ceil(CARDS.length / 4) }, (_, r) => CARDS.slice(r * 4, r * 4 + 4));
 

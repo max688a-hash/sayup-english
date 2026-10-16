@@ -1,4 +1,5 @@
 import { tr, trn } from '@/lib/tr';
+import { speakCloud, stopCloudSpeech } from '@/lib/cloud-speech';
 import { setContentLang } from '@/lib/tr';
 import { openMemberCheckout, isPaymentsOpen } from '@/lib/paddle';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
@@ -151,26 +152,34 @@ export function SpeakingApp({ initialLang, initialTab }: { initialLang?: Lang; i
   const currentWord = wordIndex === null ? null : activeWords[wordIndex];
   useEffect(() => { const q = new URLSearchParams(window.location.search); if (q.get('checkout') === 'success') { setNotice(tr("付款成功！会员身份通常几秒内生效，可在「我的账号」查看。")); window.history.replaceState(null, '', '/'); } }, []);
   useEffect(() => { bottom.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, [messages]);
-  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); window.speechSynthesis?.cancel(); }, []);
+  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); window.speechSynthesis?.cancel(); stopCloudSpeech(); }, []);
   useEffect(() => { if (!notice) return; const t = setTimeout(() => setNotice(''), 4000); return () => clearTimeout(t); }, [notice]);
 
   function speak(text: string, speed: SpeakSpeed = 'current') {
-    if (!('speechSynthesis' in window)) { setNotice(tr("当前浏览器不支持朗读，请使用 Chrome 或 Safari。")); return; }
-    window.speechSynthesis.cancel();
     const slow = (speed === 'current' ? rateMode : speed) === 'slow';
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'en-US'; utterance.rate = slow ? (kids ? 0.5 : 0.62) : (kids ? 0.78 : 0.95);
-    const voice = window.speechSynthesis.getVoices().find(v => v.lang.replace('_', '-') === 'en-US') ?? window.speechSynthesis.getVoices().find(v => v.lang.toLowerCase().startsWith('en'));
-    if (voice) utterance.voice = voice;
-    utterance.onstart = () => setSpeaking(text);
-    utterance.onend = () => setSpeaking('');
-    utterance.onerror = () => { setSpeaking(''); setNotice(tr("朗读暂不可用，请检查浏览器音频设置后重试。")); };
-    window.speechSynthesis.speak(utterance);
+    window.speechSynthesis?.cancel();
+    void speakCloud(text, slow, {
+      onstart: () => setSpeaking(text),
+      onend: () => setSpeaking(''),
+      onerror: () => setSpeaking(''),
+    }).then(ok => {
+      if (ok) return;
+      // 云端语音不可用（离线等）时回退设备系统语音
+      if (!('speechSynthesis' in window)) { setNotice(tr("当前浏览器不支持朗读，请使用 Chrome 或 Safari。")); return; }
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US'; utterance.rate = slow ? (kids ? 0.5 : 0.62) : (kids ? 0.78 : 0.95);
+      const voice = window.speechSynthesis.getVoices().find(v => v.lang.replace('_', '-') === 'en-US') ?? window.speechSynthesis.getVoices().find(v => v.lang.toLowerCase().startsWith('en'));
+      if (voice) utterance.voice = voice;
+      utterance.onstart = () => setSpeaking(text);
+      utterance.onend = () => setSpeaking('');
+      utterance.onerror = () => { setSpeaking(''); setNotice(tr("朗读暂不可用，请检查浏览器音频设置后重试。")); };
+      window.speechSynthesis.speak(utterance);
+    });
   }
   function resetDetail() { setAdvanced(null);
     if (timer.current) clearTimeout(timer.current);
     setScene(null); setLearning(-1); setWordIndex(null); setPractice(null); setFeedback(false); setRecording(false); setCompleted(false); setAnswer(''); setChecked(false); setTurnTip(''); setLastReply(''); setAttempts([]); setShowReview(false);
-    window.speechSynthesis?.cancel(); setSpeaking('');
+    window.speechSynthesis?.cancel(); stopCloudSpeech(); setSpeaking('');
   }
   function openScene(item: Scene, role = false) {
     const opening = item.turns[0];
