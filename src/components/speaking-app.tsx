@@ -83,7 +83,7 @@ export function SpeakingApp({ initialLang, initialTab }: { initialLang?: Lang; i
   const [flipped, setFlipped] = useState(false);
   const [known, setKnown] = useState<string[]>([]);
   const [practice, setPractice] = useState<string | null>(null);
-  const [advanced, setAdvanced] = useState<null | 'all' | 'listen' | 'stories' | 'placement' | 'course' | 'checkin' | 'pron' | 'mistakes' | 'chunks' | 'chat' | 'stress' | 'shadow' | 'immerse' | 'daily' | 'vocab' | LibKind>(null);
+  const [advanced, setAdvanced] = useState<null | 'all' | 'listen' | 'stories' | 'placement' | 'course' | 'checkin' | 'pron' | 'mistakes' | 'chunks' | 'chat' | 'stress' | 'shadow' | 'immerse' | 'gym' | 'daily' | 'vocab' | LibKind>(null);
   const [dailyId, setDailyId] = useState<string | undefined>(undefined);
   const [storyLevel, setStoryLevel] = useState<string | undefined>(undefined);
   const [lang, setLang] = useState<Lang>(initialLang ?? 'zh');
