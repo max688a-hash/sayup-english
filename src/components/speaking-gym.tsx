@@ -71,7 +71,7 @@ export function PictureMatch({ speak, onExit, onRecord }: P) {
     <div className="detail-heading"><Button variant="ghost" size="icon" aria-label={tr('返回上一级')} onClick={onExit}><ArrowLeft /></Button><span>{tr('看图拖拽 · 听词说句')}</span><span className="w-9" /></div>
     <p className="text-sm text-muted-foreground mb-3">{tr('像小孩学说话：先看图、听声音，把单词拖到对应图片上（也可以先点单词再点图片）。配对后会读出整句，最后你自己把句子说出来。')}</p>
     <div className="flex gap-1 mb-3">{ROUNDS.map((_, i) => <Button key={i} size="sm" variant={i === round ? 'default' : 'outline'} onClick={() => { setRound(i); setDone([]); setSpeakIdx(null); }}>{tr('第 {0} 组', i + 1)}</Button>)}</div>
-    <div className="grid grid-cols-2 gap-2 mb-3">{set.map(c => {
+    <div className="grid grid-cols-2 gap-2 mb-3 select-none">{set.map(c => {
       const ok = done.includes(c.word);
       return <div key={c.word} data-drop={c.word} className={cn('drop-card relative overflow-hidden rounded-xl border border-border bg-card', hot === c.word && 'hot', wrong === c.word && 'ring-2 ring-destructive')}
         onClick={() => { if (picked && !ok) attempt(picked, c.word); }}>
@@ -83,7 +83,7 @@ export function PictureMatch({ speak, onExit, onRecord }: P) {
     })}</div>
     {!allDone && <div className="flex flex-wrap gap-2 mb-3">{chips.map(c => <button key={c.word} type="button"
       className={cn('drag-word rounded-full border border-border bg-card px-4 py-2 text-base font-semibold', picked === c.word && 'ring-2 ring-primary')}
-      onPointerDown={e => { moved.current = false; (e.target as HTMLElement).setPointerCapture(e.pointerId); setDrag({ word: c.word, x: e.clientX, y: e.clientY }); }}
+      onPointerDown={e => { e.preventDefault(); moved.current = false; (e.target as HTMLElement).setPointerCapture(e.pointerId); setDrag({ word: c.word, x: e.clientX, y: e.clientY }); }}
       onPointerMove={e => { if (!drag) return; moved.current = true; setDrag({ ...drag, x: e.clientX, y: e.clientY }); setHot(dropAt(e.clientX, e.clientY)); }}
       onPointerUp={e => { const t = drag && moved.current ? dropAt(e.clientX, e.clientY) : null; setDrag(null); setHot(null); if (t) attempt(c.word, t); else { setPicked(c.word); speak(c.word, 'slow'); } }}
       onPointerCancel={() => { setDrag(null); setHot(null); }}>{c.word}</button>)}</div>}
