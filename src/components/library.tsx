@@ -208,7 +208,7 @@ function Words(p: P & { onExit: () => void }) {
       <p className="text-sm text-muted-foreground">{tr('点一个单词进去，听一听、跟着说、再换成自己的句子。')}</p></div>;
     }
     const full = String(g.sentence).replace('___', g.answer);
-    return <div className="space-y-3"><Head title={TM[g.tier]?.label ?? ''} onExit={() => setG(null)} />
+    return <div className="space-y-3"><Head title={tr(TM[g.tier]?.label)} onExit={() => setG(null)} />
       <p className="text-lg">{g.sentence}</p><p className="text-sm text-muted-foreground">{tr(g.sentenceZh)}</p>
       <div className="grid grid-cols-2 gap-2">{A(g.words).map(w => <Button key={w.word} variant={pick === w.word ? (w.word === g.answer ? 'default' : 'destructive') : 'outline'} onClick={() => { setPick(w.word); p.speak(w.word, 'current'); }}>{WORD_IMAGES[w.word] && <img src={WORD_IMAGES[w.word]} alt="" loading="lazy" className="mr-1 h-7 w-7 rounded object-cover" />}{w.word} · {tr(w.zh)}</Button>)}</div>
       {pick === g.answer && <><Say en={full} speak={p.speak} /><SpeechCoach target={full} onRecord={p.onRecord} onPassed={() => {}} />
@@ -218,9 +218,9 @@ function Words(p: P & { onExit: () => void }) {
   }
   const groups = A(ALL_GROUPS).filter(x => x.tier === tier);
   return <div className="space-y-4"><Head title={tr('主题单词组 · 看图识词')} onExit={p.onExit} />
-    <div className="flex flex-wrap gap-2">{(TIER_ORDER as string[]).map(t => <Button key={t} size="sm" variant={tier === t ? 'default' : 'outline'} onClick={() => setTier(t)}>{TM[t]?.emoji} {TM[t]?.label}</Button>)}</div>
-    <p className="text-xs text-muted-foreground">{TM[tier]?.desc}</p>
-    <div className="weak-list">{groups.map((x, k) => <Row key={x.id} icon={x.themeEmoji ?? '🔤'} title={x.themeZh ?? x.sentenceZh ?? `${tr('第')} ${k + 1} ${tr('组')}`} sub={x.theme ?? A(x.words).map(w => w.word).join(' / ')} onClick={() => { setG(x); setPick(null); setW(null); }} />)}</div></div>;
+    <div className="flex flex-wrap gap-2">{(TIER_ORDER as string[]).map(t => <Button key={t} size="sm" variant={tier === t ? 'default' : 'outline'} onClick={() => setTier(t)}>{TM[t]?.emoji} {tr(TM[t]?.label)}</Button>)}</div>
+    <p className="text-xs text-muted-foreground">{tr(TM[tier]?.desc)}</p>
+    <div className="weak-list">{groups.map((x, k) => <Row key={x.id} icon={x.themeEmoji ?? '🔤'} title={tr(x.themeZh ?? x.sentenceZh) || `${tr('第')} ${k + 1} ${tr('组')}`} sub={x.theme ?? A(x.words).map(w => w.word).join(' / ')} onClick={() => { setG(x); setPick(null); setW(null); }} />)}</div></div>;
 }
 
 /* ---------- 8 AI 陪练角色（按关键词走分支） ---------- */
