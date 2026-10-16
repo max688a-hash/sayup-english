@@ -7,9 +7,10 @@
 //   - 中英文一一对应，可逐句精听 / 影子跟读 / 复述
 //   - 由 expo-speech 朗读（无外部音频依赖，离线可用）
 //
-// 当前覆盖：A1×13 + A2×13 + B1×8 + B2×5 + C1×6 = 45 段（含 listeningPacks2/3）
+// 当前覆盖：A1×13 + A2×13 + B1×13 + B2×12 + C1×6 = 57 段（含 listeningPacks2/3/4）
 import { LISTENING_PACKS_BATCH_2 } from './listeningPacks2';
 import { LISTENING_PACKS_BATCH_3 } from './listeningPacks3';
+import { LISTENING_PACKS_BATCH_4 } from './listeningPacks4';
 
 export const LISTENING_PACKS = [
   // ==================== A1 ====================
@@ -511,6 +512,7 @@ export const LISTENING_PACKS = [
   },
   ...LISTENING_PACKS_BATCH_2,
   ...LISTENING_PACKS_BATCH_3,
+  ...LISTENING_PACKS_BATCH_4,
 ];
 
 // 等级 → 主题集合
