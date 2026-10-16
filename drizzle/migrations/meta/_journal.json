@@ -43,6 +43,13 @@
       "when": 1791875554584,
       "tag": "0005_aid_proof_delete",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792122204823,
+      "tag": "0006_migration",
+      "breakpoints": true
     }
   ]
 }

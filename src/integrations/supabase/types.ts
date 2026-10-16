@@ -230,6 +230,30 @@ export type Database = {
         }
         Relationships: []
       }
+      vocab_reviews: {
+        Row: {
+          box: number
+          due_day: number
+          updated_at: string
+          user_id: string
+          word: string
+        }
+        Insert: {
+          box?: number
+          due_day: number
+          updated_at?: string
+          user_id: string
+          word: string
+        }
+        Update: {
+          box?: number
+          due_day?: number
+          updated_at?: string
+          user_id?: string
+          word?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
