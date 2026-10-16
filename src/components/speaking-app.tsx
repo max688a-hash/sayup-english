@@ -1,7 +1,7 @@
 import { tr, trn } from '@/lib/tr';
 import { setContentLang } from '@/lib/tr';
 import { openMemberCheckout, getPaddleEnvironment, isPaymentsOpen } from '@/lib/paddle';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { ArrowLeft, ArrowRight, AudioLines, BookOpen, Check, CheckCheck, ChevronRight, Coffee, Flame, GraduationCap, Headphones, Leaf, Maximize2, MessageCircle, Mic, Minimize2, MoreHorizontal, Plane, RotateCcw, ShoppingBag, Sparkles, Sprout, Target, Volume2, X, Zap, Briefcase, Users, Signal, Wifi, BatteryFull, Sun, Moon, Star, CircleHelp, Turtle, Gauge, Cat, ClipboardCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SpeechCoach, type PracticeRecord } from '@/components/speech-coach';
@@ -76,7 +76,7 @@ const sceneIcons = { coffee: Coffee, plane: Plane, briefcase: Briefcase, shoppin
 
 type SpeakSpeed = 'slow' | 'normal' | 'current';
 
-const CORE_ENTRIES: Record<string, { title: string; sub: string; icon: React.ReactNode }> = {
+const CORE_ENTRIES: Record<string, { title: string; sub: string; icon: ReactNode }> = {
   placement: { title: '入门水平测试', sub: '10 道题 · 约 3 分钟 · 推荐适合你的起点', icon: <ClipboardCheck size={22} /> },
   course: { title: '12 周主线课程', sub: '日常与职场英语 · A2 起步约 3 个月', icon: <Sprout size={22} /> },
   checkin: { title: '打卡日历 · 送会员', sub: '每天 3 次真实跟读算打卡 · 满 25 天领奖励', icon: <Flame size={22} /> },
