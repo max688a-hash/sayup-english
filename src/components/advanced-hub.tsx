@@ -86,7 +86,7 @@ export function AdvancedHub({ speak, onRecord, onExit, focus }: { speak: Speak; 
   const list = (rows: { title: string; sub: string; badge?: string }[]) => <div className="weak-list">{rows.map((r, i) => <Button variant="ghost" className="weak-card" key={i} onClick={() => setItem(i)}><div className="text-left min-w-0"><h3 className="truncate">{trn(r.title)}</h3><p>{trn(r.sub)}</p></div>{r.badge && <span className="level-tag ml-auto">{trn(r.badge)}</span>}<ChevronRight className={r.badge ? '' : 'ml-auto'} /></Button>)}</div>;
 
   if (!mod) {
-    const show = focus === 'listen' ? listenModules : [...modules, ...listenModules];
+    const show = focus === 'listen' ? [...listenModules.slice(0, 1), modules[1], ...listenModules.slice(1)] : [...modules, ...listenModules];
     return <div className="adv-hub">{head(focus === 'listen' ? '听力训练' : '进阶 · 1–6 级')}
       {focus !== 'listen' && <div className="strength-summary"><div><span className="eyebrow">BEYOND DAILY ENGLISH</span><h2>{tr("学术听说读写")}</h2><p>{tr("能力对标国际英语考试的高阶要求；等级为声芽程序内 1–6 级，不是校外考试分数。")}</p></div></div>}
       <div className="weak-list mt-4">{show.map(m => <Button variant="ghost" className="weak-card" key={m.key} onClick={() => { setMod(m.key); setItem(null); }}><span className={cn('topic-icon', `tone-${m.tone}`)}><m.icon size={22} /></span><div className="text-left min-w-0"><h3>{trn(m.title)}</h3><p>{trn(m.desc)}</p><span className="text-xs text-teal">{m.count()} {tr("项内容")}</span></div><ChevronRight className="ml-auto" /></Button>)}</div>
