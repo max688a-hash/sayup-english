@@ -202,17 +202,17 @@ function Words(p: P & { onExit: () => void }) {
   const TM = TIER_META as Record<string, any>;
   if (g) {
     if (g.items) {
-      if (w) return <WordDetail it={w} themeZh={g.themeZh} speak={p.speak} onRecord={p.onRecord} onExit={() => setW(null)} />;
-      return <div className="space-y-3"><Head title={g.themeZh} onExit={() => setG(null)} />
+      if (w) return <WordDetail it={w} themeZh={tr(g.themeZh)} speak={p.speak} onRecord={p.onRecord} onExit={() => setW(null)} />;
+      return <div className="space-y-3"><Head title={tr(g.themeZh)} onExit={() => setG(null)} />
       <div className="grid grid-cols-3 gap-2">{A(g.items).map(it => <button type="button" key={it.word} className="rounded-xl border border-border p-3 text-center hover:border-primary" onClick={() => { setW(it); p.speak(it.word, 'slow'); }}>{WORD_IMAGES[it.word] ? <img src={WORD_IMAGES[it.word]} alt={it.word} loading="lazy" className="mx-auto mb-1 h-16 w-16 rounded-lg object-cover" /> : <div className="text-3xl">{it.emoji}</div>}<b className="block">{it.word}</b><span className="text-xs text-muted-foreground">{it.zh}</span></button>)}</div>
       <p className="text-sm text-muted-foreground">{tr('点一个单词进去，听一听、跟着说、再换成自己的句子。')}</p></div>;
     }
     const full = String(g.sentence).replace('___', g.answer);
     return <div className="space-y-3"><Head title={TM[g.tier]?.label ?? ''} onExit={() => setG(null)} />
-      <p className="text-lg">{g.sentence}</p><p className="text-sm text-muted-foreground">{g.sentenceZh}</p>
-      <div className="grid grid-cols-2 gap-2">{A(g.words).map(w => <Button key={w.word} variant={pick === w.word ? (w.word === g.answer ? 'default' : 'destructive') : 'outline'} onClick={() => { setPick(w.word); p.speak(w.word, 'current'); }}>{w.word} · {w.zh}</Button>)}</div>
+      <p className="text-lg">{g.sentence}</p><p className="text-sm text-muted-foreground">{tr(g.sentenceZh)}</p>
+      <div className="grid grid-cols-2 gap-2">{A(g.words).map(w => <Button key={w.word} variant={pick === w.word ? (w.word === g.answer ? 'default' : 'destructive') : 'outline'} onClick={() => { setPick(w.word); p.speak(w.word, 'current'); }}>{WORD_IMAGES[w.word] && <img src={WORD_IMAGES[w.word]} alt="" loading="lazy" className="mr-1 h-7 w-7 rounded object-cover" />}{w.word} · {tr(w.zh)}</Button>)}</div>
       {pick === g.answer && <><Say en={full} speak={p.speak} /><SpeechCoach target={full} onRecord={p.onRecord} onPassed={() => {}} />
-        {g.followUp && <><p className="text-sm font-medium">{tr('对方接着问')}</p><Say en={g.followUp} zh={g.followUpZh} speak={p.speak} /><Say en={g.userReply} zh={g.userReplyZh} speak={p.speak} /></>}
+        {g.followUp && <><p className="text-sm font-medium">{tr('对方接着问')}</p><Say en={g.followUp} zh={tr(g.followUpZh)} speak={p.speak} /><Say en={g.userReply} zh={tr(g.userReplyZh)} speak={p.speak} /></>}
         <AddWord w={g.answer} z={A(g.words).find(w => w.word === g.answer)?.zh} /></>}
     </div>;
   }
