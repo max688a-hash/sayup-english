@@ -185,9 +185,9 @@ function WordDetail({ it, themeZh, speak, onRecord, onExit }: { it: any; themeZh
   const say = card?.say ?? `I like the ${it.word}.`;
   const alt = card?.alt ?? `I see a ${it.word}.`;
   const [target, setTarget] = useState(say);
-  return <div className="space-y-3"><Head title={`${it.word} · ${it.zh ?? themeZh}`} onExit={onExit} />
+  return <div className="space-y-3"><Head title={`${it.word} · ${tr(it.zh) || themeZh}`} onExit={onExit} />
     {WORD_IMAGES[it.word] && <img src={WORD_IMAGES[it.word]} alt={it.word} loading="lazy" className="mx-auto w-full max-w-64 rounded-2xl object-cover" />}
-    <div className="text-center"><b className="text-2xl">{it.word}</b>{it.zh && <p className="text-muted-foreground">{it.zh}</p>}</div>
+    <div className="text-center"><b className="text-2xl">{it.word}</b>{it.zh && <p className="text-muted-foreground">{tr(it.zh)}</p>}</div>
     <div className="flex justify-center gap-2"><Button size="sm" variant="outline" onClick={() => speak(it.word, 'slow')}><Snail size={14} /> {tr('慢速听单词')}</Button><Button size="sm" variant="outline" onClick={() => speak(it.word, 'normal')}><Volume2 size={14} /> {tr('正常语速')}</Button></div>
     <div className="section-heading"><h2>{tr('放进句子里听')}</h2></div>
     <Say en={say} speak={speak} />
@@ -213,7 +213,7 @@ function Words(p: P & { onExit: () => void }) {
       <div className="grid grid-cols-2 gap-2">{A(g.words).map(w => <Button key={w.word} variant={pick === w.word ? (w.word === g.answer ? 'default' : 'destructive') : 'outline'} onClick={() => { setPick(w.word); p.speak(w.word, 'current'); }}>{WORD_IMAGES[w.word] && <img src={WORD_IMAGES[w.word]} alt="" loading="lazy" className="mr-1 h-7 w-7 rounded object-cover" />}{w.word} · {tr(w.zh)}</Button>)}</div>
       {pick === g.answer && <><Say en={full} speak={p.speak} /><SpeechCoach target={full} onRecord={p.onRecord} onPassed={() => {}} />
         {g.followUp && <><p className="text-sm font-medium">{tr('对方接着问')}</p><Say en={g.followUp} zh={tr(g.followUpZh)} speak={p.speak} /><Say en={g.userReply} zh={tr(g.userReplyZh)} speak={p.speak} /></>}
-        <AddWord w={g.answer} z={A(g.words).find(w => w.word === g.answer)?.zh} /></>}
+        <AddWord w={g.answer} z={tr(A(g.words).find(w => w.word === g.answer)?.zh)} /></>}
     </div>;
   }
   const groups = A(ALL_GROUPS).filter(x => x.tier === tier);
