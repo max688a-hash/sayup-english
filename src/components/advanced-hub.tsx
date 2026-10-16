@@ -60,11 +60,16 @@ function Questions({ questions, onScore }: { questions: Q[]; onScore?: (c: numbe
   </div>;
 }
 
-function SentenceList({ sentences, speak }: { sentences: Pair[]; speak: Speak }) {
+function SentenceList({ sentences, speak, onRecord }: { sentences: Pair[]; speak: Speak; onRecord?: (r: PracticeRecord) => void }) {
   const [showZh, setShowZh] = useState(false);
+  const [practice, setPractice] = useState<number | null>(null);
   return <div className="adv-sentences">
     <div className="flex gap-2"><Button size="sm" onClick={() => speak(sentences.map(s => s.en).join(' '), 'normal')}><Volume2 size={14} /> {tr("整段听")}</Button><Button size="sm" variant="outline" onClick={() => setShowZh(v => !v)}>{showZh ? tr("隐藏中文") : tr("显示中文")}</Button></div>
-    {sentences.map((s, i) => <div className="adv-sentence" key={i}><div className="min-w-0 flex-1"><p>{trn(s.en)}</p>{showZh && <p className="adv-zh">{trn(s.zh)}</p>}</div><Button variant="ghost" size="icon" aria-label={tr("慢速朗读")} onClick={() => speak(s.en, 'slow')}><Turtle size={15} /></Button><Button variant="ghost" size="icon" aria-label={tr("朗读")} onClick={() => speak(s.en, 'normal')}><Volume2 size={15} /></Button></div>)}
+    <p className="adv-zh">{tr("点句子听录音，点麦克风逐句跟读，AI 按你的真实录音评分。")}</p>
+    {sentences.map((s, i) => <div key={i}>
+      <div className={cn('adv-sentence', practice === i && 'ring-2 ring-primary')}><div className="min-w-0 flex-1 cursor-pointer" onClick={() => speak(s.en, 'normal')}><p>{trn(s.en)}</p>{showZh && <p className="adv-zh">{trn(s.zh)}</p>}</div><Button variant="ghost" size="icon" aria-label={tr("慢速朗读")} onClick={() => speak(s.en, 'slow')}><Turtle size={15} /></Button><Button variant="ghost" size="icon" aria-label={tr("朗读")} onClick={() => speak(s.en, 'normal')}><Volume2 size={15} /></Button>{onRecord && <Button variant={practice === i ? 'default' : 'ghost'} size="icon" aria-label={tr("跟读这一句")} onClick={() => setPractice(p => p === i ? null : i)}><Mic size={15} /></Button>}</div>
+      {onRecord && practice === i && <div className="mt-2 mb-3"><SpeechCoach key={s.en} target={s.en} onPassed={() => { if (i < sentences.length - 1) setPractice(i + 1); }} onRecord={onRecord} /></div>}
+    </div>)}
   </div>;
 }
 
