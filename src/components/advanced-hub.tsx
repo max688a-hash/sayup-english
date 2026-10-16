@@ -134,7 +134,7 @@ export function AdvancedHub({ speak, onRecord, onExit, focus }: { speak: Speak; 
     const l = item === null ? null : listening[item];
     if (l) return <div className="adv-hub">{head(l.titleZh)}
       <p className="adv-zh">{trn(l.fieldZh)} · {levelLabel(l.level)} · {trn(l.sentences.length)} {tr("句")}</p>
-      <SentenceList sentences={l.sentences} speak={speak} />
+      <SentenceList sentences={l.sentences} speak={speak} onRecord={onRecord} />
       <div className="adv-card"><b>{tr("关键词")}</b><div className="flex flex-wrap gap-2 mt-1">{l.keyWords.map((k: { w: string; zh: string }) => <span key={k.w} className="level-tag">{trn(k.w)} · {trn(k.zh)}</span>)}</div></div>
       <div className="section-heading"><h2>{tr("开口复述第一句")}</h2></div>{coach(l.sentences[0].en)}
     </div>;
@@ -191,7 +191,7 @@ export function AdvancedHub({ speak, onRecord, onExit, focus }: { speak: Speak; 
   if (mod === 'packs') {
     const packs = LISTENING_PACKS.filter((p: { level: string }) => p.level === level);
     const p = item === null ? null : packs[item];
-    if (p) return <div className="adv-hub">{head(p.titleZh)}<SentenceList sentences={p.sentences} speak={speak} /><div className="section-heading"><h2>{tr("跟读第一句")}</h2></div>{coach(p.sentences[0].en)}</div>;
+    if (p) return <div className="adv-hub">{head(p.titleZh)}<SentenceList sentences={p.sentences} speak={speak} onRecord={onRecord} /><div className="section-heading"><h2>{tr("跟读第一句")}</h2></div>{coach(p.sentences[0].en)}</div>;
     return <div className="adv-hub">{head('分级听力练习')}
       <div className="filter-row">{LEVELS.map((l: string) => <Button key={l} size="sm" variant={l === level ? 'default' : 'outline'} className="filter-button" onClick={() => { setLevel(l); setItem(null); }}>{levelLabel(l)}</Button>)}</div>
       {list(packs.map((x: { titleZh: string; title: string; sentences: unknown[] }) => ({ title: x.titleZh, sub: `${x.title} · ${x.sentences.length} 句` })))}
