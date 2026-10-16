@@ -67,11 +67,11 @@ export function VocabReview({ speak, onExit, onRecord }: { speak: Speak; onExit:
   const [queue, setQueue] = useState<{ words: Word[]; title: string } | null>(null);
   const total = useMemo(() => THEMES.reduce((n, t) => n + t.words.length, 0), []);
   const mastered = Object.values(srs).filter(x => x.b >= 4).length;
-  const due = useMemo(() => { const d = today(); const all = THEMES.flatMap(t => t.words); return all.filter(w => srs[w.w] && srs[w.w].due <= d); }, [srs]);
+  const due = useMemo(() => { const d = today(); const all = THEMES.flatMap(t => t.words); return all.filter(w => (srs[w.w]?.due ?? Infinity) <= d); }, [srs]);
 
   function rate(w: string, ok: 0 | 1 | 2) {
     const cur = srs[w]?.b ?? 0; const b = ok === 0 ? 0 : ok === 1 ? Math.max(1, cur) : Math.min(5, cur + 1);
-    const n = { ...srs, [w]: { b, due: today() + GAP[b] } }; setSrs(n); save(n);
+    const n = { ...srs, [w]: { b, due: today() + (GAP[b] ?? 15) } }; setSrs(n); save(n);
   }
 
   if (queue) return <Session title={queue.title} words={queue.words} srs={srs} speak={speak} onRecord={onRecord} onRate={rate} onExit={() => setQueue(null)} />;
@@ -117,7 +117,7 @@ function Session({ title, words, srs, speak, onRecord, onRate, onExit }: { title
         <Button size="sm" variant="outline" onClick={() => speak(w.w, 'normal')}><Volume2 size={15} /> {tr('发音')}</Button>
         <Button size="sm" variant="outline" onClick={() => speak(w.w, 'slow')}><Snail size={15} /> {tr('慢速')}</Button>
       </div>
-      {srs[w.w] && <p className="mt-2 text-xs text-muted-foreground">{tr('记忆等级')} {srs[w.w].b}/5</p>}
+      {srs[w.w] && <p className="mt-2 text-xs text-muted-foreground">{tr("记忆等级")} {srs[w.w]?.b}/5</p>}
       {reveal ? <p className="mt-3 text-lg">{w.z}</p> : <Button className="mt-4" variant="secondary" onClick={() => setReveal(true)}>{tr('先想一想，再看意思')}</Button>}
     </div>
     {reveal && <>
