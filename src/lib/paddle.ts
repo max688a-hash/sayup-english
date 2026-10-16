@@ -10,12 +10,10 @@ export function getPaddleEnvironment(): 'sandbox' | 'live' {
   return clientToken?.startsWith('test_') ? 'sandbox' : 'live';
 }
 
-// 正式收款开关：只在沙盒环境或预览网址上开放真实收银台。
-// 公司主体与对公账户审核完成前，正式发布站一律显示「即将开放」。
+// 正式收款开关：支付连接已断开（2026-10-16，为迁移工作区），任何环境都不开放收银台。
+// 等公司注册完成、用公司主体重新接入 Paddle 并通过审核后，再把这里改为按环境开放。
 export function isPaymentsOpen(): boolean {
-  if (getPaddleEnvironment() === 'sandbox') return true;
-  if (typeof window === 'undefined') return false;
-  return window.location.hostname.includes('id-preview');
+  return false;
 }
 
 let ready: Promise<void> | null = null;
