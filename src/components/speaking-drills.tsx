@@ -85,11 +85,14 @@ const SHADOW_LEVELS = ['a1', 'a2', 'b1', 'b2'];
 
 export function ShadowDrill({ speak, onExit, onRecord }: P) {
   const [level, setLevel] = useState('a1');
+  const [scene, setScene] = useState<string | null>(null);
   const [i, setI] = useState(0);
   const [auto, setAuto] = useState(false);
   const [showText, setShowText] = useState(true);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const list = A(REPEAT_DRILLS).filter(x => String(x.level).toLowerCase() === level);
+  const levelList = A(REPEAT_DRILLS).filter(x => String(x.level).toLowerCase() === level);
+  const scenes = Array.from(new Set(levelList.map(x => String(x.scene)))) as string[];
+  const list = scene ? levelList.filter(x => String(x.scene) === scene) : levelList;
   const d = list[Math.min(i, list.length - 1)];
   const line: string = d?.phrase ?? '';
   useEffect(() => {
@@ -101,7 +104,8 @@ export function ShadowDrill({ speak, onExit, onRecord }: P) {
   return <div className="adv-hub">
     <Head title={tr('跟读练习')} onExit={onExit} />
     <p className="text-sm text-muted-foreground mb-3">{tr('影子跟读：示范一停就马上跟着说，模仿语调和节奏。熟练后隐藏文字。共 {0} 句。', String(A(REPEAT_DRILLS).length))}</p>
-    <div className="flex flex-wrap gap-2 mb-3">{SHADOW_LEVELS.map(l => <Button key={l} size="sm" variant={l === level ? 'default' : 'outline'} onClick={() => { setLevel(l); setI(0); setAuto(false); }}>{l.toUpperCase()}</Button>)}</div>
+    <div className="flex flex-wrap gap-2 mb-3">{SHADOW_LEVELS.map(l => <Button key={l} size="sm" variant={l === level ? 'default' : 'outline'} onClick={() => { setLevel(l); setScene(null); setI(0); setAuto(false); }}>{l.toUpperCase()}</Button>)}</div>
+    <div className="flex flex-wrap gap-1 mb-3"><Button size="sm" variant={scene === null ? 'secondary' : 'ghost'} onClick={() => { setScene(null); setI(0); setAuto(false); }}>{tr('全部场景')}</Button>{scenes.map(s => <Button key={s} size="sm" variant={scene === s ? 'secondary' : 'ghost'} onClick={() => { setScene(s); setI(0); setAuto(false); }}>{s}</Button>)}</div>
     <div className="flex gap-2 mb-3">
       <Button size="sm" onClick={() => setAuto(!auto)}>{auto ? <><Pause size={14} /> {tr('暂停')}</> : <><Play size={14} /> {tr('连续跟读')}</>}</Button>
       <Button size="sm" variant="outline" onClick={() => setShowText(!showText)}>{showText ? <><EyeOff size={14} /> {tr('隐藏文字')}</> : <><Eye size={14} /> {tr('显示文字')}</>}</Button>
@@ -130,15 +134,19 @@ const IMMERSE = STORIES.map(s => ({
 })).filter(s => s.qs.length > 0);
 
 export function ImmersionDrill({ speak, onExit, onRecord }: P) {
+  const [level, setLevel] = useState('A1');
   const [i, setI] = useState(0);
   const [step, setStep] = useState<'listen' | 'quiz' | 'read'>('listen');
   const [ans, setAns] = useState<Record<number, number>>({});
-  const s = IMMERSE[i]!;
+  const levels = Array.from(new Set(IMMERSE.map(x => x.level.toUpperCase()))).sort();
+  const list = IMMERSE.filter(x => x.level.toUpperCase() === level);
+  const s = list[Math.min(i, list.length - 1)] ?? IMMERSE[0]!;
   const right = s.qs.filter((q, k) => ans[k] === q.a).length;
   return <div className="adv-hub">
     <Head title={tr('沉浸练习')} onExit={onExit} />
     <p className="text-sm text-muted-foreground mb-3">{tr('像在国外生活一样：先只听不看，再答题，最后看原文并用自己的话复述。共 {0} 篇。', String(IMMERSE.length))}</p>
-    <div className="flex flex-wrap gap-1 mb-3">{IMMERSE.map((x, k) => <Button key={x.title} size="sm" variant={k === i ? 'default' : 'outline'} onClick={() => { setI(k); setStep('listen'); setAns({}); }}>{x.level} · {x.title}</Button>)}</div>
+    <div className="flex flex-wrap gap-2 mb-2">{levels.map(l => <Button key={l} size="sm" variant={l === level ? 'default' : 'outline'} onClick={() => { setLevel(l); setI(0); setStep('listen'); setAns({}); }}>{l}</Button>)}</div>
+    <div className="flex flex-wrap gap-1 mb-3">{list.map((x, k) => <Button key={x.title} size="sm" variant={x === s ? 'secondary' : 'ghost'} onClick={() => { setI(k); setStep('listen'); setAns({}); }}>{x.title}</Button>)}</div>
     <div className="flex gap-1 mb-3 text-xs">{(['listen', 'quiz', 'read'] as const).map((k, n) => <span key={k} className={cn('level-tag', step === k && 'ring-1 ring-primary text-primary font-semibold')}>{n + 1}. {tr(k === 'listen' ? '盲听' : k === 'quiz' ? '答题' : '看原文 · 复述')}</span>)}</div>
     {step === 'listen' && <div className="rounded-lg border border-border bg-card p-4 space-y-2">
       <p className="text-sm font-semibold">{s.zh}</p>
