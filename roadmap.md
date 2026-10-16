@@ -69,3 +69,7 @@
 - [x] 2026-10-17 内置音频补齐：对不上的 1,664 句用云端真人级语音合成并打包进 public/audio（覆盖率 100%）；听力新增 B1×5、B2×7 共 12 段；听过的音频断网可播（sw.js 只缓存 /audio）。
 - [x] 儿童主题词组（18 组 225 词）配齐真实照片：新增 123 张，仅 26 个字母卡保持文字显示
 - [x] 成人易混词 101 组全部配情景照片；学习页顶部加听力/口语/阅读/词汇快捷入口；听力训练内含学术听力；拒绝内嵌的网站在 App 内给出说明
+
+- [done] 1,664 synthesized clips re-made in en-US-AvaNeural (same voice as old repo); learn page now switches by skill (起步/听力/口语/阅读/词汇); listening has per-sentence shadowing + AI scoring; native in-app browser via @capacitor/browser; all 101 adult confusable photos checked (all match); fixed b1-7 answer breath.
+- [blocked] IPA/APK build + real-device test: needs Apple/Google developer accounts (after company registration).
+- [open] Cloud-sync check-in & daily-route progress to account.
