@@ -53,7 +53,7 @@ import cake from '@/assets/words/cake.jpg';
 import cup from '@/assets/words/cup.jpg';
 import bowl from '@/assets/words/bowl.jpg';
 import spoon from '@/assets/words/spoon.jpg';
-import window from '@/assets/words/window.jpg';
+import windowImg from '@/assets/words/window.jpg';
 import shirt from '@/assets/words/shirt.jpg';
 import pants from '@/assets/words/pants.jpg';
 import socks from '@/assets/words/socks.jpg';
@@ -123,7 +123,7 @@ const CARDS: { word: string; img: string; say: string; alt: string }[] = [
   { word: 'cup', img: cup, say: 'This cup is full of milk.', alt: 'This cup is full of tea.' },
   { word: 'bowl', img: bowl, say: 'I need a bowl for the rice.', alt: 'I need a plate for the cake.' },
   { word: 'spoon', img: spoon, say: 'Give me a spoon, please.', alt: 'Give me a fork, please.' },
-  { word: 'window', img: window, say: 'Please open the window.', alt: 'Please close the door.' },
+  { word: 'window', img: windowImg, say: 'Please open the window.', alt: 'Please close the door.' },
   { word: 'shirt', img: shirt, say: 'This shirt is too big for me.', alt: 'This hat is too big for me.' },
   { word: 'pants', img: pants, say: 'These pants are very comfortable.', alt: 'These shoes are very comfortable.' },
   { word: 'socks', img: socks, say: 'I need a pair of warm socks.', alt: 'I need a pair of new shoes.' },

@@ -47,7 +47,7 @@ import cake from '@/assets/words/cake.jpg';
 import cup from '@/assets/words/cup.jpg';
 import bowl from '@/assets/words/bowl.jpg';
 import spoon from '@/assets/words/spoon.jpg';
-import window from '@/assets/words/window.jpg';
+import windowImg from '@/assets/words/window.jpg';
 import shirt from '@/assets/words/shirt.jpg';
 import pants from '@/assets/words/pants.jpg';
 import socks from '@/assets/words/socks.jpg';
