@@ -131,3 +131,12 @@ export const WORD_IMAGES: Record<string, string> = {
   grapes: grape, bananas: banana, apples: apple, oranges: orange, strawberries: strawberry,
   cherries: cherry, peaches: peach, pears: pear, eggs: egg,
 };
+
+// 自动收录 src/assets/words/ 下其余照片：文件名即单词（连字符 = 空格，如 ice-cream → "ice cream"）。
+const ALL_WORD_PHOTOS = import.meta.glob('@/assets/words/*.jpg', { eager: true, import: 'default' }) as Record<string, string>;
+for (const [path, url] of Object.entries(ALL_WORD_PHOTOS)) {
+  const name = path.split('/').pop()!.replace(/\.jpg$/, '');
+  for (const key of [name, name.replace(/-/g, ' '), name.toUpperCase()]) {
+    if (!WORD_IMAGES[key]) WORD_IMAGES[key] = url;
+  }
+}
