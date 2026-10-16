@@ -63,18 +63,31 @@ function Questions({ questions, onScore }: { questions: Q[]; onScore?: (c: numbe
 function SentenceList({ sentences, speak, onRecord }: { sentences: Pair[]; speak: Speak; onRecord?: (r: PracticeRecord) => void }) {
   const [showZh, setShowZh] = useState(false);
   const [practice, setPractice] = useState<number | null>(null);
+  const [passed, setPassed] = useState<number[]>([]);
+  const allDone = sentences.length > 0 && passed.length >= sentences.length;
+  function pass(i: number) {
+    setPassed(p => p.includes(i) ? p : [...p, i]);
+    const next = sentences.findIndex((_, j) => j > i && !passed.includes(j));
+    if (next >= 0) {
+      setPractice(next);
+      setTimeout(() => { document.getElementById(`adv-s-${next}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }); speak(sentences[next]!.en, 'normal'); }, 900);
+    } else setPractice(null);
+  }
   return <div className="adv-sentences">
-    <div className="flex gap-2"><Button size="sm" onClick={() => speak(sentences.map(s => s.en).join(' '), 'normal')}><Volume2 size={14} /> {tr("整段听")}</Button><Button size="sm" variant="outline" onClick={() => setShowZh(v => !v)}>{showZh ? tr("隐藏中文") : tr("显示中文")}</Button></div>
-    <p className="adv-zh">{tr("点句子听录音，点麦克风逐句跟读，AI 按你的真实录音评分。")}</p>
-    {sentences.map((s, i) => <div key={i}>
-      <div className={cn('adv-sentence', practice === i && 'ring-2 ring-primary')}><div className="min-w-0 flex-1 cursor-pointer" onClick={() => speak(s.en, 'normal')}><p>{trn(s.en)}</p>{showZh && <p className="adv-zh">{trn(s.zh)}</p>}</div><Button variant="ghost" size="icon" aria-label={tr("慢速朗读")} onClick={() => speak(s.en, 'slow')}><Turtle size={15} /></Button><Button variant="ghost" size="icon" aria-label={tr("朗读")} onClick={() => speak(s.en, 'normal')}><Volume2 size={15} /></Button>{onRecord && <Button variant={practice === i ? 'default' : 'ghost'} size="icon" aria-label={tr("跟读这一句")} onClick={() => setPractice(p => p === i ? null : i)}><Mic size={15} /></Button>}</div>
-      {onRecord && practice === i && <div className="mt-2 mb-3"><SpeechCoach key={s.en} target={s.en} onPassed={() => { if (i < sentences.length - 1) setPractice(i + 1); }} onRecord={onRecord} /></div>}
+    <div className="flex gap-2"><Button size="sm" onClick={() => speak(sentences.map(s => s.en).join(' '), 'normal')}><Volume2 size={14} /> {tr("整段听")}</Button><Button size="sm" variant="outline" onClick={() => setShowZh(v => !v)}>{showZh ? tr("隐藏中文") : tr("显示中文")}</Button>{onRecord && !allDone && <Button size="sm" variant="outline" onClick={() => { const f = sentences.findIndex((_, j) => !passed.includes(j)); setPractice(f < 0 ? 0 : f); speak(sentences[f < 0 ? 0 : f]!.en, 'normal'); }}><Mic size={14} /> {passed.length ? tr("继续跟读") : tr("逐句跟读整篇")}</Button>}</div>
+    <p className="adv-zh">{tr("点句子听录音，点麦克风逐句跟读，AI 按你的真实录音评分。")}{onRecord ? ` ${passed.length}/${sentences.length}` : ''}</p>
+    {onRecord && <div className="progress-track"><div className="h-full rounded-full bg-primary transition-all" style={{ width: `${(passed.length / Math.max(1, sentences.length)) * 100}%` }} /></div>}
+    {sentences.map((s, i) => <div key={i} id={`adv-s-${i}`}>
+      <div className={cn('adv-sentence', practice === i && 'ring-2 ring-primary')}><div className="min-w-0 flex-1 cursor-pointer" onClick={() => speak(s.en, 'normal')}><p>{passed.includes(i) && <Check size={13} className="inline mr-1 text-teal" />}{trn(s.en)}</p>{showZh && <p className="adv-zh">{trn(s.zh)}</p>}</div><Button variant="ghost" size="icon" aria-label={tr("慢速朗读")} onClick={() => speak(s.en, 'slow')}><Turtle size={15} /></Button><Button variant="ghost" size="icon" aria-label={tr("朗读")} onClick={() => speak(s.en, 'normal')}><Volume2 size={15} /></Button>{onRecord && <Button variant={practice === i ? 'default' : 'ghost'} size="icon" aria-label={tr("跟读这一句")} onClick={() => setPractice(p => p === i ? null : i)}><Mic size={15} /></Button>}</div>
+      {onRecord && practice === i && <div className="mt-2 mb-3"><SpeechCoach key={s.en} target={s.en} onPassed={() => pass(i)} onRecord={onRecord} /></div>}
     </div>)}
+    {allDone && <div className="completion"><div className="success-icon"><Check /></div><h2>{tr("整篇跟读完成！")}</h2><p>{tr("每一句都按你的真实录音过关了。")}</p><Button variant="outline" onClick={() => { setPassed([]); setPractice(0); speak(sentences[0]!.en, 'normal'); }}>{tr("再跟读一遍")}</Button></div>}
   </div>;
 }
 
-export function AdvancedHub({ speak, onRecord, onExit, focus }: { speak: Speak; onRecord: (r: PracticeRecord) => void; onExit: () => void; focus?: 'listen' | undefined }) {
-  const [mod, setMod] = useState<Module | null>(null);
+export type AdvModule = Module;
+export function AdvancedHub({ speak, onRecord, onExit, focus, start }: { speak: Speak; onRecord: (r: PracticeRecord) => void; onExit: () => void; focus?: 'listen' | undefined; start?: Module | undefined }) {
+  const [mod, setMod] = useState<Module | null>(start ?? null);
   const [item, setItem] = useState<number | null>(null);
   const [group, setGroup] = useState(0);
   const [level, setLevel] = useState('a1');
@@ -86,7 +99,7 @@ export function AdvancedHub({ speak, onRecord, onExit, focus }: { speak: Speak; 
   const reading = useMemo(() => [...ACADEMIC_READING, ...ACADEMIC_READING_2], []);
   const vocab = useMemo(() => [...ACADEMIC_WORDS, ...ACADEMIC_WORDS_BATCH_2], []);
   const coach = (target: string) => <SpeechCoach key={target} target={target} onPassed={() => {}} onRecord={onRecord} />;
-  const back = () => { if (item !== null) { setItem(null); setEssay(''); setShowModel(false); setChecks({}); } else if (mod) setMod(null); else onExit(); };
+  const back = () => { if (item !== null) { setItem(null); setEssay(''); setShowModel(false); setChecks({}); } else if (mod && mod !== start) setMod(null); else onExit(); };
   const head = (title: string) => <div className="detail-heading"><Button variant="ghost" size="icon" aria-label={tr("返回上一级")} onClick={back}><ArrowLeft /></Button><span>{title}</span><span className="w-9" /></div>;
   const list = (rows: { title: string; sub: string; badge?: string }[]) => <div className="weak-list">{rows.map((r, i) => <Button variant="ghost" className="weak-card" key={i} onClick={() => setItem(i)}><div className="text-left min-w-0"><h3 className="truncate">{trn(r.title)}</h3><p>{trn(r.sub)}</p></div>{r.badge && <span className="level-tag ml-auto">{trn(r.badge)}</span>}<ChevronRight className={r.badge ? '' : 'ml-auto'} /></Button>)}</div>;
 
