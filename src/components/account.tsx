@@ -88,6 +88,6 @@ export function AccountSheet({ user, onClose }: { user: User; onClose: () => voi
     {admin && <Button className="w-full mt-4" onClick={() => setReview(true)}>{tr("审核助学申请")}</Button>}
     {!admin && slot && <Button variant="outline" className="w-full mt-4" onClick={async () => { const r = await supabase.rpc('claim_first_admin'); if (r.data) { setAdmin(true); setSlot(false); } }}>{tr("设为创始人管理员（仅第一位可领取）")}</Button>}
     {review && <AdminReview onClose={() => setReview(false)} />}
-    <a href="/legal" target="_blank" rel="noreferrer" className="block text-center text-xs text-muted-foreground underline mt-3">{tr("隐私政策与服务条款")}</a><Button variant="outline" className="w-full mt-4" onClick={async () => { await supabase.auth.signOut(); onClose(); }}><LogOut size={15} /> {tr("退出登录")}</Button>
+    <a href="/legal" className="block text-center text-xs text-muted-foreground underline mt-3">{tr("隐私政策与服务条款")}</a><Button variant="outline" className="w-full mt-4" onClick={async () => { await supabase.auth.signOut(); onClose(); }}><LogOut size={15} /> {tr("退出登录")}</Button>
   </Sheet>;
 }

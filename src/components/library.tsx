@@ -38,7 +38,7 @@ function Say({ en, zh, speak }: { en: string; zh?: string; speak: Speak }) {
   return <div className="rounded-xl border border-border p-3 flex items-start gap-2">
     <Button size="icon" variant="ghost" aria-label={tr('播放')} onClick={() => speak(en, 'current')}><Volume2 size={16} /></Button>
     <Button size="icon" variant="ghost" aria-label={tr('慢速播放')} onClick={() => speak(en, 'slow')}><Snail size={16} /></Button>
-    <div className="flex-1"><p>{en}</p>{zh && <p className="text-sm text-muted-foreground">{zh}</p>}</div>
+    <div className="flex-1"><p>{en}</p>{zh && <p className="text-sm text-muted-foreground">{tr(zh)}</p>}</div>
   </div>;
 }
 function AddWord({ w, z }: { w: string; z?: string }) {
@@ -185,9 +185,9 @@ function WordDetail({ it, themeZh, speak, onRecord, onExit }: { it: any; themeZh
   const say = card?.say ?? `I like the ${it.word}.`;
   const alt = card?.alt ?? `I see a ${it.word}.`;
   const [target, setTarget] = useState(say);
-  return <div className="space-y-3"><Head title={`${it.word} · ${it.zh ?? themeZh}`} onExit={onExit} />
+  return <div className="space-y-3"><Head title={`${it.word} · ${tr(it.zh) || themeZh}`} onExit={onExit} />
     {WORD_IMAGES[it.word] && <img src={WORD_IMAGES[it.word]} alt={it.word} loading="lazy" className="mx-auto w-full max-w-64 rounded-2xl object-cover" />}
-    <div className="text-center"><b className="text-2xl">{it.word}</b>{it.zh && <p className="text-muted-foreground">{it.zh}</p>}</div>
+    <div className="text-center"><b className="text-2xl">{it.word}</b>{it.zh && <p className="text-muted-foreground">{tr(it.zh)}</p>}</div>
     <div className="flex justify-center gap-2"><Button size="sm" variant="outline" onClick={() => speak(it.word, 'slow')}><Snail size={14} /> {tr('慢速听单词')}</Button><Button size="sm" variant="outline" onClick={() => speak(it.word, 'normal')}><Volume2 size={14} /> {tr('正常语速')}</Button></div>
     <div className="section-heading"><h2>{tr('放进句子里听')}</h2></div>
     <Say en={say} speak={speak} />
@@ -202,25 +202,25 @@ function Words(p: P & { onExit: () => void }) {
   const TM = TIER_META as Record<string, any>;
   if (g) {
     if (g.items) {
-      if (w) return <WordDetail it={w} themeZh={g.themeZh} speak={p.speak} onRecord={p.onRecord} onExit={() => setW(null)} />;
-      return <div className="space-y-3"><Head title={g.themeZh} onExit={() => setG(null)} />
+      if (w) return <WordDetail it={w} themeZh={tr(g.themeZh)} speak={p.speak} onRecord={p.onRecord} onExit={() => setW(null)} />;
+      return <div className="space-y-3"><Head title={tr(g.themeZh)} onExit={() => setG(null)} />
       <div className="grid grid-cols-3 gap-2">{A(g.items).map(it => <button type="button" key={it.word} className="rounded-xl border border-border p-3 text-center hover:border-primary" onClick={() => { setW(it); p.speak(it.word, 'slow'); }}>{WORD_IMAGES[it.word] ? <img src={WORD_IMAGES[it.word]} alt={it.word} loading="lazy" className="mx-auto mb-1 h-16 w-16 rounded-lg object-cover" /> : <div className="text-3xl">{it.emoji}</div>}<b className="block">{it.word}</b><span className="text-xs text-muted-foreground">{it.zh}</span></button>)}</div>
       <p className="text-sm text-muted-foreground">{tr('点一个单词进去，听一听、跟着说、再换成自己的句子。')}</p></div>;
     }
     const full = String(g.sentence).replace('___', g.answer);
-    return <div className="space-y-3"><Head title={TM[g.tier]?.label ?? ''} onExit={() => setG(null)} />
-      <p className="text-lg">{g.sentence}</p><p className="text-sm text-muted-foreground">{g.sentenceZh}</p>
-      <div className="grid grid-cols-2 gap-2">{A(g.words).map(w => <Button key={w.word} variant={pick === w.word ? (w.word === g.answer ? 'default' : 'destructive') : 'outline'} onClick={() => { setPick(w.word); p.speak(w.word, 'current'); }}>{w.word} · {w.zh}</Button>)}</div>
+    return <div className="space-y-3"><Head title={tr(TM[g.tier]?.label)} onExit={() => setG(null)} />
+      <p className="text-lg">{g.sentence}</p><p className="text-sm text-muted-foreground">{tr(g.sentenceZh)}</p>
+      <div className="grid grid-cols-2 gap-2">{A(g.words).map(w => <Button key={w.word} variant={pick === w.word ? (w.word === g.answer ? 'default' : 'destructive') : 'outline'} onClick={() => { setPick(w.word); p.speak(w.word, 'current'); }}>{WORD_IMAGES[w.word] && <img src={WORD_IMAGES[w.word]} alt="" loading="lazy" className="mr-1 h-7 w-7 rounded object-cover" />}{w.word} · {tr(w.zh)}</Button>)}</div>
       {pick === g.answer && <><Say en={full} speak={p.speak} /><SpeechCoach target={full} onRecord={p.onRecord} onPassed={() => {}} />
-        {g.followUp && <><p className="text-sm font-medium">{tr('对方接着问')}</p><Say en={g.followUp} zh={g.followUpZh} speak={p.speak} /><Say en={g.userReply} zh={g.userReplyZh} speak={p.speak} /></>}
-        <AddWord w={g.answer} z={A(g.words).find(w => w.word === g.answer)?.zh} /></>}
+        {g.followUp && <><p className="text-sm font-medium">{tr('对方接着问')}</p><Say en={g.followUp} zh={tr(g.followUpZh)} speak={p.speak} /><Say en={g.userReply} zh={tr(g.userReplyZh)} speak={p.speak} /></>}
+        <AddWord w={g.answer} z={tr(A(g.words).find(w => w.word === g.answer)?.zh)} /></>}
     </div>;
   }
   const groups = A(ALL_GROUPS).filter(x => x.tier === tier);
   return <div className="space-y-4"><Head title={tr('主题单词组 · 看图识词')} onExit={p.onExit} />
-    <div className="flex flex-wrap gap-2">{(TIER_ORDER as string[]).map(t => <Button key={t} size="sm" variant={tier === t ? 'default' : 'outline'} onClick={() => setTier(t)}>{TM[t]?.emoji} {TM[t]?.label}</Button>)}</div>
-    <p className="text-xs text-muted-foreground">{TM[tier]?.desc}</p>
-    <div className="weak-list">{groups.map((x, k) => <Row key={x.id} icon={x.themeEmoji ?? '🔤'} title={x.themeZh ?? x.sentenceZh ?? `${tr('第')} ${k + 1} ${tr('组')}`} sub={x.theme ?? A(x.words).map(w => w.word).join(' / ')} onClick={() => { setG(x); setPick(null); setW(null); }} />)}</div></div>;
+    <div className="flex flex-wrap gap-2">{(TIER_ORDER as string[]).map(t => <Button key={t} size="sm" variant={tier === t ? 'default' : 'outline'} onClick={() => setTier(t)}>{TM[t]?.emoji} {tr(TM[t]?.label)}</Button>)}</div>
+    <p className="text-xs text-muted-foreground">{tr(TM[tier]?.desc)}</p>
+    <div className="weak-list">{groups.map((x, k) => <Row key={x.id} icon={x.themeEmoji ?? '🔤'} title={tr(x.themeZh ?? x.sentenceZh) || `${tr('第')} ${k + 1} ${tr('组')}`} sub={x.theme ?? A(x.words).map(w => w.word).join(' / ')} onClick={() => { setG(x); setPick(null); setW(null); }} />)}</div></div>;
 }
 
 /* ---------- 8 AI 陪练角色（按关键词走分支） ---------- */
