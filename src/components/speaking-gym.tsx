@@ -71,22 +71,22 @@ export function PictureMatch({ speak, onExit, onRecord }: P) {
     <div className="detail-heading"><Button variant="ghost" size="icon" aria-label={tr('返回上一级')} onClick={onExit}><ArrowLeft /></Button><span>{tr('看图拖拽 · 听词说句')}</span><span className="w-9" /></div>
     <p className="text-sm text-muted-foreground mb-3">{tr('像小孩学说话：先看图、听声音，把单词拖到对应图片上（也可以先点单词再点图片）。配对后会读出整句，最后你自己把句子说出来。')}</p>
     <div className="flex gap-1 mb-3">{ROUNDS.map((_, i) => <Button key={i} size="sm" variant={i === round ? 'default' : 'outline'} onClick={() => { setRound(i); setDone([]); setSpeakIdx(null); }}>{tr('第 {0} 组', i + 1)}</Button>)}</div>
-    <div className="grid grid-cols-2 gap-2 mb-3 select-none">{set.map(c => {
-      const ok = done.includes(c.word);
-      return <div key={c.word} data-drop={c.word} className={cn('drop-card relative overflow-hidden rounded-xl border border-border bg-card', hot === c.word && 'hot', wrong === c.word && 'ring-2 ring-destructive')}
-        onClick={() => { if (picked && !ok) attempt(picked, c.word); }}>
-        <img src={c.img} alt="" draggable={false} loading="lazy" width={300} height={300} className="aspect-square w-full object-cover" />
-        <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-background/85 px-2 py-1 text-sm">
-          {ok ? <><b className="flex items-center gap-1 text-primary"><Check size={14} />{c.word}</b><Button variant="ghost" size="icon" className="h-7 w-7" aria-label={tr('听示范')} onClick={e => { e.stopPropagation(); speak(c.say); }}><Volume2 size={14} /></Button></> : <span className="text-muted-foreground">{tr('拖到这里')}</span>}
-        </div>
-      </div>;
-    })}</div>
-    {!allDone && <div className="flex flex-wrap gap-2 mb-3">{chips.map(c => <button key={c.word} type="button"
+    {!allDone && <div className="sticky top-0 z-10 flex flex-wrap gap-2 mb-3 bg-background py-2 select-none">{chips.map(c => <button key={c.word} type="button"
       className={cn('drag-word rounded-full border border-border bg-card px-4 py-2 text-base font-semibold', picked === c.word && 'ring-2 ring-primary')}
       onPointerDown={e => { e.preventDefault(); moved.current = false; (e.target as HTMLElement).setPointerCapture(e.pointerId); setDrag({ word: c.word, x: e.clientX, y: e.clientY }); }}
       onPointerMove={e => { if (!drag) return; moved.current = true; setDrag({ ...drag, x: e.clientX, y: e.clientY }); setHot(dropAt(e.clientX, e.clientY)); }}
       onPointerUp={e => { const t = drag && moved.current ? dropAt(e.clientX, e.clientY) : null; setDrag(null); setHot(null); if (t) attempt(c.word, t); else { setPicked(c.word); speak(c.word, 'slow'); } }}
       onPointerCancel={() => { setDrag(null); setHot(null); }}>{c.word}</button>)}</div>}
+    <div className="grid grid-cols-2 gap-2 mb-3 select-none">{set.map(c => {
+      const ok = done.includes(c.word);
+      return <div key={c.word} data-drop={c.word} className={cn('drop-card relative overflow-hidden rounded-xl border border-border bg-card', hot === c.word && 'hot', wrong === c.word && 'ring-2 ring-destructive')}
+        onClick={() => { if (picked && !ok) attempt(picked, c.word); }}>
+        <img src={c.img} alt="" draggable={false} loading="lazy" width={300} height={300} className="aspect-[4/3] w-full object-cover" />
+        <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-background/85 px-2 py-1 text-sm">
+          {ok ? <><b className="flex items-center gap-1 text-primary"><Check size={14} />{c.word}</b><Button variant="ghost" size="icon" className="h-7 w-7" aria-label={tr('听示范')} onClick={e => { e.stopPropagation(); speak(c.say); }}><Volume2 size={14} /></Button></> : <span className="text-muted-foreground">{tr('拖到这里')}</span>}
+        </div>
+      </div>;
+    })}</div>
     {drag && moved.current && <div className="pointer-events-none fixed z-50 rounded-full bg-primary px-4 py-2 text-base font-semibold text-primary-foreground shadow-lg" style={{ left: drag.x - 40, top: drag.y - 22 }}>{drag.word}</div>}
     {allDone && <div className="space-y-2">
       <p className="text-sm font-semibold">{tr('全部配对！现在把句子说出来：先听原句，再听同类句，然后录音。')}</p>
