@@ -126,7 +126,7 @@ function Session({ title, words, srs, speak, onRecord, onRate, onExit }: { title
         {ctx.map(c => <div key={c.en} className="rounded-xl border border-border p-3 flex items-start gap-2"><Button size="icon" variant="ghost" aria-label={tr('播放')} onClick={() => speak(c.en, 'current')}><Volume2 size={16} /></Button><div><p>{c.en}</p>{c.zh && <p className="text-sm text-muted-foreground">{c.zh}</p>}<p className="text-xs text-primary mt-1">{c.src}</p></div></div>)}
       </div>}
       <p className="text-sm font-medium">{tr('开口说整句')}</p>
-      <SpeechCoach key={target} target={target} onRecord={onRecord} />
+      <SpeechCoach key={target} target={target} onRecord={onRecord} onPassed={() => {}} />
       <div className="grid grid-cols-3 gap-2">
         <Button variant="outline" className={cn('border-destructive/40')} onClick={() => next(0)}>{tr('不认识')}</Button>
         <Button variant="outline" onClick={() => next(1)}>{tr('模糊')}</Button>
