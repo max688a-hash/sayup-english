@@ -15,8 +15,8 @@ function Sheet({ title, onClose, children }: { title: string; onClose: () => voi
   return <div className="member-backdrop" onClick={onClose}><section role="dialog" aria-modal="true" aria-label={title} className="member-sheet" onClick={e => e.stopPropagation()}><div className="flex items-center justify-between mb-3"><h2>{title}</h2><Button variant="ghost" size="icon" aria-label={tr("关闭")} onClick={onClose}><X /></Button></div>{children}</section></div>;
 }
 
-export function AuthDialog({ reason, onClose }: { reason?: string; onClose: () => void }) {
-  const [mode, setMode] = useState<'in' | 'up'>('in');
+export function AuthDialog({ reason, initialMode = 'in', onClose }: { reason?: string; initialMode?: 'in' | 'up'; onClose: () => void }) {
+  const [mode, setMode] = useState<'in' | 'up'>(initialMode);
   const [email, setEmail] = useState('');
   const [pw, setPw] = useState('');
   const [msg, setMsg] = useState('');
@@ -40,6 +40,10 @@ export function AuthDialog({ reason, onClose }: { reason?: string; onClose: () =
     if (r.error) setMsg(tr("谷歌登录失败，请稍后再试。")); else if (!r.redirected) onClose();
   }
   return <Sheet title={mode === 'in' ? tr("登录学员账号") : tr("注册学员账号")} onClose={onClose}>
+    <div className="grid grid-cols-2 gap-2 mb-3" role="group" aria-label={tr('登录 / 注册')}>
+      <Button variant={mode === 'in' ? 'secondary' : 'outline'} aria-pressed={mode === 'in'} disabled={busy} onClick={() => { setMode('in'); setMsg(''); }}>{tr('登录')}</Button>
+      <Button variant={mode === 'up' ? 'secondary' : 'outline'} aria-pressed={mode === 'up'} disabled={busy} onClick={() => { setMode('up'); setMsg(''); }}>{tr('注册')}</Button>
+    </div>
     {reason && <p className="member-sub">{reason}</p>}
     <Button variant="outline" className="w-full h-11" onClick={google}>{tr("使用谷歌账号继续")}</Button>
     <p className="text-center text-xs text-muted-foreground my-3">{tr("或使用邮箱")}</p>

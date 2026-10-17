@@ -1,7 +1,16 @@
 import { describe, expect, it } from 'vitest';
-import { hasVoiceMembership, resolveDemoVoice } from '@/lib/member-voices';
+import { canPreviewVoice, hasVoiceMembership, resolveDemoVoice } from '@/lib/member-voices';
 
 describe('Member demonstration voices', () => {
+  it('free learners can preview Ava only', () => {
+    expect(canPreviewVoice('ava', false)).toBe(true);
+    expect(canPreviewVoice('andrew', false)).toBe(false);
+    expect(canPreviewVoice('emma', false)).toBe(false);
+  });
+  it('members can preview both premium voices', () => {
+    expect(canPreviewVoice('andrew', true)).toBe(true);
+    expect(canPreviewVoice('emma', true)).toBe(true);
+  });
   it('free learners always use Ava', () => {
     expect(resolveDemoVoice('andrew', false, true)).toBe('ava');
     expect(resolveDemoVoice('emma', false, true)).toBe('ava');

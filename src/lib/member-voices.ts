@@ -4,6 +4,9 @@ export const DEMO_VOICES: { id: DemoVoice; name: string; label: string }[] = [
   { id: 'andrew', name: 'Andrew', label: '帅气男生' },
   { id: 'emma', name: 'Emma', label: '甜美女生' },
 ];
+export function canPreviewVoice(voice: DemoVoice, member: boolean): boolean {
+  return voice === 'ava' || member;
+}
 export function resolveDemoVoice(value: string | null, member: boolean, coreCourse: boolean): DemoVoice {
   return member && coreCourse && (value === 'andrew' || value === 'emma') ? value : 'ava';
 }

@@ -482,6 +482,8 @@ h1,h2,h3,p { margin:0; }
 .aid-form fieldset { display: grid; gap: 6px; } .aid-form legend { margin-bottom: 4px; font-weight: 600; }
 .aid-option { display: flex !important; grid-auto-flow: column; align-items: center; gap: 8px; padding: 9px 10px; border: 1.5px solid var(--border); border-radius: 12px; } .aid-option.active { border-color: var(--primary); }
 .header-tools { display: flex; align-items: center; gap: 4px; }
+.account-entry-row { display:flex; justify-content:flex-end; align-items:center; gap:8px; padding:0 22px 8px; flex-shrink:0; border-bottom:1px solid var(--border); }
+.account-entry-row > button { max-width:100%; white-space:normal; height:auto; min-height:32px; }
 .lang-select { font-size: 11px; border: 1px solid var(--border); border-radius: 999px; padding: 3px 6px; background: var(--background); color: var(--foreground); }
 .member-cta { display: flex; gap: 8px; margin-bottom: 14px; } .member-cta > * { flex: 1; }
 
