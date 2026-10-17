@@ -1,5 +1,4 @@
 import { openBillingPortal } from '@/utils/portal.functions';
-import { InAppLink } from '@/components/in-app-browser';
 import { tr, trn } from '@/lib/tr';
 import { useEffect, useState } from 'react';
 import type { User } from '@supabase/supabase-js';
@@ -64,9 +63,6 @@ export function AccountSheet({ user, onClose }: { user: User; onClose: () => voi
   const [aid, setAid] = useState<Aid[]>([]);
   const [recs, setRecs] = useState<Rec[]>([]);
   const [weeks, setWeeks] = useState(0);
-  const [admin, setAdmin] = useState(false);
-  const [slot, setSlot] = useState(false);
-  const [review, setReview] = useState(false);
   const [gift, setGift] = useState(false);
   const [subs, setSubs] = useState<{ product_id: string; status: string; current_period_end: string | null; cancel_at_period_end: boolean | null }[]>([]);
   useEffect(() => {
@@ -74,9 +70,7 @@ export function AccountSheet({ user, onClose }: { user: User; onClose: () => voi
     supabase.from('practice_records').select('id,target,score,main_issue,created_at').order('created_at', { ascending: false }).limit(20).then(r => setRecs(r.data ?? []));
     supabase.from('learning_progress').select('item_key', { count: 'exact', head: true }).like('item_key', 'course:%').then(r => setWeeks(r.count ?? 0));
     supabase.from('subscriptions').select('product_id,status,current_period_end,cancel_at_period_end').eq('user_id', user.id).eq('environment', getPaddleEnvironment()).order('created_at', { ascending: false }).limit(1).then(r => setSubs(r.data ?? []));
-    supabase.from('user_roles').select('role').eq('user_id', user.id).eq('role', 'admin').then(r => setAdmin((r.data ?? []).length > 0));
     supabase.from('reward_grants').select('ends_at').gt('ends_at', new Date().toISOString()).limit(1).then(r => setGift((r.data ?? []).length > 0));
-    supabase.rpc('admin_slot_open').then(r => setSlot(r.data === true));
   }, []);
   const member = aid.some(a => a.status === 'approved') ? tr("助学名额") : subs[0] && ['active', 'trialing'].includes(subs[0].status) ? tr("付费会员") : gift ? tr("奖励会员") : tr("免费试学");
   return <Sheet title={tr("我的学员账号")} onClose={onClose}>
