@@ -24,7 +24,7 @@ type Speak = (text: string, speed?: 'slow' | 'normal' | 'current') => void;
 type Module = 'speaking' | 'vocab' | 'listening' | 'reading' | 'writing' | 'mock' | 'packs' | 'resources';
 
 // 主数组已合并第二批，两批再拼一次会重复，按 id（或单词）去重
-export const uniqById = <T,>(arr: T[]): T[] => { const seen = new Set<string>(); return arr.filter((x) => { const k = String((x as { id?: string; word?: string }).id ?? (x as { word?: string }).word ?? JSON.stringify(x)); if (seen.has(k)) return false; seen.add(k); return true; }); };
+export const uniqById = <T,>(arr: T[]): T[] => { const seen = new Set<string>(); return arr.filter((x) => { const k = String((x as { id?: string }).id ?? (x as { w?: string }).w ?? (x as { word?: string }).word ?? JSON.stringify(x)); if (seen.has(k)) return false; seen.add(k); return true; }); };
 const modules: { key: Module; title: string; desc: string; icon: typeof Mic; tone: number; count: () => number }[] = [
   { key: 'speaking', title: '进阶口语话题', desc: '简短问答 · 话题独白 · 深入讨论 · 观点表达', icon: Mic, tone: 0, count: () => SPEAKING_GROUPS.reduce((n: number, g: { items: unknown[] }) => n + g.items.length, 0) },
   { key: 'listening', title: '学术听力', desc: '真实学科短讲 · 整段听 → 逐句精听 → 开口复述', icon: Headphones, tone: 1, count: () => uniqById([...ACADEMIC_LISTENING, ...ACADEMIC_LISTENING_2]).length },
