@@ -47,6 +47,21 @@ export async function speakCloud(text: string, slow: boolean, hooks: SpeakHooks 
       index = await pending;
     }
     let hash = index[loosenKey(text)];
+    if (!hash && voice !== 'ava') {
+      const sentences = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g)?.map(s => s.trim()).filter(Boolean) ?? [];
+      if (sentences.length > 1 && sentences.every(s => index[loosenKey(s)])) {
+        let position = 0;
+        const playNext = async (): Promise<boolean> => {
+          const sentence = sentences[position];
+          if (!sentence) { hooks.onend?.(); return true; }
+          return speakCloud(sentence, slow, {
+            onstart: position === 0 ? hooks.onstart : undefined,
+            onend: () => { position++; void playNext(); }, onerror: hooks.onerror,
+          }, voice);
+        };
+        return playNext();
+      }
+    }
     if (!hash && voice !== 'ava') { chosenVoice = 'ava'; hash = (await loadIndex())[loosenKey(text)]; }
     if (requestId !== playbackId) return true;
     if (hash) {
