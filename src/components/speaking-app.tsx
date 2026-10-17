@@ -152,6 +152,7 @@ export function SpeakingApp({ initialLang, initialTab }: { initialLang?: Lang; i
   const [authReason, setAuthReason] = useState('');
   const [authMode, setAuthMode] = useState<'in' | 'up'>('in');
   const { user } = useAuth();
+  useEffect(() => { setRecords([]); }, [user?.id]);
   const { voice: coreVoice } = useMemberVoice(user?.id);
   const [pendingSheet, setPendingSheet] = useState<null | 'sub' | 'aid'>(null);
   useEffect(() => { if (user && pendingSheet) { setSheet(pendingSheet); setPendingSheet(null); } }, [user, pendingSheet]);
