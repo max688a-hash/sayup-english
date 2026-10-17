@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { recordWav } from '@/lib/record-wav';
 
 export type Analysis = { score: number; verdict: 'good' | 'needs_work' | 'retry'; summary: string; issues: { word: string; problem: string; fix: string }[]; suggestions: string[]; next_try: string };
-export type PracticeRecord = { id: string; target: string; heard: string; analysis: Analysis; audioUrl: string; at: Date };
+export type PracticeRecord = { id: string; target: string; heard: string; analysis: Analysis; audioUrl: string; at: Date; waveform?: number[]; seconds?: number };
 
 type Phase = 'idle' | 'recording' | 'analyzing' | 'done' | 'retry' | 'error';
 
@@ -62,7 +62,7 @@ export function SpeechCoach({ target, onPassed, onRecord }: { target: string; on
       setPhase(a.verdict === 'retry' ? 'retry' : 'done');
       if (a.verdict === 'retry') setMessage(tr('这次没有说完整，请再重复一次。'));
       else onPassed();
-      onRecord({ id: crypto.randomUUID(), target, heard: data.heard, analysis: a, audioUrl: url, at: new Date() });
+      onRecord({ id: crypto.randomUUID(), target, heard: data.heard, analysis: a, audioUrl: url, at: new Date(), waveform: result.waveform, seconds: result.seconds });
     } catch (e) {
       if ((e as Error).name === 'AbortError') return;
       setPhase('error'); setMessage(tr('网络异常，录音没有发送成功，请重试。'));
