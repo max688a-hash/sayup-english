@@ -152,7 +152,7 @@ export function SpeakingApp({ initialLang, initialTab }: { initialLang?: Lang; i
   const { voice: coreVoice } = useMemberVoice(user?.id);
   const [pendingSheet, setPendingSheet] = useState<null | 'sub' | 'aid'>(null);
   useEffect(() => { if (user && pendingSheet) { setSheet(pendingSheet); setPendingSheet(null); } }, [user, pendingSheet]);
-  function needLogin(next: 'sub' | 'aid') { if (user) { setSheet(next); return; } setAuthReason(next === 'sub' ? tr("购买会员需要先登录，会员身份会绑定到你的账号，换手机也不会丢。") : tr("申请助学需要先登录，审核结果会通知到你的账号。")); setPendingSheet(next); setSheet('auth'); }
+  function needLogin(next: 'sub' | 'aid') { if (user || next === 'sub') { setSheet(next); return; } setAuthReason(tr("申请助学需要先登录，审核结果会通知到你的账号。")); setPendingSheet(next); setSheet('auth'); }
   function addRecord(r: PracticeRecord) { setRecords(old => [r, ...old].slice(0, 30)); if (user) void supabase.from('practice_records').insert({ user_id: user.id, target: r.target.slice(0, 500), heard: r.heard.slice(0, 500), score: r.analysis.score, main_issue: r.analysis.issues[0] ? `${r.analysis.issues[0].word} · ${r.analysis.issues[0].fix}`.slice(0, 300) : null }); }
   const t = DICT[lang];
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);

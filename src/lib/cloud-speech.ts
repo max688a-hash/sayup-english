@@ -16,6 +16,24 @@ export type SpeakHooks = { onstart?: () => void; onend?: () => void; onerror?: (
 // Built-in neural recordings shipped with the app (public/audio). Offline, no server cost.
 let localIndex: Promise<Record<string, string>> | null = null;
 const voiceIndexes = new Map<DemoVoice, Promise<Record<string, string>>>();
+const voiceUrls = new Map<string, string>();
+async function recordedVoiceUrl(path: string) {
+  const existing = voiceUrls.get(path);
+  if (existing) return existing;
+  let audioCache: Cache | null = null;
+  try { audioCache = await caches.open('sayup-audio-v2'); } catch { /* storage unavailable */ }
+  let response = await audioCache?.match(path);
+  if (!response) {
+    response = await fetch(path);
+    if (!response.ok) throw new Error('recording unavailable');
+    try { await audioCache?.put(path, response.clone()); } catch { /* cache quota */ }
+  }
+  const blob = await response.blob();
+  if (!blob.size) throw new Error('empty recording');
+  const url = URL.createObjectURL(blob);
+  voiceUrls.set(path, url);
+  return url;
+}
 export const loosenKey = (t: string) => (t || "").toLowerCase().replace(/[’‘]/g, "'").replace(/[^a-z0-9\s']/g, " ").replace(/\s+/g, " ").trim();
 let swTried = false;
 function registerAudioCache() {
@@ -65,7 +83,10 @@ export async function speakCloud(text: string, slow: boolean, hooks: SpeakHooks 
     if (!hash && voice !== 'ava') { chosenVoice = 'ava'; hash = (await loadIndex())[loosenKey(text)]; }
     if (requestId !== playbackId) return true;
     if (hash) {
-      const audio = new Audio(chosenVoice === 'ava' ? `/audio/${hash}.mp3` : `/audio/v/${chosenVoice}/${hash}.mp3`);
+      const path = chosenVoice === 'ava' ? `/audio/${hash}.mp3` : `/audio/v/${chosenVoice}/${hash}.mp3`;
+      const audioUrl = chosenVoice === 'ava' ? path : await recordedVoiceUrl(path);
+      if (requestId !== playbackId) return true;
+      const audio = new Audio(audioUrl);
       audio.playbackRate = slow ? 0.75 : 1;
       (audio as HTMLAudioElement & { preservesPitch?: boolean }).preservesPitch = true;
       current = audio;
