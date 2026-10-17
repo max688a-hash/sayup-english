@@ -73,8 +73,8 @@ export async function speakCloud(text: string, slow: boolean, hooks: SpeakHooks 
           const sentence = sentences[position];
           if (!sentence) { hooks.onend?.(); return true; }
           return speakCloud(sentence, slow, {
-            onstart: position === 0 ? hooks.onstart : undefined,
-            onend: () => { position++; void playNext(); }, onerror: hooks.onerror,
+            onstart: () => { if (position === 0) hooks.onstart?.(); },
+            onend: () => { position++; void playNext(); }, onerror: () => hooks.onerror?.(),
           }, voice);
         };
         return playNext();
