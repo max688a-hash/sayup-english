@@ -23,12 +23,14 @@ type Q = { id: string; type: 'tfng' | 'mcq' | 'gap'; prompt: string; promptZh?: 
 type Speak = (text: string, speed?: 'slow' | 'normal' | 'current') => void;
 type Module = 'speaking' | 'vocab' | 'listening' | 'reading' | 'writing' | 'mock' | 'packs' | 'resources';
 
+// 主数组已合并第二批，两批再拼一次会重复，按 id（或单词）去重
+export const uniqById = <T,>(arr: T[]): T[] => { const seen = new Set<string>(); return arr.filter((x) => { const k = String((x as { id?: string; word?: string }).id ?? (x as { word?: string }).word ?? JSON.stringify(x)); if (seen.has(k)) return false; seen.add(k); return true; }); };
 const modules: { key: Module; title: string; desc: string; icon: typeof Mic; tone: number; count: () => number }[] = [
   { key: 'speaking', title: '进阶口语话题', desc: '简短问答 · 话题独白 · 深入讨论 · 观点表达', icon: Mic, tone: 0, count: () => SPEAKING_GROUPS.reduce((n: number, g: { items: unknown[] }) => n + g.items.length, 0) },
-  { key: 'listening', title: '学术听力', desc: '真实学科短讲 · 整段听 → 逐句精听 → 开口复述', icon: Headphones, tone: 1, count: () => ACADEMIC_LISTENING.length + ACADEMIC_LISTENING_2.length },
-  { key: 'reading', title: '学术阅读', desc: '学术文章 · 判断 / 选择 / 填空 · 自动判分 + 解析', icon: BookOpen, tone: 2, count: () => ACADEMIC_READING.length + ACADEMIC_READING_2.length },
+  { key: 'listening', title: '学术听力', desc: '真实学科短讲 · 整段听 → 逐句精听 → 开口复述', icon: Headphones, tone: 1, count: () => uniqById([...ACADEMIC_LISTENING, ...ACADEMIC_LISTENING_2]).length },
+  { key: 'reading', title: '学术阅读', desc: '学术文章 · 判断 / 选择 / 填空 · 自动判分 + 解析', icon: BookOpen, tone: 2, count: () => uniqById([...ACADEMIC_READING, ...ACADEMIC_READING_2]).length },
   { key: 'writing', title: '学术写作', desc: '议论文 / 看图写 · 结构框架 + 范文 + 四维自评', icon: PenLine, tone: 3, count: () => ALL_WRITING_TASKS.length },
-  { key: 'vocab', title: '学术词汇', desc: '高频学术词 · 学一个词立刻开口造句', icon: Library, tone: 0, count: () => ACADEMIC_WORDS.length + ACADEMIC_WORDS_BATCH_2.length },
+  { key: 'vocab', title: '学术词汇', desc: '高频学术词 · 学一个词立刻开口造句', icon: Library, tone: 0, count: () => uniqById([...ACADEMIC_WORDS, ...ACADEMIC_WORDS_BATCH_2]).length },
   { key: 'mock', title: '迷你模拟考', desc: '长篇听力 + 长篇阅读自动判分 · 估算 1–6 级', icon: ListChecks, tone: 1, count: () => 2 },
 ];
 const listenModules: typeof modules = [
@@ -95,9 +97,9 @@ export function AdvancedHub({ speak, onRecord, onExit, focus, start }: { speak: 
   const [showModel, setShowModel] = useState(false);
   const [checks, setChecks] = useState<Record<string, boolean>>({});
   const [mockScores, setMockScores] = useState<Record<string, [number, number]>>({});
-  const listening = useMemo(() => [...ACADEMIC_LISTENING, ...ACADEMIC_LISTENING_2], []);
-  const reading = useMemo(() => [...ACADEMIC_READING, ...ACADEMIC_READING_2], []);
-  const vocab = useMemo(() => [...ACADEMIC_WORDS, ...ACADEMIC_WORDS_BATCH_2], []);
+  const listening = useMemo(() => uniqById([...ACADEMIC_LISTENING, ...ACADEMIC_LISTENING_2]), []);
+  const reading = useMemo(() => uniqById([...ACADEMIC_READING, ...ACADEMIC_READING_2]), []);
+  const vocab = useMemo(() => uniqById([...ACADEMIC_WORDS, ...ACADEMIC_WORDS_BATCH_2]), []);
   const coach = (target: string) => <SpeechCoach key={target} target={target} onPassed={() => {}} onRecord={onRecord} />;
   const back = () => { if (item !== null) { setItem(null); setEssay(''); setShowModel(false); setChecks({}); } else if (mod && mod !== start) setMod(null); else onExit(); };
   const head = (title: string) => <div className="detail-heading"><Button variant="ghost" size="icon" aria-label={tr("返回上一级")} onClick={back}><ArrowLeft /></Button><span>{title}</span><span className="w-9" /></div>;
