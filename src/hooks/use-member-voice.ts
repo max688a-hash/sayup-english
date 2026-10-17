@@ -23,7 +23,7 @@ export function useMemberVoice(userId?: string) {
     window.addEventListener('storage', read);
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
       if (active && session?.user.id === userId) {
-        const value = session.user.user_metadata?.demo_voice;
+        const value = session.user.user_metadata?.['demo_voice'];
         if (typeof value === 'string') {
           const voice = resolveDemoVoice(value, true, true);
           setSelected(voice);
@@ -34,7 +34,7 @@ export function useMemberVoice(userId?: string) {
     // Read the verified cloud account, not just a cached session from this device.
     void supabase.auth.getUser().then(({ data, error }) => {
       if (!active || error || data.user?.id !== userId) return;
-      const value = data.user.user_metadata?.demo_voice;
+      const value = data.user.user_metadata?.['demo_voice'];
       const voice = resolveDemoVoice(typeof value === 'string' ? value : null, true, true);
       setSelected(voice);
       try { localStorage.setItem(`sayup-voice:${userId}`, voice); } catch { /* optional cache */ }
