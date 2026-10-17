@@ -1,3 +1,5 @@
+import { waveformPeaks } from '@/lib/learning-results';
+
 function encodeWav(chunks: readonly Float32Array[], sampleRate: number): Blob {
   const length = chunks.reduce((sum, chunk) => sum + chunk.length, 0);
   const bytes = new ArrayBuffer(44 + length * 2);
@@ -19,7 +21,7 @@ function encodeWav(chunks: readonly Float32Array[], sampleRate: number): Blob {
   return new Blob([bytes], { type: "audio/wav" });
 }
 
-export type Recording = { file: File; seconds: number; voiced: boolean };
+export type Recording = { file: File; seconds: number; voiced: boolean; waveform: number[] };
 
 /** Records mic audio as WAV; `voiced` is false when no speech-level sound was captured. */
 export async function recordWav(): Promise<{ stop: () => Promise<Recording>; cancel: () => void }> {
@@ -55,7 +57,7 @@ export async function recordWav(): Promise<{ stop: () => Promise<Recording>; can
         const samples = chunks.reduce((s, c) => s + c.length, 0);
         const seconds = samples / context.sampleRate;
         await context.close();
-        return { file: new File([blob], "recording.wav", { type: "audio/wav" }), seconds, voiced: loudFrames >= 3 && seconds >= 0.5 };
+        return { file: new File([blob], "recording.wav", { type: "audio/wav" }), seconds, voiced: loudFrames >= 3 && seconds >= 0.5, waveform: waveformPeaks(chunks) };
       },
     };
   } catch (error) {

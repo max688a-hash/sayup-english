@@ -24,3 +24,5 @@
 - Daily route ticks and daily-exchange completion sync to learning_progress as item_key "plan:<day>:<step>" / "daily:<id>" via src/lib/cloud-progress.ts, with localStorage as offline cache; check-in days are computed server-side from practice_records — so progress follows the learner across phones without new tables.
 - Learn page has exactly five groups (起步/听力/口语/阅读/词汇) in LEARN_GROUPS; advanced modules open directly via advanced "adv-<module>" (AdvancedHub start prop) instead of a separate 进阶 hub, so no content sits outside the five groups.
 - External links go through InAppLink: native uses @capacitor/browser; web iframes only hosts in the tested EMBED_OK allowlist, others get an open-in-new-window + copy-link page, because most sites send X-Frame-Options and show a blank 'refused to connect' frame.
+
+- Learning results stay inside the index app, read only the signed-in owner’s practice records and existing check-in RPC, and export aggregate-only reports; microphone waveform peaks remain session-only to avoid retaining voice data.

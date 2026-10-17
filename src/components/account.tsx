@@ -59,7 +59,7 @@ type Aid = { aid_type: string; status: string; created_at: string; chsi_code: st
 type Rec = { id: string; target: string; score: number; main_issue: string | null; created_at: string };
 const STATUS: Record<string, string> = { pending: tr('审核中'), approved: tr('已通过，名额已开通'), rejected: tr('未通过') };
 
-export function AccountSheet({ user, onClose }: { user: User; onClose: () => void }) {
+export function AccountSheet({ user, onClose, onResults }: { user: User; onClose: () => void; onResults?: () => void }) {
   const [aid, setAid] = useState<Aid[]>([]);
   const [recs, setRecs] = useState<Rec[]>([]);
   const [weeks, setWeeks] = useState(0);
@@ -76,6 +76,7 @@ export function AccountSheet({ user, onClose }: { user: User; onClose: () => voi
   return <Sheet title={tr("我的学员账号")} onClose={onClose}>
     <p className="member-sub">{trn(user.email)}</p>
     <VoicePicker />
+    {onResults && <Button variant="outline" className="w-full my-3" onClick={onResults}>{tr('学习成果')}</Button>}
     <div className="member-box"><Sprout size={18} /><div><b>{tr("身份：")}{member}</b><p>{tr("12 周课程已完成")} {weeks} {tr("周 · 云端录音记录")} {trn(recs.length)} {tr("条")}</p></div></div>
     {subs[0] && ['active', 'trialing', 'past_due'].includes(subs[0].status) && (() => { const s0 = subs[0]!; const end = s0.current_period_end ? new Date(s0.current_period_end) : null; const soon = end && end.getTime() - Date.now() < 3 * 864e5; return <div className="member-box"><Sprout size={18} /><div>
       <b>{s0.cancel_at_period_end ? tr('已取消自动续费') : tr('自动续费已开启')}</b>
