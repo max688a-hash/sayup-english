@@ -23,14 +23,14 @@ async function loadResults(userId: string) {
 }
 
 class ResultsError extends Component<{ children: ReactNode }, { failed: boolean }> {
-  state = { failed: false };
+  override state = { failed: false };
   static getDerivedStateFromError() { return { failed: true }; }
-  render() {
+  override render() {
     return this.state.failed ? <div role="alert" className="py-6"><p className="text-sm mb-3">{tr('学习成果暂时无法读取，请重试。')}</p><Button variant="outline" onClick={() => this.setState({ failed: false })}>{tr('重试')}</Button></div> : this.props.children;
   }
 }
 
-export function LearningResults({ userId, records, onExit, onLogin }: { userId?: string; records: PracticeRecord[]; onExit: () => void; onLogin: () => void }) {
+export function LearningResults({ userId, records, onExit, onLogin }: { userId: string | undefined; records: PracticeRecord[]; onExit: () => void; onLogin: () => void }) {
   return <div className="adv-hub learning-results">
     <div className="detail-heading"><Button variant="ghost" size="icon" aria-label={tr('返回上一级')} onClick={onExit}><ArrowLeft /></Button><span>{tr('学习成果')}</span><ShieldCheck size={18} className="text-primary" /></div>
     <h2 className="text-xl font-semibold mt-4">{tr('每一次开口，都有记录')}</h2>
