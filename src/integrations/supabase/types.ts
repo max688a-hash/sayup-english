@@ -80,6 +80,39 @@ export type Database = {
         }
         Relationships: []
       }
+      partner_codes: {
+        Row: {
+          code: string
+          created_at: string
+          days: number
+          expires_at: string | null
+          id: string
+          org_name: string
+          used_at: string | null
+          used_by: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          days?: number
+          expires_at?: string | null
+          id?: string
+          org_name: string
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          days?: number
+          expires_at?: string | null
+          id?: string
+          org_name?: string
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Relationships: []
+      }
       practice_records: {
         Row: {
           created_at: string
@@ -275,6 +308,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      redeem_partner_code: { Args: { _code: string }; Returns: string }
     }
     Enums: {
       app_role: "admin" | "user"
