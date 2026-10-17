@@ -1,4 +1,4 @@
-import { Suspense } from 'react';
+import { Component, Suspense, type ReactNode } from 'react';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { ArrowLeft, Download, RefreshCw, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -22,12 +22,20 @@ async function loadResults(userId: string) {
   return { ...summarizePractice(records), days: [...new Set((result.data ?? []).map(x => x.day))], from: from.toISOString().slice(0, 10), to: to.toISOString().slice(0, 10) };
 }
 
+class ResultsError extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() { return { failed: true }; }
+  render() {
+    return this.state.failed ? <div role="alert" className="py-6"><p className="text-sm mb-3">{tr('学习成果暂时无法读取，请重试。')}</p><Button variant="outline" onClick={() => this.setState({ failed: false })}>{tr('重试')}</Button></div> : this.props.children;
+  }
+}
+
 export function LearningResults({ userId, records, onExit, onLogin }: { userId?: string; records: PracticeRecord[]; onExit: () => void; onLogin: () => void }) {
   return <div className="adv-hub learning-results">
     <div className="detail-heading"><Button variant="ghost" size="icon" aria-label={tr('返回上一级')} onClick={onExit}><ArrowLeft /></Button><span>{tr('学习成果')}</span><ShieldCheck size={18} className="text-primary" /></div>
     <h2 className="text-xl font-semibold mt-4">{tr('每一次开口，都有记录')}</h2>
     <p className="text-xs text-muted-foreground mt-2 mb-5">{tr('仅本人可见；分享前请勿展示账号信息。')}</p>
-    {!userId ? <div className="py-8 text-center"><p className="text-sm mb-4">{tr('登录后查看真实学习成果。')}</p><Button onClick={onLogin}>{tr('登录')}</Button></div> : <Suspense fallback={<p role="status" className="py-8 text-sm">{tr('正在读取学习记录…')}</p>}><ResultsData userId={userId} records={records} /></Suspense>}
+    {!userId ? <div className="py-8 text-center"><p className="text-sm mb-4">{tr('登录后查看真实学习成果。')}</p><Button onClick={onLogin}>{tr('登录')}</Button></div> : <ResultsError><Suspense fallback={<p role="status" className="py-8 text-sm">{tr('正在读取学习记录…')}</p>}><ResultsData userId={userId} records={records} /></Suspense></ResultsError>}
   </div>;
 }
 
