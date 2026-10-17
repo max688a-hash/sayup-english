@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { lovable } from '@/integrations/lovable/index';
 import { getPaddleEnvironment } from '@/lib/paddle';
 import { AdminReview } from '@/components/admin-review';
+import { VoicePicker } from '@/components/voice-picker';
 
 function Sheet({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
   return <div className="member-backdrop" onClick={onClose}><section role="dialog" aria-modal="true" aria-label={title} className="member-sheet" onClick={e => e.stopPropagation()}><div className="flex items-center justify-between mb-3"><h2>{title}</h2><Button variant="ghost" size="icon" aria-label={tr("关闭")} onClick={onClose}><X /></Button></div>{children}</section></div>;
@@ -76,6 +77,7 @@ export function AccountSheet({ user, onClose }: { user: User; onClose: () => voi
   const member = aid.some(a => a.status === 'approved') ? tr("助学名额") : subs[0] && ['active', 'trialing'].includes(subs[0].status) ? tr("付费会员") : gift ? tr("奖励会员") : tr("免费试学");
   return <Sheet title={tr("我的学员账号")} onClose={onClose}>
     <p className="member-sub">{trn(user.email)}</p>
+    <VoicePicker />
     <div className="member-box"><Sprout size={18} /><div><b>{tr("身份：")}{member}</b><p>{tr("12 周课程已完成")} {weeks} {tr("周 · 云端录音记录")} {trn(recs.length)} {tr("条")}</p></div></div>
     {subs[0] && ['active', 'trialing', 'past_due'].includes(subs[0].status) && (() => { const s0 = subs[0]!; const end = s0.current_period_end ? new Date(s0.current_period_end) : null; const soon = end && end.getTime() - Date.now() < 3 * 864e5; return <div className="member-box"><Sprout size={18} /><div>
       <b>{s0.cancel_at_period_end ? tr('已取消自动续费') : tr('自动续费已开启')}</b>

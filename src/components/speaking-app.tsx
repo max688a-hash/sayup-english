@@ -25,6 +25,7 @@ import { SubscribeDialog, AidDialog } from '@/components/membership';
 import { DICT, LANGS, type Lang } from '@/lib/i18n';
 import { AuthDialog, AccountSheet } from '@/components/account';
 import { useAuth } from '@/hooks/use-auth';
+import { useMemberVoice } from '@/hooks/use-member-voice';
 import { supabase } from '@/integrations/supabase/client';
 import { UserRound } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -148,9 +149,10 @@ export function SpeakingApp({ initialLang, initialTab }: { initialLang?: Lang; i
   const [sheet, setSheet] = useState<null | 'sub' | 'aid' | 'auth' | 'account'>(null);
   const [authReason, setAuthReason] = useState('');
   const { user } = useAuth();
+  const { voice: coreVoice } = useMemberVoice(user?.id);
   const [pendingSheet, setPendingSheet] = useState<null | 'sub' | 'aid'>(null);
   useEffect(() => { if (user && pendingSheet) { setSheet(pendingSheet); setPendingSheet(null); } }, [user, pendingSheet]);
-  function needLogin(next: 'sub' | 'aid') { if (user) { setSheet(next); return; } setAuthReason(next === 'sub' ? tr("购买会员需要先登录，会员身份会绑定到你的账号，换手机也不会丢。") : tr("申请助学需要先登录，审核结果会通知到你的账号。")); setPendingSheet(next); setSheet('auth'); }
+  function needLogin(next: 'sub' | 'aid') { if (user || next === 'sub') { setSheet(next); return; } setAuthReason(tr("申请助学需要先登录，审核结果会通知到你的账号。")); setPendingSheet(next); setSheet('auth'); }
   function addRecord(r: PracticeRecord) { setRecords(old => [r, ...old].slice(0, 30)); if (user) void supabase.from('practice_records').insert({ user_id: user.id, target: r.target.slice(0, 500), heard: r.heard.slice(0, 500), score: r.analysis.score, main_issue: r.analysis.issues[0] ? `${r.analysis.issues[0].word} · ${r.analysis.issues[0].fix}`.slice(0, 300) : null }); }
   const t = DICT[lang];
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -171,7 +173,7 @@ export function SpeakingApp({ initialLang, initialTab }: { initialLang?: Lang; i
       onstart: () => setSpeaking(text),
       onend: () => setSpeaking(''),
       onerror: () => setSpeaking(''),
-    }).then(ok => {
+    }, advanced === 'course' ? coreVoice : 'ava').then(ok => {
       if (ok) return;
       // 云端语音不可用（离线等）时回退设备系统语音
       if (!('speechSynthesis' in window)) { setNotice(tr("当前浏览器不支持朗读，请使用 Chrome 或 Safari。")); return; }

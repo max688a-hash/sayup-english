@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { DICT, POVERTY_CRITERIA, type Lang } from '@/lib/i18n';
 import { supabase } from '@/integrations/supabase/client';
+import { VoicePicker } from '@/components/voice-picker';
 
 function Sheet({ title, onClose, closeLabel, children }: { title: string; onClose: () => void; closeLabel: string; children: React.ReactNode }) {
   return <div className="member-backdrop" onClick={onClose}><section role="dialog" aria-modal="true" aria-label={title} className="member-sheet" onClick={e => e.stopPropagation()}><div className="flex items-center justify-between mb-3"><h2>{title}</h2><Button variant="ghost" size="icon" aria-label={closeLabel} onClick={onClose}><X /></Button></div>{children}</section></div>;
@@ -16,6 +17,7 @@ export function SubscribeDialog({ lang, onClose, onBuy, onAid }: { lang: Lang; o
     <p className="member-sub">{t.planSub}</p>
     <div className="plan-list" role="radiogroup">{t.plans.map(p => <Button key={p.id} variant="ghost" role="radio" aria-checked={pick === p.id} className={cn('plan-card', pick === p.id && 'active')} onClick={() => setPick(p.id)}><div className="text-left"><b>{p.name}</b><span>{p.note}</span></div><div className="plan-price">{p.price}<small>{p.unit}</small></div></Button>)}</div>
     <ul className="perk-list">{t.perks.map(x => <li key={x}><Check size={14} />{x}</li>)}</ul>
+    <VoicePicker />
     <Button className="w-full h-11" onClick={() => onBuy(pick)}><Crown size={16} /> {t.buy}</Button>
     <p className="member-note">{t.testNote}</p>
     <div className="member-box"><Flame size={18} /><div><b>{t.rewardTitle}</b><p>{t.rewardBody}</p></div></div>
