@@ -148,6 +148,7 @@ export function SpeakingApp({ initialLang, initialTab }: { initialLang?: Lang; i
   setContentLang(lang);
   const [sheet, setSheet] = useState<null | 'sub' | 'aid' | 'auth' | 'account'>(null);
   const [authReason, setAuthReason] = useState('');
+  const [authMode, setAuthMode] = useState<'in' | 'up'>('in');
   const { user } = useAuth();
   const { voice: coreVoice } = useMemberVoice(user?.id);
   const [pendingSheet, setPendingSheet] = useState<null | 'sub' | 'aid'>(null);
@@ -236,6 +237,10 @@ export function SpeakingApp({ initialLang, initialTab }: { initialLang?: Lang; i
       <div className="phone-screen">
         <div className="status-bar"><span>9:41</span><div className="dynamic-island" /><div className="flex items-center gap-1.5"><Signal size={14} /><Wifi size={14} /><BatteryFull size={21} /></div></div>
         <header className="app-header"><div className="flex items-center gap-2"><img className="app-logo-img" src={logoImage} alt="" width={28} height={28} /><div className="flex flex-col leading-tight"><span className="app-logo">{tr("声芽")}<span>SayUp</span></span><span className="app-tagline">{trn(t.tagline)}</span></div></div><div className="header-tools"><Button variant="ghost" size="icon" className="mode-switch" aria-label={user ? tr("我的账号") : tr("登录")} title={user ? tr("我的账号") : tr("登录 / 注册")} onClick={() => { if (user) setSheet('account'); else { setAuthReason(tr("登录后，学习进度、录音记录、会员和助学申请都会保存在你的账号里。")); setSheet('auth'); } }}><UserRound size={15} /></Button><select className="lang-select" aria-label={t.langLabel} value={lang} onChange={e => setLang(e.target.value as Lang)}>{LANGS.map(l => <option key={l.id} value={l.id}>{trn(l.label)}</option>)}</select><Button variant="ghost" className="mode-switch" onClick={() => { resetDetail(); setKids(!kids); setCategory('全部'); setKnown([]); setCompleted(false); setDialogDone(false); }} title={tr("切换课程模式")}>{kids ? <Sun size={14} /> : <Sparkles size={14} />}{kids ? tr("儿童") : tr("成人")}</Button></div></header>
+        <div className="account-entry-row">
+          <Button variant="ghost" size="sm" onClick={() => { setAuthMode('in'); setAuthReason(tr('登录后，学习进度、录音记录、会员和助学申请都会保存在你的账号里。')); setSheet(user ? 'account' : 'auth'); }}><UserRound size={15} />{user ? tr('我的账号') : tr('登录')}</Button>
+          {!user && <Button variant="outline" size="sm" onClick={() => { setAuthMode('up'); setAuthReason(tr('登录后，学习进度、录音记录、会员和助学申请都会保存在你的账号里。')); setSheet('auth'); }}>{tr('注册学员账号')}</Button>}
+        </div>
         <div className="speed-bar"><span className="speed-bar-label"><Volume2 size={13} /> {tr("示范发音")}</span><div className="speed-segment" role="group" aria-label={tr("示范发音语速")}><Button variant="ghost" size="sm" className={cn('speed-option', rateMode === 'slow' && 'active')} aria-pressed={rateMode === 'slow'} onClick={() => setRateMode('slow')}><Turtle size={12} /> {tr("慢速")}</Button><Button variant="ghost" size="sm" className={cn('speed-option', rateMode === 'normal' && 'active')} aria-pressed={rateMode === 'normal'} onClick={() => setRateMode('normal')}><Gauge size={12} /> {tr("正常")}</Button></div><span className="speed-bar-hint">{rateMode === 'slow' ? tr("放慢约三分之一，方便跟读") : tr("接近日常对话语速")}</span></div>
         <main className="app-content" key={tab + String(kids) + lang}>
           {detail ? <>

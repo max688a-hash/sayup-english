@@ -3,7 +3,7 @@ import { Check, LockKeyhole, Loader2, Volume2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/use-auth';
 import { useMemberVoice } from '@/hooks/use-member-voice';
-import { DEMO_VOICES, type DemoVoice } from '@/lib/member-voices';
+import { canPreviewVoice, DEMO_VOICES, type DemoVoice } from '@/lib/member-voices';
 import { speakCloud, stopCloudSpeech } from '@/lib/cloud-speech';
 import { tr } from '@/lib/tr';
 
@@ -12,8 +12,10 @@ export function VoicePicker() {
   const { member, loaded, voice, select } = useMemberVoice(user?.id);
   const [playing, setPlaying] = useState<DemoVoice | null>(null);
   const [message, setMessage] = useState('');
+  const [saving, setSaving] = useState(false);
   useEffect(() => () => stopCloudSpeech(), []);
   async function preview(id: DemoVoice) {
+    if (!canPreviewVoice(id, loaded && member)) return;
     setMessage(''); setPlaying(id);
     const ok = await speakCloud("Hi, I'm Lin. Nice to meet you.", false, {
       onend: () => setPlaying(null), onerror: () => { setPlaying(null); setMessage(tr('试听暂不可用，请稍后再试。')); },
@@ -26,11 +28,11 @@ export function VoicePicker() {
     <div className="space-y-2">{DEMO_VOICES.map(v => {
       const locked = v.id !== 'ava' && (!loaded || !member);
       return <div key={v.id} className="flex items-center gap-2 border border-border rounded-lg p-2">
-        <Button variant={voice === v.id ? 'secondary' : 'ghost'} className="flex-1 min-w-0 h-auto justify-start gap-2 whitespace-normal" disabled={locked} aria-pressed={voice === v.id} onClick={() => { if (!select(v.id)) setMessage(tr('未能保存声音选择，请重试。')); }}>
+        <Button variant={voice === v.id ? 'secondary' : 'ghost'} className="flex-1 min-w-0 h-auto justify-start gap-2 whitespace-normal" disabled={locked || saving || !user} aria-pressed={voice === v.id} onClick={async () => { setSaving(true); setMessage(''); const ok = await select(v.id); setSaving(false); setMessage(tr(ok ? '声音选择已保存到账号。' : '未能保存声音选择，请重试。')); }}>
           {locked ? <LockKeyhole size={16} className="shrink-0" /> : voice === v.id ? <Check size={16} className="shrink-0" /> : <Volume2 size={16} className="shrink-0" />}
           <span className="text-left"><b className="block">{v.name}</b><span className="text-xs text-muted-foreground">{tr(v.label)}</span></span>
         </Button>
-        <Button variant="outline" size="sm" disabled={locked} aria-label={tr('试听 {0}', v.name)} onClick={() => void preview(v.id)}>{playing === v.id ? <Loader2 size={14} className="animate-spin" /> : <Volume2 size={14} />}{tr('试听')}</Button>
+        <Button variant="outline" size="sm" disabled={!canPreviewVoice(v.id, loaded && member)} aria-label={tr('试听 {0}', v.name)} onClick={() => { if (playing === v.id) { stopCloudSpeech(); setPlaying(null); } else void preview(v.id); }}>{playing === v.id ? <Loader2 size={14} className="animate-spin" /> : <Volume2 size={14} />}{tr('试听')}</Button>
       </div>;
     })}</div>
     {!member && <p className="text-xs text-muted-foreground mt-2">{tr('免费学员使用 Ava；会员可选择 Andrew 和 Emma。')}</p>}
