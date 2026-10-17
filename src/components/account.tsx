@@ -1,5 +1,4 @@
 import { openBillingPortal } from '@/utils/portal.functions';
-import { InAppLink } from '@/components/in-app-browser';
 import { tr, trn } from '@/lib/tr';
 import { useEffect, useState } from 'react';
 import type { User } from '@supabase/supabase-js';
@@ -8,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { lovable } from '@/integrations/lovable/index';
 import { getPaddleEnvironment } from '@/lib/paddle';
-import { AdminReview } from '@/components/admin-review';
 import { VoicePicker } from '@/components/voice-picker';
 
 function Sheet({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
@@ -65,9 +63,6 @@ export function AccountSheet({ user, onClose }: { user: User; onClose: () => voi
   const [aid, setAid] = useState<Aid[]>([]);
   const [recs, setRecs] = useState<Rec[]>([]);
   const [weeks, setWeeks] = useState(0);
-  const [admin, setAdmin] = useState(false);
-  const [slot, setSlot] = useState(false);
-  const [review, setReview] = useState(false);
   const [gift, setGift] = useState(false);
   const [subs, setSubs] = useState<{ product_id: string; status: string; current_period_end: string | null; cancel_at_period_end: boolean | null }[]>([]);
   useEffect(() => {
@@ -75,9 +70,7 @@ export function AccountSheet({ user, onClose }: { user: User; onClose: () => voi
     supabase.from('practice_records').select('id,target,score,main_issue,created_at').order('created_at', { ascending: false }).limit(20).then(r => setRecs(r.data ?? []));
     supabase.from('learning_progress').select('item_key', { count: 'exact', head: true }).like('item_key', 'course:%').then(r => setWeeks(r.count ?? 0));
     supabase.from('subscriptions').select('product_id,status,current_period_end,cancel_at_period_end').eq('user_id', user.id).eq('environment', getPaddleEnvironment()).order('created_at', { ascending: false }).limit(1).then(r => setSubs(r.data ?? []));
-    supabase.from('user_roles').select('role').eq('user_id', user.id).eq('role', 'admin').then(r => setAdmin((r.data ?? []).length > 0));
     supabase.from('reward_grants').select('ends_at').gt('ends_at', new Date().toISOString()).limit(1).then(r => setGift((r.data ?? []).length > 0));
-    supabase.rpc('admin_slot_open').then(r => setSlot(r.data === true));
   }, []);
   const member = aid.some(a => a.status === 'approved') ? tr("助学名额") : subs[0] && ['active', 'trialing'].includes(subs[0].status) ? tr("付费会员") : gift ? tr("奖励会员") : tr("免费试学");
   return <Sheet title={tr("我的学员账号")} onClose={onClose}>
@@ -89,12 +82,8 @@ export function AccountSheet({ user, onClose }: { user: User; onClose: () => voi
       {end && <p className={soon && !s0.cancel_at_period_end ? 'text-destructive font-semibold' : ''}>{s0.cancel_at_period_end ? tr('会员到期日：') : tr('下次扣费日期：')}{end.toLocaleDateString()}{soon && !s0.cancel_at_period_end ? ' · ' + tr('3 天内将自动扣费') : ''}</p>}
       {!s0.cancel_at_period_end && <Button size="sm" variant="outline" className="mt-1" onClick={async () => { const w = window.open('', '_blank'); try { const r = await openBillingPortal(); if (w) w.location.href = r.url; } catch { w?.close(); alert(tr('暂时打不开，请稍后再试。')); } }}>{tr('取消自动续费 / 管理付款')}</Button>}
     </div></div>; })()}
-    {aid.length > 0 && <div className="member-box"><Sprout size={18} /><div><b>{tr("助学申请")}</b>{aid.map(a => <p key={a.created_at}>{a.aid_type === 'poor' ? tr("贫困学生") : tr("普通学生")} · {trn(STATUS[a.status])}{a.review_note && a.status === 'rejected' ? `（${a.review_note}）` : ''} · {new Date(a.created_at).toLocaleDateString('zh-CN')}{a.chsi_code && <> {tr("· 学信网验证码")} {trn(a.chsi_code)} <InAppLink url="https://www.chsi.com.cn/xlcx/bgys.jsp" title={tr("去核真")} className="text-primary underline">{tr("去核真")}</InAppLink></>}</p>)}</div></div>}
     <h3 className="font-semibold mt-3 mb-2 text-sm">{tr("最近的口语记录")}</h3>
     {recs.length === 0 ? <p className="text-xs text-muted-foreground">{tr("还没有录音记录，去跟读一句试试。")}</p> : <div className="record-list">{recs.map(r => <div className="record-item" key={r.id}><div className="flex items-center justify-between gap-2"><b className="truncate">{trn(r.target)}</b><span className="record-score">{trn(r.score)}</span></div>{r.main_issue && <p className="record-fix">{tr("待纠正：")}{trn(r.main_issue)}</p>}<span className="text-[10px] text-muted-foreground">{new Date(r.created_at).toLocaleString('zh-CN')}</span></div>)}</div>}
-    {admin && <Button className="w-full mt-4" onClick={() => setReview(true)}>{tr("审核助学申请")}</Button>}
-    {!admin && slot && <Button variant="outline" className="w-full mt-4" onClick={async () => { const r = await supabase.rpc('claim_first_admin'); if (r.data) { setAdmin(true); setSlot(false); } }}>{tr("设为创始人管理员（仅第一位可领取）")}</Button>}
-    {review && <AdminReview onClose={() => setReview(false)} />}
     <a href="/legal" className="block text-center text-xs text-muted-foreground underline mt-3">{tr("隐私政策与服务条款")}</a><Button variant="outline" className="w-full mt-4" onClick={async () => { await supabase.auth.signOut(); onClose(); }}><LogOut size={15} /> {tr("退出登录")}</Button>
   </Sheet>;
 }
