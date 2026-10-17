@@ -15,7 +15,7 @@ export function VoicePicker() {
   useEffect(() => () => stopCloudSpeech(), []);
   async function preview(id: DemoVoice) {
     setMessage(''); setPlaying(id);
-    const ok = await speakCloud("Hi, I'm Alex. Nice to meet you.", false, {
+    const ok = await speakCloud("Hi, I'm Lin. Nice to meet you.", false, {
       onend: () => setPlaying(null), onerror: () => { setPlaying(null); setMessage(tr('试听暂不可用，请稍后再试。')); },
     }, id);
     if (!ok) { setPlaying(null); setMessage(tr('试听暂不可用，请稍后再试。')); }
