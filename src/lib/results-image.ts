@@ -29,7 +29,7 @@ export async function createResultsImage(data: ResultsImageData, source: HTMLEle
   label(tr('学习成果'), 72, 202, 52);
   label(`${data.from} — ${data.to}`, 72, 266, 28, muted);
   line(72, 310, 1008, 310);
-  const metrics = [
+  const metrics: [string, string][] = [
     [String(data.count), tr('有效跟读次数')],
     [String(data.average ?? '—'), tr('平均 AI 评分')],
     [String(data.days.length), tr('打卡天数')],
@@ -44,10 +44,11 @@ export async function createResultsImage(data: ResultsImageData, source: HTMLEle
     const y = 930 - score * 2.6;
     label(String(score), 72, y + 9, 24, muted, 60); line(140, y, 1008, y);
   });
-  const point = (score: number, i: number) => [data.trend.length === 1 ? 574 : 140 + i * 868 / (data.trend.length - 1), 930 - score * 2.6];
+  const point = (score: number, i: number): [number, number] => [data.trend.length === 1 ? 574 : 140 + i * 868 / (data.trend.length - 1), 930 - score * 2.6];
   data.trend.forEach((r, i) => {
     const [x, y] = point(r.score, i);
-    if (i) { const [px, py] = point(data.trend[i - 1].score, i - 1); line(px, py, x, y, primary, 5); }
+    const previous = data.trend[i - 1];
+    if (previous) { const [px, py] = point(previous.score, i - 1); line(px, py, x, y, primary, 5); }
     ctx.fillStyle = primary; ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2); ctx.fill();
   });
   label(data.trend[0]?.day ?? '', 140, 988, 23, muted);
