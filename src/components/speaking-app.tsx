@@ -4,7 +4,7 @@ import { tr, trn } from '@/lib/tr';
 import { speakCloud, stopCloudSpeech } from '@/lib/cloud-speech';
 import { setContentLang } from '@/lib/tr';
 import { openMemberCheckout, isPaymentsOpen } from '@/lib/paddle';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode, type UIEvent, type TouchEvent } from 'react';
 import { ArrowLeft, ArrowRight, AudioLines, BookOpen, Check, CheckCheck, ChevronRight, Coffee, Flame, GraduationCap, Headphones, Leaf, Maximize2, MessageCircle, Mic, Minimize2, MoreHorizontal, Plane, RotateCcw, ShoppingBag, Sparkles, Sprout, Target, Volume2, X, Zap, Briefcase, Users, Signal, Wifi, BatteryFull, Sun, Moon, Star, CircleHelp, Turtle, Gauge, Cat, ClipboardCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SpeechCoach, type PracticeRecord } from '@/components/speech-coach';
@@ -236,9 +236,9 @@ export function SpeakingApp({ initialLang, initialTab }: { initialLang?: Lang; i
   const swipe = useRef<{ x: number; y: number } | null>(null);
   const backButton = (el: Element | null) => el?.querySelector<HTMLButtonElement>('.detail-heading button') ?? null;
   const clickBack = () => { const main = document.querySelector('.app-content'); backButton(main)?.click(); main?.scrollTo({ top: 0 }); setShowFloatBack(false); };
-  const onContentScroll = (e: React.UIEvent<HTMLElement>) => { const el = e.currentTarget; setShowFloatBack(el.scrollTop > 240 && !!backButton(el)); };
-  const onSwipeStart = (e: React.TouchEvent<HTMLElement>) => { const t = e.touches[0]; const left = e.currentTarget.getBoundingClientRect().left; swipe.current = t.clientX - left < 40 ? { x: t.clientX, y: t.clientY } : null; };
-  const onSwipeEnd = (e: React.TouchEvent<HTMLElement>) => { const s0 = swipe.current; swipe.current = null; if (!s0) return; const t = e.changedTouches[0]; const dx = t.clientX - s0.x, dy = Math.abs(t.clientY - s0.y); if (dx > 70 && dy < 60 && backButton(e.currentTarget)) clickBack(); };
+  const onContentScroll = (e: UIEvent<HTMLElement>) => { const el = e.currentTarget; setShowFloatBack(el.scrollTop > 240 && !!backButton(el)); };
+  const onSwipeStart = (e: TouchEvent<HTMLElement>) => { const t = e.touches[0]; const left = e.currentTarget.getBoundingClientRect().left; swipe.current = t.clientX - left < 40 ? { x: t.clientX, y: t.clientY } : null; };
+  const onSwipeEnd = (e: TouchEvent<HTMLElement>) => { const s0 = swipe.current; swipe.current = null; if (!s0) return; const t = e.changedTouches[0]; const dx = t.clientX - s0.x, dy = Math.abs(t.clientY - s0.y); if (dx > 70 && dy < 60 && backButton(e.currentTarget)) clickBack(); };
 
   return <div className={cn('preview-workspace', fullscreen && 'is-fullscreen')}>
     <header className="workspace-header"><div className="workspace-brand"><img className="brand-logo" src={logoImage} alt={tr("声芽 SayUp Logo")} width={36} height={36} /><span>{tr("声芽")}<span className="workspace-brand-en"> SayUp</span></span><span className="preview-tag">WEB PREVIEW</span></div><div className="workspace-actions"><span className="live-label"><i /> {tr("实时预览")}</span><Button variant="ghost" size="icon" title={tr("预览说明")} aria-label={tr("预览说明")} onClick={() => setPreviewInfo(true)}><CircleHelp /></Button><Button variant="ghost" size="icon" title={fullscreen ? tr("退出全屏") : tr("全屏预览")} aria-label={fullscreen ? tr("退出全屏") : tr("全屏预览")} onClick={() => setFullscreen(!fullscreen)}>{fullscreen ? <Minimize2 /> : <Maximize2 />}</Button></div></header>
