@@ -1,11 +1,13 @@
-import { Component, Suspense, type ReactNode } from 'react';
+import { Component, Suspense, useEffect, useRef, useState, type ReactNode } from 'react';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { ArrowLeft, Download, RefreshCw, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Download, ImageDown, RefreshCw, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { summarizePractice, type ScoredPractice } from '@/lib/learning-results';
 import type { PracticeRecord } from '@/components/speech-coach';
 import { tr } from '@/lib/tr';
+import { createResultsImage } from '@/lib/results-image';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 
 async function loadResults(userId: string) {
   const to = new Date();
@@ -42,12 +44,31 @@ export function LearningResults({ userId, records, onExit, onLogin }: { userId: 
 function ResultsData({ userId, records }: { userId: string; records: PracticeRecord[] }) {
   const { data, refetch, isFetching } = useSuspenseQuery({ queryKey: ['learning-results', userId], queryFn: () => loadResults(userId), staleTime: 0 });
   const recent = records.find(r => r.waveform?.length && r.heard.trim());
+  const imageSource = useRef<HTMLDivElement>(null);
+  const [imageUrl, setImageUrl] = useState<string>();
+  const [makingImage, setMakingImage] = useState(false);
+  const [imageError, setImageError] = useState('');
+  useEffect(() => () => { if (imageUrl) URL.revokeObjectURL(imageUrl); }, [imageUrl]);
+  async function generateImage() {
+    const source = imageSource.current;
+    if (!source) return;
+    setMakingImage(true); setImageError('');
+    try {
+      const blob = await createResultsImage(data, source, recent?.waveform);
+      setImageUrl(URL.createObjectURL(blob));
+    } catch { setImageError(tr('成果图片生成失败，请重试。')); }
+    finally { setMakingImage(false); }
+  }
+  function saveImage() {
+    if (!imageUrl) return;
+    const a = document.createElement('a'); a.href = imageUrl; a.download = 'SayUp-learning-results.png'; a.click();
+  }
   function download() {
     const csv = '\uFEFF' + ['SayUp,' + tr('学习成果'), `${data.from},${data.to}`, [tr('日期'), tr('日均 AI 评分'), tr('有效跟读次数'), tr('已打卡')].join(','), ...data.trend.map(r => [r.day, r.score, r.count, data.days.includes(r.day) ? 1 : 0].join(','))].join('\r\n');
     const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
     const a = document.createElement('a'); a.href = url; a.download = 'SayUp-learning-results.csv'; a.click(); URL.revokeObjectURL(url);
   }
-  return <>
+  return <div ref={imageSource}>
     <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground"><span>{tr('近 30 天')} · {data.from} — {data.to}</span><Button variant="ghost" size="icon" aria-label={tr('刷新成果')} title={tr('刷新成果')} disabled={isFetching} onClick={() => void refetch()}><RefreshCw size={16} /></Button></div>
     <div className="grid grid-cols-3 gap-2 border-y border-border py-5 my-3">
       {[{ value: data.count, label: tr('有效跟读次数') }, { value: data.average ?? '—', label: tr('平均 AI 评分') }, { value: data.days.length, label: tr('打卡天数') }].map(item => <div key={item.label} className="text-center min-w-0"><b className="text-2xl text-primary">{item.value}</b><p className="text-xs text-muted-foreground mt-1">{item.label}</p></div>)}
@@ -70,6 +91,14 @@ function ResultsData({ userId, records }: { userId: string; records: PracticeRec
     </section>
     <section className="py-4"><h3 className="font-semibold text-sm">{tr('真实打卡')}</h3><p className="text-xs text-muted-foreground my-3">{tr('当天完成 3 次真实跟读录音并获得评分，才算打卡一天。只看真开口，挂机不算。')}</p><div className="flex flex-wrap gap-2">{data.days.length ? data.days.map(day => <span key={day} className="text-xs bg-muted rounded px-2 py-1">{day}</span>) : <p className="text-sm text-muted-foreground">{tr('还没有达标打卡日。')}</p>}</div></section>
     <Button variant="outline" className="w-full mt-3" disabled={!data.count} onClick={download}><Download size={16} />{tr('导出匿名成果')}</Button>
+    <Button className="w-full mt-3" disabled={!data.count || makingImage || isFetching} onClick={() => void generateImage()}><ImageDown size={16} />{makingImage ? tr('正在生成图片…') : tr('保存成果图片')}</Button>
+    {imageError && <p role="alert" className="text-sm mt-3">{imageError}</p>}
+    <Dialog open={Boolean(imageUrl)} onOpenChange={open => { if (!open) setImageUrl(undefined); }}>
+      <DialogContent className="max-w-sm"><DialogTitle>{tr('学习成果')}</DialogTitle>
+        {imageUrl && <img className="results-image-preview" src={imageUrl} alt={tr('学习成果')} width={1080} height={1920} />}
+        <Button onClick={saveImage}><Download size={16} />{tr('保存图片')}</Button>
+      </DialogContent>
+    </Dialog>
     <p className="text-xs text-muted-foreground mt-3 mb-4">{tr('仅导出日期、评分和次数，不含邮箱、昵称、句子或录音。')}</p>
-  </>;
+  </div>;
 }
