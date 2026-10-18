@@ -10,6 +10,13 @@ export function getContentLang() { return current; }
 const maps = DICT as unknown as Record<'vi' | 'ja', Record<string, string>>;
 const voiceCopy: Record<'vi' | 'ja', Record<string, string>> = {
   vi: {
+    '保存成果图片': 'Lưu ảnh kết quả', '保存图片': 'Lưu ảnh', '正在生成图片…': 'Đang tạo ảnh…',
+    '成果图片生成失败，请重试。': 'Không tạo được ảnh kết quả. Vui lòng thử lại.',
+    '按日平均；评分不等同于专业水平认证。': 'Điểm trung bình theo ngày; không phải chứng nhận năng lực.',
+    '本次使用中的真实录音波形': 'Dạng sóng từ bản thu trong phiên này',
+    '本次暂无录音波形': 'Phiên này chưa có dạng sóng bản thu',
+    '当天完成 3 次真实录音评分才计入打卡。': 'Hoàn thành 3 bản thu được chấm điểm trong ngày để đạt mục tiêu.',
+    '不含账号、句子或录音文件': 'Không kèm tài khoản, câu nói hay tệp ghi âm',
     '学习成果': 'Kết quả học tập',
     '每一次开口，都有记录': 'Mỗi lần luyện nói đều được ghi lại',
     '仅本人可见；分享前请勿展示账号信息。': 'Chỉ bạn xem được. Không chia sẻ thông tin tài khoản.',
@@ -42,6 +49,13 @@ const voiceCopy: Record<'vi' | 'ja', Record<string, string>> = {
     '试听暂不可用，请稍后再试。': 'Chưa thể nghe thử. Bạn hãy thử lại sau nhé.', '未能保存声音选择，请重试。': 'Không lưu được giọng đã chọn. Bạn hãy thử lại nhé.',
   },
   ja: {
+    '保存成果图片': '学習記録を画像で保存', '保存图片': '画像を保存', '正在生成图片…': '画像を作成中…',
+    '成果图片生成失败，请重试。': '画像を作成できませんでした。もう一度お試しください。',
+    '按日平均；评分不等同于专业水平认证。': '日別の平均スコアです。能力認定を示すものではありません。',
+    '本次使用中的真实录音波形': '今回の練習で録音した音声の波形',
+    '本次暂无录音波形': '今回の練習にはまだ録音の波形がありません',
+    '当天完成 3 次真实录音评分才计入打卡。': '1日に3回録音し、採点を受けると目標達成になります。',
+    '不含账号、句子或录音文件': 'アカウント情報・発話文・音声ファイルは含みません',
     '学习成果': '学習の記録',
     '每一次开口，都有记录': '一回ずつの練習を記録',
     '仅本人可见；分享前请勿展示账号信息。': '本人のみ閲覧できます。共有時はアカウント情報を見せないでください。',

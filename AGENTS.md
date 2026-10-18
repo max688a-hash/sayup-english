@@ -26,3 +26,4 @@
 - External links go through InAppLink: native uses @capacitor/browser; web iframes only hosts in the tested EMBED_OK allowlist, others get an open-in-new-window + copy-link page, because most sites send X-Frame-Options and show a blank 'refused to connect' frame.
 
 - Learning results stay inside the index app, read only the signed-in owner’s practice records and existing check-in RPC, and export aggregate-only reports; microphone waveform peaks remain session-only to avoid retaining voice data.
+- Results PNGs are drawn client-side from summary fields and optional session peaks, never a page screenshot, so account details and speech text cannot leak into the image.
