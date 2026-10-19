@@ -2,7 +2,9 @@ import { openBillingPortal } from '@/utils/portal.functions';
 import { tr, trn } from '@/lib/tr';
 import { useEffect, useState } from 'react';
 import type { User } from '@supabase/supabase-js';
-import { LogOut, Sprout, X } from 'lucide-react';
+import { LogOut, Sprout, Trash2, X } from 'lucide-react';
+import { deleteMyAccount } from '@/utils/account.functions';
+import { isIosApp } from '@/lib/platform';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { lovable } from '@/integrations/lovable/index';
@@ -33,9 +35,9 @@ export function AuthDialog({ reason, initialMode = 'in', onClose }: { reason?: s
     }
     setBusy(false);
   }
-  async function google() {
-    const r = await lovable.auth.signInWithOAuth('google', { redirect_uri: window.location.origin });
-    if (r.error) setMsg(tr("谷歌登录失败，请稍后再试。")); else if (!r.redirected) onClose();
+  async function social(p: 'google' | 'apple') {
+    const r = await lovable.auth.signInWithOAuth(p, { redirect_uri: window.location.origin });
+    if (r.error) setMsg(p === 'apple' ? tr("Apple 登录失败，请稍后再试。") : tr("谷歌登录失败，请稍后再试。")); else if (!r.redirected) onClose();
   }
   return <Sheet title={mode === 'in' ? tr("登录学员账号") : tr("注册学员账号")} onClose={onClose}>
     <div className="grid grid-cols-2 gap-2 mb-3" role="group" aria-label={tr('登录 / 注册')}>
@@ -43,7 +45,8 @@ export function AuthDialog({ reason, initialMode = 'in', onClose }: { reason?: s
       <Button variant={mode === 'up' ? 'secondary' : 'outline'} aria-pressed={mode === 'up'} disabled={busy} onClick={() => { setMode('up'); setMsg(''); }}>{tr('注册')}</Button>
     </div>
     {reason && <p className="member-sub">{reason}</p>}
-    <Button variant="outline" className="w-full h-11" onClick={google}>{tr("使用谷歌账号继续")}</Button>
+    <Button variant="outline" className="w-full h-11 mb-2" onClick={() => social('apple')}>{tr("通过 Apple 登录")}</Button>
+    <Button variant="outline" className="w-full h-11" onClick={() => social('google')}>{tr("使用谷歌账号继续")}</Button>
     <p className="text-center text-xs text-muted-foreground my-3">{tr("或使用邮箱")}</p>
     <form className="aid-form" onSubmit={submit}>
       <label>{tr("邮箱")}<input type="email" required value={email} onChange={e => setEmail(e.target.value)} /></label>
@@ -81,10 +84,31 @@ export function AccountSheet({ user, onClose, onResults }: { user: User; onClose
     {subs[0] && ['active', 'trialing', 'past_due'].includes(subs[0].status) && (() => { const s0 = subs[0]!; const end = s0.current_period_end ? new Date(s0.current_period_end) : null; const soon = end && end.getTime() - Date.now() < 3 * 864e5; return <div className="member-box"><Sprout size={18} /><div>
       <b>{s0.cancel_at_period_end ? tr('已取消自动续费') : tr('自动续费已开启')}</b>
       {end && <p className={soon && !s0.cancel_at_period_end ? 'text-destructive font-semibold' : ''}>{s0.cancel_at_period_end ? tr('会员到期日：') : tr('下次扣费日期：')}{end.toLocaleDateString()}{soon && !s0.cancel_at_period_end ? ' · ' + tr('3 天内将自动扣费') : ''}</p>}
-      {!s0.cancel_at_period_end && <Button size="sm" variant="outline" className="mt-1" onClick={async () => { const w = window.open('', '_blank'); try { const r = await openBillingPortal(); if (w) w.location.href = r.url; } catch { w?.close(); alert(tr('暂时打不开，请稍后再试。')); } }}>{tr('取消自动续费 / 管理付款')}</Button>}
+      {!s0.cancel_at_period_end && !isIosApp() && <Button size="sm" variant="outline" className="mt-1" onClick={async () => { const w = window.open('', '_blank'); try { const r = await openBillingPortal(); if (w) w.location.href = r.url; } catch { w?.close(); alert(tr('暂时打不开，请稍后再试。')); } }}>{tr('取消自动续费 / 管理付款')}</Button>}
     </div></div>; })()}
     <h3 className="font-semibold mt-3 mb-2 text-sm">{tr("最近的口语记录")}</h3>
     {recs.length === 0 ? <p className="text-xs text-muted-foreground">{tr("还没有录音记录，去跟读一句试试。")}</p> : <div className="record-list">{recs.map(r => <div className="record-item" key={r.id}><div className="flex items-center justify-between gap-2"><b className="truncate">{trn(r.target)}</b><span className="record-score">{trn(r.score)}</span></div>{r.main_issue && <p className="record-fix">{tr("待纠正：")}{trn(r.main_issue)}</p>}<span className="text-[10px] text-muted-foreground">{new Date(r.created_at).toLocaleString('zh-CN')}</span></div>)}</div>}
     <a href="/legal" className="block text-center text-xs text-muted-foreground underline mt-3">{tr("隐私政策与服务条款")}</a><Button variant="outline" className="w-full mt-4" onClick={async () => { await supabase.auth.signOut(); onClose(); }}><LogOut size={15} /> {tr("退出登录")}</Button>
+    <DeleteAccount onDone={onClose} />
   </Sheet>;
+}
+
+function DeleteAccount({ onDone }: { onDone: () => void }) {
+  const [step, setStep] = useState(0);
+  const [msg, setMsg] = useState('');
+  async function go() {
+    setStep(2); setMsg('');
+    try {
+      const r = await deleteMyAccount();
+      if (!r.ok) { setStep(1); setMsg(tr('请先取消自动续费，再注销账号，以免注销后继续扣费。')); return; }
+      await supabase.auth.signOut(); localStorage.clear(); onDone(); alert(tr('账号和学习记录已全部删除。'));
+    } catch { setStep(1); setMsg(tr('注销失败，请稍后再试。')); }
+  }
+  if (step === 0) return <Button variant="ghost" className="w-full mt-2 text-destructive" onClick={() => setStep(1)}><Trash2 size={15} /> {tr('注销账号')}</Button>;
+  return <div className="member-box mt-2"><Trash2 size={18} /><div>
+    <b>{tr('确定永久注销账号？')}</b>
+    <p>{tr('将立即删除账号、录音评分记录、学习进度、词汇复习和打卡记录，无法恢复。')}</p>
+    {msg && <p className="text-destructive" role="status">{msg}</p>}
+    <div className="flex gap-2 mt-2"><Button size="sm" variant="destructive" disabled={step === 2} onClick={go}>{step === 2 ? tr('请稍候…') : tr('永久注销')}</Button><Button size="sm" variant="outline" disabled={step === 2} onClick={() => { setStep(0); setMsg(''); }}>{tr('取消')}</Button></div>
+  </div></div>;
 }
