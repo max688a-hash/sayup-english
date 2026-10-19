@@ -13,7 +13,8 @@ export const deleteMyAccount = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     for (const t of USER_TABLES) {
       const col = t === "profiles" ? "id" : "user_id";
-      const { error } = await supabaseAdmin.from(t).delete().eq(col, uid);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await (supabaseAdmin.from(t) as any).delete().eq(col, uid);
       if (error && !/column/.test(error.message)) throw new Error("delete " + t + " failed");
     }
     const { error } = await supabaseAdmin.auth.admin.deleteUser(uid);
