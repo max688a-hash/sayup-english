@@ -217,21 +217,11 @@ export function SpeakingApp({ initialLang, initialTab }: { initialLang?: Lang; i
       onerror: () => setSpeaking(''),
     }, advanced === 'course' ? coreVoice : 'ava').then(ok => {
       if (ok) return;
-      // 云端语音不可用（离线等）时回退设备系统语音
-      if (!('speechSynthesis' in window)) { setNotice(tr("当前浏览器不支持朗读，请使用 Chrome 或 Safari。")); return; }
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-US'; utterance.rate = slow ? (kids ? 0.5 : 0.62) : (kids ? 0.78 : 0.95);
-      const voices = window.speechSynthesis.getVoices();
-      const enVoices = voices.filter(v => v.lang.toLowerCase().startsWith('en'));
-      const voice = enVoices.find(v => /(premium|enhanced|natural)/i.test(v.name) && !/compact/i.test(v.name))
-        ?? enVoices.find(v => /ava|allison|serena|rachel|tessa|oliver|karen|daniel|moira/i.test(v.name) && !/compact/i.test(v.name))
-        ?? enVoices.find(v => v.lang.replace('_', '-') === 'en-US' && !/fred|bells|bahh|bad|cellos|good|pipe|whisper|zarvox|trinoids|junior|albert|compact/i.test(v.name))
-        ?? enVoices[0];
-      if (voice) utterance.voice = voice;
-      utterance.onstart = () => setSpeaking(text);
-      utterance.onend = () => setSpeaking('');
-      utterance.onerror = () => { setSpeaking(''); setNotice(tr("朗读暂不可用，请检查浏览器音频设置后重试。")); };
-      window.speechSynthesis.speak(utterance);
+      // Never fall back to the device's robotic speechSynthesis voice: every shipped sentence has
+      // a neural recording in /audio, so reaching this point means the audio asset is missing.
+      setSpeaking('');
+      setNotice(tr("这句暂时没有示范发音，请检查网络后重试。"));
+      if (import.meta.env.DEV) console.warn('[speak] no neural audio for:', text);
     });
   }
   function resetDetail() { setAdvanced(null);
@@ -411,7 +401,7 @@ export function SpeakingApp({ initialLang, initialTab }: { initialLang?: Lang; i
             {tab === '词汇' && <>
               <div className="vocab-stats">
                 <div>
-                  <span className="eyebrow">MY WORD GARDEN · 3500+ VOCABULARY</span>
+                  <span className="eyebrow">MY WORD GARDEN · 3000+ VOCABULARY</span>
                   <h2>{trn(known.length)}<span> / {trn(activeWords.length)} {tr("个已掌握")}</span></h2>
                 </div>
                 <img src={uiGarden} alt="" width={64} height={64} loading="lazy" className="h-16 w-16 rounded-2xl object-cover" />
@@ -484,7 +474,7 @@ export function SpeakingApp({ initialLang, initialTab }: { initialLang?: Lang; i
                   {!isMember && vocabPage >= 1 ? (
                     <span className="flex items-center justify-center gap-1.5">
                       <Lock size={14} className="text-amber-500" />
-                      {tr("开通会员查看全部 3,500+ 词汇")}
+                      {tr("开通会员查看全部 3,000+ 词汇")}
                     </span>
                   ) : (
                     <>{tr("加载更多词汇")} ({Math.min(vocabPage * 40, activeWords.length)} / {activeWords.length})</>
@@ -504,7 +494,7 @@ export function SpeakingApp({ initialLang, initialTab }: { initialLang?: Lang; i
             {tab === '加强' && <><div className="strength-summary"><div><span className="eyebrow">SMALL FIXES, BIG PROGRESS</span><h2>{tr("精准练习，更快进步")}</h2><p>{tr("说错的句子自动进错题本，逐个攻克。")}</p></div><img src={uiMistakes} alt="" width={64} height={64} loading="lazy" className="h-16 w-16 flex-none rounded-2xl object-cover" /></div><div className="section-heading"><h2>{tr("我的错题本")}</h2></div><div className="weak-list"><Button variant="ghost" className="weak-card" onClick={() => setAdvanced('mistakes' as never)}><span className="topic-icon tone-2"><ClipboardCheck size={24} /></span><div className="text-left"><h3>{tr("打开错题本")}</h3><p>{tr("低于 60 分的句子自动收集 · 重练过关")}</p></div><ChevronRight className="ml-auto" /></Button></div><div className="section-heading mt-6"><h2>{tr("我的录音记录")}</h2><span>{trn(records.length)} {tr("条")}</span></div>{records.length === 0 ? <div className="empty-state"><span className="empty-bubble"><Mic size={26} /></span><b>{tr("还没有录音")}</b><p>{tr("在对话、学习或强化练习里点「开始跟读录音」，AI 会逐词纠正，记录会出现在这里。")}</p></div> : <div className="record-list">{records.map(r => <div className="record-item" key={r.id}><div className="flex items-center justify-between gap-2"><b className="truncate">{trn(r.target)}</b><span className={cn('record-score', r.analysis.score >= 85 ? 'good' : r.analysis.score >= 60 ? 'mid' : 'low')}>{trn(r.analysis.score)}</span></div><p className="record-heard">{tr("识别到：")}{trn(r.heard)}</p>{r.analysis.issues[0] && <p className="record-fix">{tr("待纠正：")}<b>{trn(r.analysis.issues[0].word)}</b> · {trn(r.analysis.issues[0].fix)}</p>}<div className="flex items-center gap-1"><Button variant="ghost" size="sm" onClick={() => void playExclusiveAudio(r.audioUrl)}><Volume2 size={13} /> {tr("我的录音")}</Button><AudioButton text={r.target} /><span className="ml-auto text-[10px] text-muted-foreground">{r.at.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}</span></div></div>)}</div>}<div className="tip-panel mt-6"><Zap size={19} /><div><b>{tr("不怕说错，怕的是不再尝试")}</b><p>{tr("所有纠正都来自你的真实录音，分数只代表这一次的发挥。")}</p></div></div></>}
           </>}
         </main>
-        {sheet === 'sub' && <SubscribeDialog lang={lang} onClose={() => setSheet(null)} onLogin={() => { setSheet(null); setAuthMode('in'); setSheet('auth'); }} onBuy={id => { setSheet(null); setNotice(tr("会员权益已开通")); }} />}{sheet === 'auth' && <AuthDialog initialMode={authMode} reason={authReason} onClose={() => { setSheet(null); }} />}{sheet === 'account' && user && <AccountSheet user={user} onResults={() => { setSheet(null); resetDetail(); setTab('学习'); setAdvanced('results'); }} onClose={() => setSheet(null)} />}
+        {sheet === 'sub' && <SubscribeDialog lang={lang} onClose={() => setSheet(null)} onLogin={() => { setSheet(null); setAuthMode('in'); setSheet('auth'); }} userId={user?.id} onPurchased={() => { setSheet(null); setNotice(tr("会员已开通，全部课程已解锁")); }} />}{sheet === 'auth' && <AuthDialog initialMode={authMode} reason={authReason} onClose={() => { setSheet(null); }} />}{sheet === 'account' && user && <AccountSheet user={user} onResults={() => { setSheet(null); resetDetail(); setTab('学习'); setAdvanced('results'); }} onClose={() => setSheet(null)} />}
         {notice && <div role="status" className="app-notice">{notice}<Button variant="ghost" size="icon" aria-label={tr("关闭提示")} onClick={() => setNotice('')}><X size={14} /></Button></div>}
         <nav className="bottom-nav" aria-label={tr("核心栏目")}>{tabs.map(t => <Button variant="ghost" key={t.name} className={cn('nav-item', tab === t.name && 'active')} onClick={() => { resetDetail(); setTab(t.name); }} aria-label={t.name} aria-current={tab === t.name ? 'page' : undefined}><t.icon size={22} strokeWidth={tab === t.name ? 2.2 : 1.6} /><span>{trn(DICT[lang].tabs[t.name])}</span>{tab === t.name && <i />}</Button>)}</nav><div className="home-indicator"><span /></div>
       </div>

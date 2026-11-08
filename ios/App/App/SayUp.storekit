@@ -1,0 +1,114 @@
+{
+  "identifier" : "5A3F1C2E-7B4D-4E8A-9C1F-2D6B8E4A7C01",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+
+  ],
+  "settings" : {
+    "_applicationInternalID" : "",
+    "_developerTeamID" : "",
+    "_failTransactionsEnabled" : false,
+    "_lastSynchronizedDate" : 0,
+    "_locale" : "zh_CN",
+    "_storefront" : "CHN",
+    "_storeKitErrors" : [
+
+    ]
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "21500001",
+      "localizations" : [
+        {
+          "description" : "声芽 SayUp 会员",
+          "displayName" : "SayUp 会员",
+          "locale" : "zh_CN"
+        }
+      ],
+      "name" : "SayUp Membership",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "39",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "6740000001",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "全部 12 周主线课程、3,000+ 分级词库与 AI 逐词纠音",
+              "displayName" : "月卡",
+              "locale" : "zh_CN"
+            }
+          ],
+          "productID" : "com.sayup.english.sub.month",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "SayUp Monthly",
+          "subscriptionGroupID" : "21500001",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "6740000002",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "全部 12 周主线课程、3,000+ 分级词库与 AI 逐词纠音",
+              "displayName" : "季卡",
+              "locale" : "zh_CN"
+            }
+          ],
+          "productID" : "com.sayup.english.sub.quarter",
+          "recurringSubscriptionPeriod" : "P3M",
+          "referenceName" : "SayUp Quarterly",
+          "subscriptionGroupID" : "21500001",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "299",
+          "familyShareable" : false,
+          "groupNumber" : 3,
+          "internalID" : "6740000003",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "全部 12 周主线课程、3,000+ 分级词库与 AI 逐词纠音",
+              "displayName" : "年卡",
+              "locale" : "zh_CN"
+            }
+          ],
+          "productID" : "com.sayup.english.sub.year",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "SayUp Yearly",
+          "subscriptionGroupID" : "21500001",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { hasVoiceMembership, resolveDemoVoice, type DemoVoice } from '@/lib/member-voices';
+import { cachedEntitlements, hasActiveEntitlement, iapAvailable, refreshEntitlements, watchEntitlements, IAP_CHANGE_EVENT } from '@/lib/iap';
 
 const CHANGE = 'sayup-voice-change';
 export function useMemberVoice(userId?: string) {
@@ -9,6 +10,14 @@ export function useMemberVoice(userId?: string) {
   const [selected, setSelected] = useState<DemoVoice>('ava');
   const currentUser = useRef(userId);
   currentUser.current = userId;
+  // Apple in-app subscription on this device (works without a learner account).
+  const [nativeMember, setNativeMember] = useState(() => hasActiveEntitlement(cachedEntitlements()));
+  useEffect(() => {
+    const read = () => setNativeMember(hasActiveEntitlement(cachedEntitlements()));
+    window.addEventListener(IAP_CHANGE_EVENT, read);
+    if (iapAvailable()) { watchEntitlements(); void refreshEntitlements().then(read); }
+    return () => window.removeEventListener(IAP_CHANGE_EVENT, read);
+  }, []);
   useEffect(() => {
     let active = true;
     setMember(false); setLoaded(false); setSelected('ava');
@@ -52,7 +61,7 @@ export function useMemberVoice(userId?: string) {
     return () => { active = false; authListener.subscription.unsubscribe(); window.clearInterval(interval); window.removeEventListener(CHANGE, read); window.removeEventListener('storage', read); };
   }, [userId]);
   async function select(voice: DemoVoice) {
-    if (!userId || !loaded || (!member && voice !== 'ava')) return false;
+    if (!userId || !loaded || (!(member || nativeMember) && voice !== 'ava')) return false;
     try {
       const { data, error } = await supabase.auth.updateUser({ data: { demo_voice: voice } });
       if (error || data.user?.id !== userId || currentUser.current !== userId) return false;
@@ -60,5 +69,6 @@ export function useMemberVoice(userId?: string) {
       setSelected(voice); window.dispatchEvent(new Event(CHANGE)); return true;
     } catch { return false; }
   }
-  return { member, loaded, voice: resolveDemoVoice(selected, member, true), select };
+  const isMember = member || nativeMember;
+  return { member: isMember, loaded, voice: resolveDemoVoice(selected, isMember, true), select };
 }

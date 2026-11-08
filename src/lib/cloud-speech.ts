@@ -82,7 +82,7 @@ export async function speakCloud(text: string, slow: boolean, hooks: SpeakHooks 
       index = await pending;
     }
     let hash = index[loosenKey(text)];
-    if (!hash && voice !== 'ava') {
+    if (!hash) {
       const sentences = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g)?.map(s => s.trim()).filter(Boolean) ?? [];
       if (sentences.length > 1 && sentences.every(s => index[loosenKey(s)])) {
         let position = 0;

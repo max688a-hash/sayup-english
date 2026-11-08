@@ -81,7 +81,7 @@ export function SpeechCoach({ target, onPassed, onRecord }: { target: string; on
             }
             const clean = str.trim();
             const words = clean.toLowerCase().split(/\s+/).filter(Boolean);
-            const isSimulatorDummy = words.length >= 2 && (words.every(w => w === 'test') || new Set(words).size === 1);
+            const isSimulatorDummy = words.length >= 2 && words.every(w => w === 'test');
             if (!isSimulatorDummy) {
               recognizedText.current = clean;
             }
@@ -141,7 +141,7 @@ export function SpeechCoach({ target, onPassed, onRecord }: { target: string; on
     // Fallback to intelligent on-device speech evaluation if remote API is unavailable
     if (!finalAnalysis) {
       const heardWords = finalHeard.toLowerCase().split(/\s+/).filter(Boolean);
-      const isSimulatorDummy = heardWords.length >= 2 && (heardWords.every(w => w === 'test') || new Set(heardWords).size === 1);
+      const isSimulatorDummy = heardWords.length >= 2 && heardWords.every(w => w === 'test');
       if (isSimulatorDummy) {
         finalHeard = '';
       }
