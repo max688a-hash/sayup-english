@@ -30,3 +30,18 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Build derived data & scratch
+build_dd/
+.sidecar-run-scratch/
+*.bak_*
+
+
+# Environment files (keep local only)
+.env
+.env.*
+!.env.example
+
+# Stale build artifacts copied into public/
+public/assets/
+public/index.html

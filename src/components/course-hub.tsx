@@ -2,7 +2,7 @@ import { tr } from '@/lib/tr';
 import { useEffect, useState } from 'react';
 import { useAuth, saveProgress } from '@/hooks/use-auth';
 import { supabase } from '@/integrations/supabase/client';
-import { ArrowLeft, Check, ChevronRight, Volume2 } from 'lucide-react';
+import { ArrowLeft, Check, ChevronRight, Lock, Volume2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SpeechCoach, type PracticeRecord } from '@/components/speech-coach';
 import { cn } from '@/lib/utils';
@@ -11,7 +11,7 @@ import { COURSE, STAGES, type Week } from '@/lib/course12';
 type Speak = (text: string, speed?: 'slow' | 'normal' | 'current') => void;
 const STEPS = ['听懂', '跟读', '替换练', '对话', '任务'] as const;
 
-export function CourseHub({ speak, onRecord, onExit }: { speak: Speak; onRecord: (r: PracticeRecord) => void; onExit: () => void }) {
+export function CourseHub({ speak, onRecord, onExit, isMember, onNeedSub }: { speak: Speak; onRecord: (r: PracticeRecord) => void; onExit: () => void; isMember?: boolean; onNeedSub?: () => void }) {
   const [week, setWeek] = useState<Week | null>(null);
   const [step, setStep] = useState(0);
   const [k, setK] = useState(0);
@@ -23,7 +23,23 @@ export function CourseHub({ speak, onRecord, onExit }: { speak: Speak; onRecord:
   if (!week) return <div className="adv-hub">{head(tr('12 周主线课程'), onExit)}
     <div className="strength-summary"><div><span className="eyebrow">{tr('A2 → B1+ · 约 3 个月')}</span><h2>{tr('日常与职场英语')}</h2><p>{tr('每周一个真实场景：先听懂，再跟读，再替换句型，最后开口完成任务。每天约 20 分钟。')}</p>{!user && <p className="text-xs text-amber mt-1">{tr('未登录：完成记录只保存到刷新前。点右上角头像登录即可长期保存。')}</p>}</div></div>
     {STAGES.map(s => <div key={tr(s.name)}><div className="section-heading"><h2>{tr(s.name)}</h2><span>{tr(s.weeks)}</span></div><p className="adv-zh mb-2">{tr(s.desc)}</p>
-      <div className="weak-list">{COURSE.filter(w => w.stage === s.name).map(w => <Button variant="ghost" className="weak-card" key={w.week} onClick={() => { setWeek(w); setStep(0); setK(0); }}><span className={cn('path-number', done.includes(w.week) && 'active')}>{done.includes(w.week) ? <Check size={18} /> : String(w.week).padStart(2, '0')}</span><div className="text-left min-w-0"><h3>{tr(w.title)}</h3><p>{tr(w.goal)}</p></div><ChevronRight className="ml-auto" /></Button>)}</div></div>)}
+      <div className="weak-list">{COURSE.filter(w => w.stage === s.name).map(w => {
+        const locked = w.week > 2 && !isMember;
+        return <Button variant="ghost" className="weak-card" key={w.week} onClick={() => {
+          if (locked) {
+            onNeedSub ? onNeedSub() : alert(tr('第 3-12 周主线课程为会员专属内容，请在 SayUp App 内开通会员以解锁！'));
+            return;
+          }
+          setWeek(w); setStep(0); setK(0);
+        }}>
+          <span className={cn('path-number', done.includes(w.week) && 'active')}>{done.includes(w.week) ? <Check size={18} /> : String(w.week).padStart(2, '0')}</span>
+          <div className="text-left min-w-0">
+            <h3 className="flex items-center gap-1.5">{tr(w.title)}{locked && <Lock size={13} className="text-amber-500 shrink-0" />}</h3>
+            <p>{tr(w.goal)}</p>
+          </div>
+          {locked ? <Lock size={15} className="ml-auto text-amber-500 shrink-0" /> : <ChevronRight className="ml-auto" />}
+        </Button>;
+      })}</div></div>)}
   </div>;
 
   const back = () => { if (step > 0) { setStep(step - 1); setK(0); } else setWeek(null); };

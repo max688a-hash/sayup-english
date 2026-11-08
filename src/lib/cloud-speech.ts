@@ -1,4 +1,5 @@
 import type { DemoVoice } from '@/lib/member-voices';
+import { getApiUrl } from '@/lib/api-config';
 // Client helper: plays cloud-synthesized demo audio (consistent, natural voice
 // on every device). Falls back to the device's speechSynthesis when the cloud
 // voice is unavailable, so the app never goes silent.
@@ -9,6 +10,22 @@ let playbackId = 0;
 export function stopCloudSpeech() {
   playbackId++;
   if (current) { current.pause(); current.src = ""; current = null; }
+}
+
+/**
+ * 独占式音频播放器：打断并销毁所有其他正在播放的录音、示范发音与 TTS，彻底避免多音频混响打架
+ */
+export function playExclusiveAudio(url: string): HTMLAudioElement {
+  stopCloudSpeech();
+  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+  }
+  const audio = new Audio(url);
+  current = audio;
+  audio.onended = () => { if (current === audio) current = null; };
+  audio.onerror = () => { if (current === audio) current = null; };
+  audio.play().catch(() => {});
+  return audio;
 }
 
 export type SpeakHooks = { onstart?: () => void; onend?: () => void; onerror?: () => void };
@@ -84,7 +101,7 @@ export async function speakCloud(text: string, slow: boolean, hooks: SpeakHooks 
     if (requestId !== playbackId) return true;
     if (hash) {
       const path = chosenVoice === 'ava' ? `/audio/${hash}.mp3` : `/audio/v/${chosenVoice}/${hash}.mp3`;
-      const audioUrl = chosenVoice === 'ava' ? path : await recordedVoiceUrl(path);
+      const audioUrl = await recordedVoiceUrl(path).catch(() => path);
       if (requestId !== playbackId) return true;
       const audio = new Audio(audioUrl);
       audio.playbackRate = slow ? 0.75 : 1;
@@ -93,15 +110,18 @@ export async function speakCloud(text: string, slow: boolean, hooks: SpeakHooks 
       audio.onplay = () => hooks.onstart?.();
       audio.onended = () => { if (current === audio) current = null; hooks.onend?.(); };
       audio.onerror = () => { if (current === audio) current = null; hooks.onerror?.(); };
-      try { await audio.play(); return true; } catch {
-        if (voice !== 'ava') return false;
+      try {
+        await audio.play();
+        return true;
+      } catch (err) {
+        console.warn('Local pre-baked audio playback failed, falling back to TTS:', err);
       }
     }
     if (voice !== 'ava') return false;
     const key = `${slow ? "s" : "n"}|${text}`;
     let url = cache.get(key);
     if (!url) {
-      const res = await fetch("/api/tts", {
+      const res = await fetch(getApiUrl("/api/tts"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text, slow }),

@@ -1,7 +1,6 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 const mock = vi.hoisted(() => ({ saved: 'emma', member: true, fail: false, update: vi.fn() }));
-vi.mock('@/lib/paddle', () => ({ getPaddleEnvironment: () => 'live' }));
 vi.mock('@/integrations/supabase/client', () => ({ supabase: {
   auth: {
     onAuthStateChange: () => ({ data: { subscription: { unsubscribe: vi.fn() } } }),

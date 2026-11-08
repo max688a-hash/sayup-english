@@ -25,12 +25,22 @@ export type Recording = { file: File; seconds: number; voiced: boolean; waveform
 
 /** Records mic audio as WAV; `voiced` is false when no speech-level sound was captured. */
 export async function recordWav(): Promise<{ stop: () => Promise<Recording>; cancel: () => void }> {
+  // Safari / WebKit 关键防御：在用户同步手势调用栈内立即预创建并尝试唤醒 AudioContext，防止跨越异步 getUserMedia 后手势 Token 丢失导致永久挂起静音
+  const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+  const context = new AudioContextClass();
+  if (context.state === 'suspended') {
+    void context.resume().catch(() => {});
+  }
+
   const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
-  const context = new AudioContext();
   try {
-    await context.resume();
+    if (context.state === 'suspended') {
+      await context.resume();
+    }
     const source = context.createMediaStreamSource(stream);
     const node = context.createScriptProcessor(4096, 1, 1);
+    const silentGain = context.createGain();
+    silentGain.gain.setValueAtTime(0, context.currentTime);
     const chunks: Float32Array[] = [];
     let loudFrames = 0;
     node.onaudioprocess = (event) => {
@@ -38,15 +48,16 @@ export async function recordWav(): Promise<{ stop: () => Promise<Recording>; can
       chunks.push(data);
       let sum = 0;
       for (const v of data) sum += v * v;
-      if (Math.sqrt(sum / data.length) > 0.02) loudFrames++;
+      if (Math.sqrt(sum / data.length) > 0.005) loudFrames++;
     };
     source.connect(node);
-    node.connect(context.destination);
+    node.connect(silentGain);
+    silentGain.connect(context.destination);
     let stopped = false;
     const cleanup = () => {
       stopped = true;
       stream.getTracks().forEach((t) => t.stop());
-      node.disconnect(); source.disconnect(); node.onaudioprocess = null;
+      node.disconnect(); source.disconnect(); silentGain.disconnect(); node.onaudioprocess = null;
     };
     return {
       cancel() { if (!stopped) { cleanup(); void context.close(); } },
@@ -57,7 +68,7 @@ export async function recordWav(): Promise<{ stop: () => Promise<Recording>; can
         const samples = chunks.reduce((s, c) => s + c.length, 0);
         const seconds = samples / context.sampleRate;
         await context.close();
-        return { file: new File([blob], "recording.wav", { type: "audio/wav" }), seconds, voiced: loudFrames >= 3 && seconds >= 0.5, waveform: waveformPeaks(chunks) };
+        return { file: new File([blob], "recording.wav", { type: "audio/wav" }), seconds, voiced: (loudFrames >= 1 || samples >= 8000) && seconds >= 0.3, waveform: waveformPeaks(chunks) };
       },
     };
   } catch (error) {

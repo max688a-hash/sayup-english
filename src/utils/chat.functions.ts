@@ -5,7 +5,7 @@ const LANG_NAME: Record<string, string> = { zh: "简体中文", vi: "越南语",
 
 // AI free conversation partner: replies in simple English and corrects the learner's last sentence.
 export const freeChat = createServerFn({ method: "POST" })
-  .inputValidator((d: { messages: Msg[]; scene: string; lang: string }) => {
+  .validator((d: { messages: Msg[]; scene: string; lang: string }) => {
     if (!Array.isArray(d.messages) || d.messages.length > 40) throw new Error("bad input");
     return { scene: String(d.scene).slice(0, 80), lang: String(d.lang), messages: d.messages.map(m => ({ role: m.role === "assistant" ? "assistant" as const : "user" as const, content: String(m.content).slice(0, 600) })) };
   })

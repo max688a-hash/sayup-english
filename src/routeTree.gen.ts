@@ -14,7 +14,6 @@ import { Route as LegalRouteImport } from './routes/legal'
 import { Route as ApiSpeechAnalyzeRouteImport } from './routes/api/speech-analyze'
 import { Route as ApiTtsRouteImport } from './routes/api/tts'
 import { Route as StartLangRouteImport } from './routes/start.$lang'
-import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -41,12 +40,6 @@ const StartLangRoute = StartLangRouteImport.update({
   path: '/start/$lang',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicPaymentsWebhookRoute =
-  ApiPublicPaymentsWebhookRouteImport.update({
-    id: '/api/public/payments/webhook',
-    path: '/api/public/payments/webhook',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,7 +47,6 @@ export interface FileRoutesByFullPath {
   '/api/speech-analyze': typeof ApiSpeechAnalyzeRoute
   '/api/tts': typeof ApiTtsRoute
   '/start/$lang': typeof StartLangRoute
-  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,7 +54,6 @@ export interface FileRoutesByTo {
   '/api/speech-analyze': typeof ApiSpeechAnalyzeRoute
   '/api/tts': typeof ApiTtsRoute
   '/start/$lang': typeof StartLangRoute
-  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,25 +62,13 @@ export interface FileRoutesById {
   '/api/speech-analyze': typeof ApiSpeechAnalyzeRoute
   '/api/tts': typeof ApiTtsRoute
   '/start/$lang': typeof StartLangRoute
-  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
-    | '/legal'
-    | '/api/speech-analyze'
-    | '/api/tts'
-    | '/start/$lang'
-    | '/api/public/payments/webhook'
+    '/' | '/legal' | '/api/speech-analyze' | '/api/tts' | '/start/$lang'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/legal'
-    | '/api/speech-analyze'
-    | '/api/tts'
-    | '/start/$lang'
-    | '/api/public/payments/webhook'
+  to: '/' | '/legal' | '/api/speech-analyze' | '/api/tts' | '/start/$lang'
   id:
     | '__root__'
     | '/'
@@ -97,7 +76,6 @@ export interface FileRouteTypes {
     | '/api/speech-analyze'
     | '/api/tts'
     | '/start/$lang'
-    | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -106,7 +84,6 @@ export interface RootRouteChildren {
   ApiSpeechAnalyzeRoute: typeof ApiSpeechAnalyzeRoute
   ApiTtsRoute: typeof ApiTtsRoute
   StartLangRoute: typeof StartLangRoute
-  ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -146,13 +123,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StartLangRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/payments/webhook': {
-      id: '/api/public/payments/webhook'
-      path: '/api/public/payments/webhook'
-      fullPath: '/api/public/payments/webhook'
-      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -162,7 +132,6 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSpeechAnalyzeRoute: ApiSpeechAnalyzeRoute,
   ApiTtsRoute: ApiTtsRoute,
   StartLangRoute: StartLangRoute,
-  ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -22,7 +22,7 @@ export function PronLab({ speak, onExit, onRecord }: { speak: (t: string, s?: 's
   const [target, setTarget] = useState('');
   const head = (title: string, back: () => void) => <div className="detail-heading"><Button variant="ghost" size="icon" aria-label={tr('返回上一级')} onClick={back}><ArrowLeft /></Button><span>{title}</span><span className="w-9" /></div>;
   if (!sel) return <div className="adv-hub">{head(tr('发音实验室'), onExit)}
-    <div className="strength-summary"><div><span className="eyebrow">{tr('8 组最易混的音')}</span><h2>{tr('先听清区别，再录音让 AI 纠正')}</h2><p>{tr('每组：看发音方法 → 听对比词 → 跟读词和句子。')}</p></div></div>
+    <div className="strength-summary"><div><span className="eyebrow">{tr('8 组最易混的音')}</span><h2>{tr('先听清区别，再录音智能纠正发音')}</h2><p>{tr('每组：看发音方法 → 听对比词 → 跟读词和句子。')}</p></div></div>
     {SOUNDS.map(s => <Button key={s.id} variant="ghost" className="weak-card" onClick={() => { setSel(s); setTarget(s.pairs[0]![0]); }}><div className="text-left"><h3>{tr(s.title)}</h3><p>{s.pairs.map(p => p.join(' / ')).join(' · ')}</p></div><ChevronRight className="ml-auto" /></Button>)}
   </div>;
   return <div className="adv-hub">{head(tr(sel.title), () => setSel(null))}

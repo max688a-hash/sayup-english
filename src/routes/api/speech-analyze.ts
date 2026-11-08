@@ -20,7 +20,7 @@ export const Route = createFileRoute("/api/speech-analyze")({
           const target = String(form.get("target") ?? "").trim().slice(0, 300);
           if (!(file instanceof File) || !file.size) return json({ status: "no_audio", error: "没有收到录音，请再说一次" }, 400);
           if (file.size > MAX_AUDIO_BYTES) return json({ error: "录音太长，请控制在 30 秒以内" }, 413);
-          if (!file.type.startsWith("audio/")) return json({ error: "录音格式不正确" }, 400);
+          if (file.type && !file.type.startsWith("audio/") && file.type !== "application/octet-stream") return json({ error: "录音格式不正确" }, 400);
           if (!target) return json({ error: "缺少目标句子" }, 400);
           const heard = await transcribeAudio(apiKey, file, request.signal);
           if (!heard.replace(/[^a-zA-Z]/g, "")) return json({ status: "no_speech", heard });

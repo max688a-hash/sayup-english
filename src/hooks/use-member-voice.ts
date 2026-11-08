@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { getPaddleEnvironment } from '@/lib/paddle';
 import { hasVoiceMembership, resolveDemoVoice, type DemoVoice } from '@/lib/member-voices';
 
 const CHANGE = 'sayup-voice-change';
@@ -40,13 +39,12 @@ export function useMemberVoice(userId?: string) {
       try { localStorage.setItem(`sayup-voice:${userId}`, voice); } catch { /* optional cache */ }
     });
     async function refresh() {
-      const [s, r, a] = await Promise.all([
-        supabase.from('subscriptions').select('status,current_period_end').eq('user_id', userId ?? '').eq('environment', getPaddleEnvironment()),
+      const [s, r] = await Promise.all([
+        supabase.from('subscriptions').select('status,current_period_end').eq('user_id', userId ?? ''),
         supabase.from('reward_grants').select('starts_at,ends_at').eq('user_id', userId ?? ''),
-        supabase.from('aid_applications').select('status').eq('user_id', userId ?? ''),
       ]);
       if (!active) return;
-      setMember(hasVoiceMembership(s.data ?? [], r.data ?? [], a.data ?? []));
+      setMember(hasVoiceMembership(s.data ?? [], r.data ?? [], []));
       setLoaded(true);
     }
     void refresh();

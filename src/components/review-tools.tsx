@@ -9,23 +9,46 @@ import { SpeechCoach, type PracticeRecord } from '@/components/speech-coach';
 type Speak = (t: string, s?: 'slow' | 'normal' | 'current') => void;
 type P = { speak: Speak; onExit: () => void; onRecord: (r: PracticeRecord) => void };
 
+import { loadGuestMistakes, updateGuestMistake } from '@/lib/storage';
+
 // Mistake book: sentences whose real recorded score was below 60, newest first, deduplicated.
 export function MistakeBook({ speak, onExit, onRecord }: P) {
   const { user } = useAuth();
   const [items, setItems] = useState<{ target: string; score: number; main_issue: string | null }[]>([]);
   const [pick, setPick] = useState<string | null>(null);
-  useEffect(() => { if (!user) return; void supabase.from('practice_records').select('target,score,main_issue').lt('score', 60).order('created_at', { ascending: false }).limit(100).then(r => {
-    const seen = new Set<string>(); setItems((r.data ?? []).filter(x => !seen.has(x.target) && seen.add(x.target)));
-  }); }, [user]);
+
+  useEffect(() => {
+    if (!user) {
+      // 游客/离线用户：直接从本地持久化错题本加载
+      const local = loadGuestMistakes();
+      setItems(local.map(m => ({ target: m.target, score: m.score, main_issue: m.main_issue })));
+      return;
+    }
+    void supabase.from('practice_records').select('target,score,main_issue').lt('score', 60).order('created_at', { ascending: false }).limit(100).then(r => {
+      const seen = new Set<string>();
+      setItems((r.data ?? []).filter(x => !seen.has(x.target) && seen.add(x.target)));
+    });
+  }, [user]);
+
+  function handleRecord(r: PracticeRecord) {
+    onRecord(r);
+    // 无论是游客还是登录用户，达标后自动在端侧移出错题本
+    updateGuestMistake(r.target, r.analysis.score, r.heard, r.analysis.issues[0]?.fix ?? null);
+    if (r.analysis.score >= 60) {
+      setItems(prev => prev.filter(it => it.target.toLowerCase() !== r.target.toLowerCase()));
+      setPick(null);
+    }
+  }
+
   return <div className="adv-hub">
     <div className="detail-heading"><Button variant="ghost" size="icon" aria-label={tr('返回上一级')} onClick={onExit}><ArrowLeft /></Button><span>{tr('智能错题本')}</span><span className="w-9" /></div>
-    <p className="text-sm text-muted-foreground mb-3">{tr('跟读低于 60 分的句子会自动收进来，重新读到 60 分以上就算过关。')}</p>
-    {!user ? <p className="text-sm p-3">{tr('登录后才能保存错题。')}</p> : items.length === 0 ? <p className="text-sm p-3">{tr('还没有错题，继续练习吧。')}</p> :
+    <p className="text-sm text-muted-foreground mb-3">{tr('跟读低于 60 分的句子会自动收录（支持离线记忆），重新读到 60 分以上就算过关。')}</p>
+    {items.length === 0 ? <p className="text-sm p-3 text-muted-foreground">{tr('暂无待复习错题，每一次开口都是进步！')}</p> :
       <div className="space-y-2">{items.map(it => <div key={it.target} className="rounded-lg border border-border bg-card p-3">
         <div className="flex items-start gap-2"><div className="flex-1"><b className="text-sm">{it.target}</b><p className="text-xs text-muted-foreground">{it.score} {tr('分')}{it.main_issue ? ' · ' + it.main_issue : ''}</p></div>
           <Button variant="ghost" size="icon" aria-label={tr('听示范')} onClick={() => speak(it.target)}><Volume2 size={16} /></Button>
           <Button variant="outline" size="sm" onClick={() => setPick(pick === it.target ? null : it.target)}>{tr('再练')}</Button></div>
-        {pick === it.target && <SpeechCoach key={it.target} target={it.target} onPassed={() => {}} onRecord={onRecord} />}
+        {pick === it.target && <SpeechCoach key={it.target} target={it.target} onPassed={() => {}} onRecord={handleRecord} />}
       </div>)}</div>}
   </div>;
 }

@@ -1,15 +1,136 @@
 export type Tab = '对话' | '角色' | '学习' | '词汇' | '加强';
+export type Word = { word: string; phonetic: string; meaning: string; example: string; level: string };
 export type Scene = { id: string; title: string; english: string; category: string; icon: 'coffee' | 'plane' | 'briefcase' | 'shopping'; level: string; turns: string[]; replies: string[]; options: [string, string][]; tips: string[] };
 export const scenes: Scene[] = [
-  { id: 'cafe', title: '在咖啡店点单', english: 'A little coffee, a little chat', category: '日常生活', icon: 'coffee', level: 'A1', turns: ['Hi! What can I get for you?', 'Sure! Would you like it hot or iced?', 'Great. Anything else?'], replies: ["I'd like a latte, please.", 'Iced, please.', "That's all, thank you!"], options: [["I'd like a latte, please.", 'A cappuccino, please.'], ['Iced, please.', 'Hot, please.'], ["That's all, thank you!", 'A cookie too, please.']], tips: ['很好！I’d like… 是礼貌点单的万能开头。', '说得自然！hot 和 iced 是冷热饮的常用说法。', '圆满结束！That’s all 表示“就要这些了”。'] },
-  { id: 'travel', title: '机场轻松出发', english: 'Ready for your next adventure', category: '旅行出行', icon: 'plane', level: 'A2', turns: ['Hello! May I see your passport?', 'Do you have any bags to check?', 'Here is your boarding pass.'], replies: ['Here you are.', 'Yes, just one bag.', 'Thank you. Where is my gate?'], options: [['Here you are.', 'Sure, here it is.'], ['Yes, just one bag.', 'No, only a carry-on.'], ['Thank you. Where is my gate?', 'Thanks! What time is boarding?']], tips: ['很棒！Here you are 是递东西时最自然的说法。', '不错！carry-on 指随身携带的行李。', '完成值机！gate 是登机口，boarding 是登机。'] },
-  { id: 'work', title: '认识新同事', english: 'Make a great first impression', category: '职场交流', icon: 'briefcase', level: 'A2', turns: ["Hi! I'm Alex. Nice to meet you.", 'Which team are you joining?', 'Welcome to the team!'], replies: ["I'm Sam. Nice to meet you too.", "I'm joining the design team.", "Thanks! I'm excited to be here."], options: [["I'm Sam. Nice to meet you too.", 'Hi Alex! I\'m Sam.'], ["I'm joining the design team.", 'I\'ll be on the design team.'], ["Thanks! I'm excited to be here.", 'Thank you! Looking forward to it.']], tips: ['第一印象很棒！回应 Nice to meet you 记得加 too。', '表达清楚！join a team 表示加入某个团队。', '完美收尾！excited 和 looking forward 都表达期待。'] },
-  { id: 'shop', title: '逛逛周末市集', english: 'Find something you love', category: '日常生活', icon: 'shopping', level: 'A1', turns: ['Hello! Can I help you?', 'What size do you need?', 'Of course. Here you go!'], replies: ["I'm looking for a T-shirt.", 'A medium, please.', 'Thank you. Can I try it on?'], options: [["I'm looking for a T-shirt.", 'Just browsing, thanks.'], ['A medium, please.', 'A small, please.'], ['Thank you. Can I try it on?', 'Thanks! How much is it?']], tips: ['很好！I’m looking for… 是购物找东西的常用句。', '说得对！衣服尺码：small / medium / large。', '很棒！try it on 是“试穿”，how much 用来问价格。'] },
+  {
+    id: 'cafe',
+    title: '在咖啡店点单',
+    english: 'A little coffee, a little chat',
+    category: '日常生活',
+    icon: 'coffee',
+    level: 'A1',
+    turns: [
+      'Hi! What can I get for you?',
+      'Sure. Hot or iced?',
+      'What size do you need?',
+      'For here or to go?',
+      'Anything else? A muffin maybe?',
+      'Cash or card?',
+    ],
+    replies: [
+      "Hi, I'd like a large latte, please.",
+      'Iced, with less sugar.',
+      'A medium, please.',
+      'To go, please.',
+      "No, that's it. How much is it?",
+      'By card please.',
+    ],
+    options: [
+      ["Hi, I'd like a large latte, please.", "I'd like a latte, please."],
+      ['Iced, with less sugar.', 'Hot, please.'],
+      ['A medium, please.', 'A small, please.'],
+      ['To go, please.', 'Iced, please.'],
+      ["No, that's it. How much is it?", "That's all, thank you!"],
+      ['By card please.', 'Card please.'],
+    ],
+    tips: [
+      '很好！I’d like… 是礼貌点单的万能开头。',
+      '说得自然！hot 和 iced 是冷热饮的常用说法。',
+      '尺码清晰！medium / small 是杯型的常用词汇。',
+      '非常实用！For here（堂食）或 to go（外带）是点单必答题。',
+      '完美收尾！How much is it 用来问价格非常自然。',
+      '支付得体！By card please 是刷卡支付的标准表达。',
+    ],
+  },
+  {
+    id: 'travel',
+    title: '机场轻松出发',
+    english: 'Ready for your next adventure',
+    category: '旅行出行',
+    icon: 'plane',
+    level: 'A2',
+    turns: [
+      'Hello! May I see your passport?',
+      'Do you have any bags to check?',
+      'Here is your boarding pass.',
+    ],
+    replies: [
+      'Here you are.',
+      'Yes, just one bag.',
+      'Thank you. Where is my gate?',
+    ],
+    options: [
+      ['Here you are.', 'Sure, here it is.'],
+      ['Yes, just one bag.', 'No, only a carry-on.'],
+      ['Thank you. Where is my gate?', 'Thanks! What time is boarding?'],
+    ],
+    tips: [
+      '很棒！Here you are 是递东西时最自然的说法。',
+      '不错！carry-on 指随身携带的行李。',
+      '完成值机！gate 是登机口，boarding 是登机。',
+    ],
+  },
+  {
+    id: 'work',
+    title: '认识新同事',
+    english: 'Make a great first impression',
+    category: '职场交流',
+    icon: 'briefcase',
+    level: 'A2',
+    turns: [
+      "Hi! I'm Alex. Nice to meet you.",
+      'Which team are you joining?',
+      'Welcome to the team!',
+    ],
+    replies: [
+      "I'm Sam. Nice to meet you too.",
+      "I'm joining the design team.",
+      "Thanks! I'm excited to be here.",
+    ],
+    options: [
+      ["I'm Sam. Nice to meet you too.", "Hi Alex! I'm Sam."],
+      ["I'm joining the design team.", "I'll be on the design team."],
+      ["Thanks! I'm excited to be here.", 'Thank you! Looking forward to it.'],
+    ],
+    tips: [
+      '第一印象很棒！回应 Nice to meet you 记得加 too。',
+      '表达清楚！join a team 表示加入某个团队。',
+      '完美收尾！excited 和 looking forward 都表达期待。',
+    ],
+  },
+  {
+    id: 'shop',
+    title: '逛逛周末市集',
+    english: 'Find something you love',
+    category: '日常生活',
+    icon: 'shopping',
+    level: 'A1',
+    turns: [
+      'Hello! Can I help you?',
+      'What size do you need?',
+      'Of course. Here you go!',
+    ],
+    replies: [
+      "I'm looking for a T-shirt.",
+      'A medium, please.',
+      'Thank you. Can I try it on?',
+    ],
+    options: [
+      ["I'm looking for a T-shirt.", 'Just browsing, thanks.'],
+      ['A medium, please.', 'A small, please.'],
+      ['Thank you. Can I try it on?', 'Thanks! How much is it?'],
+    ],
+    tips: [
+      '很好！I’m looking for… 是购物找东西的常用句。',
+      '说得对！衣服尺码：small / medium / large。',
+      '很棒！try it on 是“试穿”，how much 用来问价格。',
+    ],
+  },
 ];
 export const kidScene: Scene = { id: 'kids', title: '认识动物朋友', english: 'Hello, little friends!', category: '动物朋友', icon: 'coffee', level: '启蒙', turns: ['Hello! What animal do you like?', 'What color is the cat?', 'Can you say hello to the cat?'], replies: ['I like cats!', 'The cat is orange.', 'Hello, little cat!'], options: [['I like cats!', 'I like dogs!'], ['The cat is orange.', 'The cat is white.'], ['Hello, little cat!', 'Hi, little cat!']], tips: ['真棒！I like… 可以说出你喜欢的动物。', '观察得真仔细！orange 是橙色，white 是白色。', '太棒了！你和小猫成为好朋友啦！'] };
 export const toyScene: Scene = { id: 'toys', title: '我的玩具商店', english: 'Let’s play together', category: '玩具游戏', icon: 'shopping', level: '启蒙', turns: ['Welcome to my toy shop! What toy do you want?', 'Here is a ball. What color do you like?', 'Here you go! Do you want to play together?'], replies: ['I want a ball, please.', 'I like blue!', 'Yes! Let’s play!'], options: [['I want a ball, please.', 'I want a teddy bear, please.'], ['I like blue!', 'I like red!'], ['Yes! Let’s play!', 'Yes, please! Thank you!']], tips: ['真棒！I want… please 可以礼貌地说出想要的玩具。', '说得真好！blue 是蓝色，red 是红色。', '太棒了！Let’s play 就是“我们一起玩吧”！'] };
 export const kidCategories = ['全部', '动物朋友', '玩具游戏'];
-export const words = [
+export const words: Word[] = [
   { word: 'coffee', phonetic: '/ˈkɒfi/', meaning: '咖啡', example: "I'd like a coffee, please.", level: 'A1' },
   { word: 'please', phonetic: '/pliːz/', meaning: '请；劳驾', example: 'A latte, please.', level: 'A1' },
   { word: 'delicious', phonetic: '/dɪˈlɪʃəs/', meaning: '美味的', example: 'This coffee is delicious.', level: 'A2' },
@@ -19,7 +140,7 @@ export const words = [
   { word: 'passport', phonetic: '/ˈpɑːspɔːt/', meaning: '护照', example: 'Here is my passport.', level: 'A2' },
   { word: 'colleague', phonetic: '/ˈkɒliːɡ/', meaning: '同事', example: 'She is my new colleague.', level: 'B1' },
 ];
-export const kidWords = [
+export const kidWords: Word[] = [
   { word: 'cat', phonetic: '/kæt/', meaning: '小猫', example: 'I like the orange cat.', level: 'A1' },
   { word: 'apple', phonetic: '/ˈæpəl/', meaning: '苹果', example: 'This is a red apple.', level: 'A1' },
   { word: 'happy', phonetic: '/ˈhæpi/', meaning: '开心的', example: 'I am happy today.', level: 'A2' },
