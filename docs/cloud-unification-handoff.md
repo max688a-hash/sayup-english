@@ -26,27 +26,27 @@
 
 ---
 
-## 二、唯一权威账本（已定稿）
+## 二、唯一权威账本（已定稿，已迁移至我方自有账号）
 
 | 角色 | 值 |
 |---|---|
-| **权威数据库（唯一）** | Supabase 项目 `qcqqfjugznqdtldxgyrj` —— **已定以此为准** |
-| **权威后端（唯一）** | `https://sayup-english.lovable.app`（IPA 内 `api-config.ts` 硬编码指向） |
+| **权威数据库（唯一）** | Supabase 项目 `lonhvcavkkejsapecaxy`（东京 ap-northeast-1，我方账号，已完成 0000–0009 全部迁移并验证）|
+| **权威后端（唯一）** | `https://app.orikstudio.com`（IPA 内 `api-config.ts` 硬编码指向） |
 | App Bundle ID / 团队 | `com.sayup.app` / `XU3FP3HXF3`（SHIHUA ZHANG） |
 | 官网门面域名 | `sayup.orikstudio.com`（**当前 500，须修复**；修复前商店支持/隐私网址先用 lovable 域名） |
 
-**以 `qcqqfjugznqdtldxgyrj` 为准的理由**：已签名导出的 IPA 将 Supabase 地址在编译期写死指向该库，换库等于重打 IPA 并迁移全部练习/订阅数据；学习者练习记录、订阅账本、积分账本全部在此库，无迁移成本。云端侧仅需把环境变量指向该库即可，成本最低。
+**以 `lonhvcavkkejsapecaxy` 为准的理由**：已签名导出的 IPA 将 Supabase 地址在编译期写死指向该库，换库等于重打 IPA 并迁移全部练习/订阅数据；学习者练习记录、订阅账本、积分账本全部在此库，无迁移成本。云端侧仅需把环境变量指向该库即可，成本最低。
 
 **云端需要配置的环境变量**（anon 公钥，客户端可公开，RLS 兜底）：
 ```
-SUPABASE_URL=https://qcqqfjugznqdtldxgyrj.supabase.co
-VITE_SUPABASE_URL=https://qcqqfjugznqdtldxgyrj.supabase.co
+SUPABASE_URL=https://lonhvcavkkejsapecaxy.supabase.co
+VITE_SUPABASE_URL=https://lonhvcavkkejsapecaxy.supabase.co
 SUPABASE_PUBLISHABLE_KEY=sb_publishable_UGM-2n1YO1EK2UJsTfqU_Q_VV7z8oaP
 VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_UGM-2n1YO1EK2UJsTfqU_Q_VV7z8oaP
 ```
 若云端服务端代码需要写共享表（service role），请到 Supabase Dashboard → Settings → API 取 `service_role` 密钥并**私下**配置，不要写进仓库或群聊。若云端只读不写（RLS 限 own），anon 键足够。
 
-**关键事实**：云端项目（orikstudio）与本地后端是**两个不同 Supabase 项目**——云端有 `apple_membership_periods`、`learning_membership`，本库没有；本库的 `subscriptions`、`reward_grants`、`reward_point_events` 云端库里没有。**同一邮箱在两边是不同 auth user，权益目前完全不互通**。云端改指 `qcqqfjugznqdtldxgyrj` 后，原库内的注册用户如需保留，须把 auth 用户与数据迁移过来（或接受原库账号作废重注册）。
+**关键事实**：云端项目（orikstudio）与本地后端是**两个不同 Supabase 项目**——云端有 `apple_membership_periods`、`learning_membership`，本库没有；本库的 `subscriptions`、`reward_grants`、`reward_point_events` 云端库里没有。**同一邮箱在两边是不同 auth user，权益目前完全不互通**。云端改指 `lonhvcavkkejsapecaxy` 后，原库内的注册用户如需保留，须把 auth 用户与数据迁移过来（或接受原库账号作废重注册）。
 
 ---
 
@@ -54,7 +54,7 @@ VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_UGM-2n1YO1EK2UJsTfqU_Q_VV7z8oaP
 
 ### 1. 执行数据库迁移（两个文件，缺一不可）
 
-在 `qcqqfjugznqdtldxgyrj` 库的 SQL Editor 依次执行：
+在 `lonhvcavkkejsapecaxy` 库的 SQL Editor 依次执行：
 
 - `drizzle/migrations/0008_reward_points.sql` — 积分流水表 `reward_point_events`、`reward_points_balance()`、`redeem_points(int)`、`claim_rewards()`（积分版）、`reward_grants` 放开 `kind='points'`
 - `drizzle/migrations/0009_unified_rewards.sql` — `membership_periods` 付费周期账本（含从 `subscriptions` 回填）、`apple_notification_events` 通知去重表、`subscriptions.last_event_at` 列、`latest_coverage_segment()`、`defer_point_grants()`、`redeem_points`/`claim_rewards` 统一版
@@ -64,7 +64,7 @@ VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_UGM-2n1YO1EK2UJsTfqU_Q_VV7z8oaP
 ### 2. 苹果服务器通知地址（App Store Connect 后台填）
 
 ```
-https://sayup-english.lovable.app/api/public/apple-purchase
+https://app.orikstudio.com/api/public/apple-purchase
 ```
 
 该端点已实现（`src/routes/api/public/apple-purchase.ts`）：POST JSON，收两类报文——`{signedTransaction}`（App 购买凭据上报）与 `{signedPayload}`（苹果 V2 通知信封）。验签 Apple 证书链（ES256 + x5c → Apple Root G3），按 `notificationUUID` 幂等去重，`last_event_at` 防乱序回退；处理 `SUBSCRIBED/DID_RENEW/OFFER_REDEEMED`（写订阅+周期+顺延）、`DID_CHANGE_RENEWAL_STATUS`（续订开关）、`DID_FAIL_TO_RENEW`（past_due）、`EXPIRED/GRACE_PERIOD_EXPIRED`（canceled）、`REFUND/REVOKE`（canceled + 撤销对应 `membership_periods`）。
