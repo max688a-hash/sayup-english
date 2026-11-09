@@ -197,6 +197,33 @@ export type Database = {
         }
         Relationships: []
       }
+      reward_point_events: {
+        Row: {
+          created_at: string
+          id: string
+          period_key: string
+          points: number
+          reason: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          period_key: string
+          points: number
+          reason: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          period_key?: string
+          points?: number
+          reason?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
           cancel_at_period_end: boolean | null
@@ -309,6 +336,8 @@ export type Database = {
         Returns: boolean
       }
       redeem_partner_code: { Args: { _code: string }; Returns: string }
+      redeem_points: { Args: { _days: number }; Returns: Json }
+      reward_points_balance: { Args: never; Returns: number }
     }
     Enums: {
       app_role: "admin" | "user"

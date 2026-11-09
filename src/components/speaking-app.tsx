@@ -96,7 +96,7 @@ const CORE_ENTRIES: Record<string, { title: string; sub: string; icon: ReactNode
   placement: { title: '入门水平测试', sub: '10 道题 · 约 3 分钟 · 推荐适合你的起点', icon: <ClipboardCheck size={22} /> },
   course: { title: '12 周主线课程', sub: '日常与职场英语 · A2 起步约 3 个月', icon: <GraduationCap size={22} /> },
   results: { title: '学习成果', sub: '真实跟读波形 · AI 评分趋势 · 打卡天数', icon: <AudioLines size={22} /> },
-  checkin: { title: '打卡日历 · 送会员', sub: '每天 3 次真实跟读算打卡 · 满 25 天领奖励', icon: <Flame size={22} /> },
+  checkin: { title: '打卡日历 · 送积分', sub: '每天 3 次真实跟读算打卡 · 满 25 天领奖励', icon: <Flame size={22} /> },
   mistakes: { title: '智能错题本', sub: '低于 60 分的句子自动收集 · 重练过关', icon: <ClipboardCheck size={22} /> },
   listen: { title: '听力训练', sub: 'A1–C1 分级听力 · 在线听力资源', icon: <Headphones size={22} /> },
   daily: { title: '每日交流', sub: '59 个真实生活场景 · A1–C1 · 听懂换说法再开口', icon: <MessageCircle size={22} /> },
@@ -366,7 +366,7 @@ export function SpeakingApp({ initialLang, initialTab }: { initialLang?: Lang; i
             <div className="greeting-row"><div><div className="eyebrow">{kids ? 'HELLO, LITTLE EXPLORER' : 'A LITTLE EVERY DAY, A LOT ALONG THE WAY'}</div><h1>{tab === '对话' ? (kids ? tr("你好，小小探险家！") : tr("今天，也勇敢开口吧")) : tab === '角色' ? tr("换个角色，聊点新鲜的") : tab === '学习' ? tr("每一小步，都是进步") : tab === '词汇' ? tr("让每个单词，成为朋友") : tr("把薄弱，变成你的强项")}<span className="greeting-spark">{tab === '对话' ? '✦' : ''}</span></h1><p>{tab === '对话' ? tr("从熟悉的生活开始，练出自然的英语。") : tab === '角色' ? tr("进入真实情景，体验不一样的你。") : tab === '学习' ? tr("听懂、记住、说出来，声芽陪你一步步来。") : tab === '词汇' ? tr("不只记住意思，更要学会怎么说。") : tr("针对性练习，让每一次开口更有底气。")}</p></div></div>
             {tab === '对话' && <>
               <div className="member-cta"><Button onClick={() => needLogin('sub')}><Star size={15} /> {trn(t.subscribe)}</Button></div>
-              {!kids && <section className="promo-card" aria-label={tr("声芽会员福利")}><div className="promo-head"><Flame size={16} className="text-amber" /><b>{tr("坚持 3 个月，第 4 个月免费")}</b></div><p>{tr("付费会员连续 3 个月、每月开口打卡满 25 天，第 4 个月会员免费送。坚持越久，学得越省。")}</p><div className="promo-points"><span><Check size={12} /> {tr("智能逐词纠音")}</span><span><Check size={12} /> {tr("12 周强攻开口")}</span><span><Check size={12} /> {tr("沉浸式原声听力")}</span></div><Button variant="ghost" size="sm" className="promo-link" onClick={() => needLogin('sub')}>{tr("查看会员方案")} <ArrowRight size={13} /></Button></section>}
+              {!kids && <section className="promo-card" aria-label={tr("声芽会员福利")}><div className="promo-head"><Flame size={16} className="text-amber" /><b>{tr("打卡送积分，积分兑会员")}</b></div><p>{tr("前 2 周课程免费试学。新人 30 天打卡满 25 天送 30 积分，会员连续 3 个月每月满 25 天再送 30 积分。1 积分 = 1 天会员，随时兑换。")}</p><div className="promo-points"><span><Check size={12} /> {tr("智能逐词纠音")}</span><span><Check size={12} /> {tr("12 周强攻开口")}</span><span><Check size={12} /> {tr("沉浸式原声听力")}</span></div><Button variant="ghost" size="sm" className="promo-link" onClick={() => needLogin('sub')}>{tr("查看会员方案")} <ArrowRight size={13} /></Button></section>}
               <div className="daily-summary">
                 <span><Flame size={17} className="text-amber" /><b>{calculateRealStats(records.map(r => r.at)).streak}</b> {tr("天连续学习")}</span>
                 <div className="summary-divider" />
