@@ -2,11 +2,11 @@ import { Capacitor, registerPlugin, type PluginListenerHandle } from '@capacitor
 
 // Apple auto-renewable subscriptions. Product IDs must match App Store Connect
 // and ios/App/App/SayUp.storekit (used for simulator testing).
-export const IAP_BUNDLE_ID = 'com.sayup.english';
+export const IAP_BUNDLE_ID = 'com.sayup.app';
 export const IAP_PRODUCT_IDS = {
-  month: 'com.sayup.english.sub.month',
-  quarter: 'com.sayup.english.sub.quarter',
-  year: 'com.sayup.english.sub.year',
+  month: 'com.sayup.app.sub.month',
+  quarter: 'com.sayup.app.sub.quarter',
+  year: 'com.sayup.app.sub.year',
 } as const;
 export type PlanId = keyof typeof IAP_PRODUCT_IDS;
 export const PLAN_IDS = Object.keys(IAP_PRODUCT_IDS) as PlanId[];

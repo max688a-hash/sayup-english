@@ -48,7 +48,7 @@
               "locale" : "zh_CN"
             }
           ],
-          "productID" : "com.sayup.english.sub.month",
+          "productID" : "com.sayup.app.sub.month",
           "recurringSubscriptionPeriod" : "P1M",
           "referenceName" : "SayUp Monthly",
           "subscriptionGroupID" : "21500001",
@@ -73,7 +73,7 @@
               "locale" : "zh_CN"
             }
           ],
-          "productID" : "com.sayup.english.sub.quarter",
+          "productID" : "com.sayup.app.sub.quarter",
           "recurringSubscriptionPeriod" : "P3M",
           "referenceName" : "SayUp Quarterly",
           "subscriptionGroupID" : "21500001",
@@ -98,7 +98,7 @@
               "locale" : "zh_CN"
             }
           ],
-          "productID" : "com.sayup.english.sub.year",
+          "productID" : "com.sayup.app.sub.year",
           "recurringSubscriptionPeriod" : "P1Y",
           "referenceName" : "SayUp Yearly",
           "subscriptionGroupID" : "21500001",

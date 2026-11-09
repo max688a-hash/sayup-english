@@ -9,9 +9,9 @@ const ent = (productId: string, expiresDate?: number): Entitlement => ({ product
 
 describe('Apple in-app purchase wiring', () => {
   it('every plan shown in the paywall maps to an App Store product id', () => {
-    for (const p of DICT.zh.plans) expect(IAP_PRODUCT_IDS[p.id as keyof typeof IAP_PRODUCT_IDS]).toMatch(/^com\.sayup\.english\.sub\./);
+    for (const p of DICT.zh.plans) expect(IAP_PRODUCT_IDS[p.id as keyof typeof IAP_PRODUCT_IDS]).toMatch(/^com\.sayup\.app\.sub\./);
     expect(PLAN_IDS).toEqual(['month', 'quarter', 'year']);
-    expect(planForProduct('com.sayup.english.sub.quarter')).toBe('quarter');
+    expect(planForProduct('com.sayup.app.sub.quarter')).toBe('quarter');
     expect(planForProduct('com.other.app')).toBeNull();
   });
 

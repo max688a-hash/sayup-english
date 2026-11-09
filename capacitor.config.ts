@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.sayup.english',
+  appId: 'com.sayup.app',
   appName: 'SayUp English',
   webDir: '.output/public',
   plugins: {
