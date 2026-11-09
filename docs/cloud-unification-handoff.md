@@ -26,16 +26,27 @@
 
 ---
 
-## 二、唯一权威账本（先拍板再干活）
+## 二、唯一权威账本（已定稿）
 
 | 角色 | 值 |
 |---|---|
+| **权威数据库（唯一）** | Supabase 项目 `qcqqfjugznqdtldxgyrj` —— **已定以此为准** |
 | **权威后端（唯一）** | `https://sayup-english.lovable.app`（IPA 内 `api-config.ts` 硬编码指向） |
-| **权威数据库（唯一）** | Supabase 项目 `qcqqfjugznqdtldxgyrj` |
 | App Bundle ID / 团队 | `com.sayup.app` / `XU3FP3HXF3`（SHIHUA ZHANG） |
 | 官网门面域名 | `sayup.orikstudio.com`（**当前 500，须修复**；修复前商店支持/隐私网址先用 lovable 域名） |
 
-**关键事实**：云端项目（orikstudio）与本地后端是**两个不同 Supabase 项目**——云端有 `apple_membership_periods`、`learning_membership`，本地库没有；本地库的 `subscriptions`、`reward_grants`、`reward_point_events` 云端库里没有。**同一邮箱在两边是不同 auth user，权益目前完全不互通**。云端必须改为读/写 `qcqqfjugznqdtldxgyrj` 的账本，或将用户数据迁移合并——任选其一，但只能留一个权威来源。
+**以 `qcqqfjugznqdtldxgyrj` 为准的理由**：已签名导出的 IPA 将 Supabase 地址在编译期写死指向该库，换库等于重打 IPA 并迁移全部练习/订阅数据；学习者练习记录、订阅账本、积分账本全部在此库，无迁移成本。云端侧仅需把环境变量指向该库即可，成本最低。
+
+**云端需要配置的环境变量**（anon 公钥，客户端可公开，RLS 兜底）：
+```
+SUPABASE_URL=https://qcqqfjugznqdtldxgyrj.supabase.co
+VITE_SUPABASE_URL=https://qcqqfjugznqdtldxgyrj.supabase.co
+SUPABASE_PUBLISHABLE_KEY=sb_publishable_UGM-2n1YO1EK2UJsTfqU_Q_VV7z8oaP
+VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_UGM-2n1YO1EK2UJsTfqU_Q_VV7z8oaP
+```
+若云端服务端代码需要写共享表（service role），请到 Supabase Dashboard → Settings → API 取 `service_role` 密钥并**私下**配置，不要写进仓库或群聊。若云端只读不写（RLS 限 own），anon 键足够。
+
+**关键事实**：云端项目（orikstudio）与本地后端是**两个不同 Supabase 项目**——云端有 `apple_membership_periods`、`learning_membership`，本库没有；本库的 `subscriptions`、`reward_grants`、`reward_point_events` 云端库里没有。**同一邮箱在两边是不同 auth user，权益目前完全不互通**。云端改指 `qcqqfjugznqdtldxgyrj` 后，原库内的注册用户如需保留，须把 auth 用户与数据迁移过来（或接受原库账号作废重注册）。
 
 ---
 
