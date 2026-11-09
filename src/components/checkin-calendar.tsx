@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Capacitor } from '@capacitor/core';
 import { ArrowLeft, Flame, Gift } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
@@ -39,6 +40,7 @@ export function CheckinCalendar({ onExit }: { onExit: () => void }) {
       const d = r.data as { status?: string; balance?: number; ends_at?: string } | null;
       if (d?.status === 'ok') setMsg(tr('已兑换 30 天会员，有效期至 {0}', d.ends_at ? new Date(d.ends_at).toLocaleDateString() : ''));
       else if (d?.status === 'insufficient') setMsg(tr('积分不足，还差 {0} 分', 30 - Number(d?.balance ?? 0)));
+      else if (d?.status === 'has_active') setMsg(tr('当前有生效中的付费或奖励权益，到期后可兑换。'));
       else setMsg(tr('兑换失败，请重试。'));
     } catch { setMsg(tr('兑换失败，请重试。')); }
     setBusy(false);
@@ -60,13 +62,15 @@ export function CheckinCalendar({ onExit }: { onExit: () => void }) {
       <div className="member-box"><Gift size={18} /><div>
         <b>{tr('打卡送积分')}</b>
         <p>{tr('新人挑战：注册后前 30 天里打卡满 25 天，送 30 积分（每个账号一次）。')}</p>
-        <p>{tr('会员坚持奖：付费会员连续 3 个月每月打卡满 25 天，送 30 积分，送完重新计数。')}</p>
-        <p>{tr('1 积分 = 1 天会员，随时兑换。订阅照常扣费，积分归你所有。')}</p>
+        <p>{tr('会员坚持奖：付费会员每连续 3 个会员月（按订阅周期起算）每月打卡满 25 天，送 30 积分，发奖后重新计数；断订或退款则重新累计。')}</p>
+        <p>{tr('1 积分 = 1 天会员。有生效中的付费或奖励权益时不能兑换，到期后可兑；兑换后若重新付费，剩余天数自动顺延。订阅照常扣费，兑换不取消续费。')}</p>
         <p className="text-primary font-semibold">{tr('积分余额')} {points}</p>
         {active && <p className="text-primary font-semibold">{tr('奖励会员有效期至')} {new Date(active.ends_at).toLocaleDateString()}</p>}
       </div></div>
       <Button className="w-full mt-3" onClick={claim}>{tr('检查并领取奖励')}</Button>
-      <Button className="w-full mt-2" variant="outline" disabled={busy || points < 30} onClick={redeem}>{tr('兑换 30 天会员（30 积分）')}</Button>
+      {Capacitor.isNativePlatform()
+        ? <Button className="w-full mt-2" variant="outline" disabled={busy || points < 30} onClick={redeem}>{tr('兑换 30 天会员（30 积分）')}</Button>
+        : <p className="text-xs text-muted-foreground text-center mt-2">{tr('积分兑换请在 SayUp App 内操作；网页可查看余额与权益。')}</p>}
       {msg && <p className="text-sm text-center mt-2">{msg}</p>}
     </>}
   </div>;

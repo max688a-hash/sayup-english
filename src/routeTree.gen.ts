@@ -14,6 +14,7 @@ import { Route as LegalRouteImport } from './routes/legal'
 import { Route as ApiSpeechAnalyzeRouteImport } from './routes/api/speech-analyze'
 import { Route as ApiTtsRouteImport } from './routes/api/tts'
 import { Route as StartLangRouteImport } from './routes/start.$lang'
+import { Route as ApiPublicApplePurchaseRouteImport } from './routes/api/public/apple-purchase'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,6 +41,11 @@ const StartLangRoute = StartLangRouteImport.update({
   path: '/start/$lang',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicApplePurchaseRoute = ApiPublicApplePurchaseRouteImport.update({
+  id: '/api/public/apple-purchase',
+  path: '/api/public/apple-purchase',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/api/speech-analyze': typeof ApiSpeechAnalyzeRoute
   '/api/tts': typeof ApiTtsRoute
   '/start/$lang': typeof StartLangRoute
+  '/api/public/apple-purchase': typeof ApiPublicApplePurchaseRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/api/speech-analyze': typeof ApiSpeechAnalyzeRoute
   '/api/tts': typeof ApiTtsRoute
   '/start/$lang': typeof StartLangRoute
+  '/api/public/apple-purchase': typeof ApiPublicApplePurchaseRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +70,25 @@ export interface FileRoutesById {
   '/api/speech-analyze': typeof ApiSpeechAnalyzeRoute
   '/api/tts': typeof ApiTtsRoute
   '/start/$lang': typeof StartLangRoute
+  '/api/public/apple-purchase': typeof ApiPublicApplePurchaseRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/legal' | '/api/speech-analyze' | '/api/tts' | '/start/$lang'
+    | '/'
+    | '/legal'
+    | '/api/speech-analyze'
+    | '/api/tts'
+    | '/start/$lang'
+    | '/api/public/apple-purchase'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/legal' | '/api/speech-analyze' | '/api/tts' | '/start/$lang'
+  to:
+    | '/'
+    | '/legal'
+    | '/api/speech-analyze'
+    | '/api/tts'
+    | '/start/$lang'
+    | '/api/public/apple-purchase'
   id:
     | '__root__'
     | '/'
@@ -76,6 +96,7 @@ export interface FileRouteTypes {
     | '/api/speech-analyze'
     | '/api/tts'
     | '/start/$lang'
+    | '/api/public/apple-purchase'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -84,6 +105,7 @@ export interface RootRouteChildren {
   ApiSpeechAnalyzeRoute: typeof ApiSpeechAnalyzeRoute
   ApiTtsRoute: typeof ApiTtsRoute
   StartLangRoute: typeof StartLangRoute
+  ApiPublicApplePurchaseRoute: typeof ApiPublicApplePurchaseRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -123,6 +145,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StartLangRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/apple-purchase': {
+      id: '/api/public/apple-purchase'
+      path: '/api/public/apple-purchase'
+      fullPath: '/api/public/apple-purchase'
+      preLoaderRoute: typeof ApiPublicApplePurchaseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -132,6 +161,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSpeechAnalyzeRoute: ApiSpeechAnalyzeRoute,
   ApiTtsRoute: ApiTtsRoute,
   StartLangRoute: StartLangRoute,
+  ApiPublicApplePurchaseRoute: ApiPublicApplePurchaseRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

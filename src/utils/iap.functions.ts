@@ -14,20 +14,7 @@ export const recordAppleSubscription = createServerFn({ method: "POST" })
     const { verifyAppleTransactionJws, subscriptionStatus } = await import("@/lib/apple-iap.server");
     const tx = await verifyAppleTransactionJws(data.jws);
     const status = subscriptionStatus(tx);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.from("subscriptions").upsert({
-      user_id: userId,
-      paddle_subscription_id: `apple:${tx.originalTransactionId}`,
-      paddle_customer_id: `apple:${tx.appAccountToken ?? userId}`,
-      product_id: tx.productId,
-      price_id: tx.productId,
-      status,
-      current_period_start: new Date(tx.purchaseDate).toISOString(),
-      current_period_end: tx.expiresDate ? new Date(tx.expiresDate).toISOString() : null,
-      cancel_at_period_end: false,
-      environment: tx.environment === "Production" ? "live" : "sandbox",
-      updated_at: new Date().toISOString(),
-    }, { onConflict: "paddle_subscription_id" });
-    if (error) throw error;
+    const { applyVerifiedTransaction } = await import("@/lib/apple-purchase.server");
+    await applyVerifiedTransaction(userId, tx);
     return { status, productId: tx.productId, expiresAt: tx.expiresDate ?? null };
   });

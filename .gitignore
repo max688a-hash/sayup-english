@@ -45,3 +45,4 @@ build_dd/
 # Stale build artifacts copied into public/
 public/assets/
 public/index.html
+ios/build/

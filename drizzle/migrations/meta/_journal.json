@@ -64,6 +64,13 @@
       "when": 1794190308244,
       "tag": "0008_reward_points",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1794191000000,
+      "tag": "0009_unified_rewards",
+      "breakpoints": true
     }
   ]
 }

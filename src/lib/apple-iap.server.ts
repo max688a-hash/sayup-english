@@ -23,7 +23,10 @@ function b64urlToBuffer(s: string): Buffer {
   return Buffer.from(s.replace(/-/g, '+').replace(/_/g, '/'), 'base64');
 }
 
-export async function verifyAppleTransactionJws(jws: string, now = Date.now()): Promise<AppleTransaction> {
+// Verifies any Apple-signed JWS (transaction, renewal info or notification
+// envelope): ES256 signature against the leaf cert, x5c chain up to Apple Root.
+// Returns the decoded payload; callers validate their own schema fields.
+export async function verifyAppleJws(jws: string, now = Date.now()): Promise<Record<string, unknown>> {
   const [h, p, s] = jws.split('.');
   if (!h || !p || !s || jws.split('.').length !== 3) throw new Error('Malformed JWS');
   const header = JSON.parse(b64urlToBuffer(h).toString('utf8')) as { alg?: string; x5c?: string[] };
@@ -47,14 +50,30 @@ export async function verifyAppleTransactionJws(jws: string, now = Date.now()): 
   const signature = b64urlToBuffer(s);
   const ok = cryptoVerify('sha256', signingInput, { key: leaf.publicKey, dsaEncoding: 'ieee-p1363' }, signature);
   if (!ok) throw new Error('Invalid transaction signature');
+  return JSON.parse(b64urlToBuffer(p).toString('utf8')) as Record<string, unknown>;
+}
 
-  const payload = JSON.parse(b64urlToBuffer(p).toString('utf8')) as AppleTransaction;
+export async function verifyAppleTransactionJws(jws: string, now = Date.now()): Promise<AppleTransaction> {
+  const payload = (await verifyAppleJws(jws, now)) as unknown as AppleTransaction;
   if (payload.bundleId !== IAP_BUNDLE_ID) throw new Error('Transaction belongs to another app');
   if (!Object.values(IAP_PRODUCT_IDS).includes(payload.productId as (typeof IAP_PRODUCT_IDS)[keyof typeof IAP_PRODUCT_IDS])) {
     throw new Error('Unknown product');
   }
   return payload;
 }
+
+export type AppleNotification = {
+  notificationType: string;
+  subtype?: string;
+  notificationUUID: string;
+  signedDate?: number;
+  data?: {
+    bundleId?: string;
+    environment?: string;
+    signedTransactionInfo?: string;
+    signedRenewalInfo?: string;
+  };
+};
 
 export function subscriptionStatus(tx: AppleTransaction, now = Date.now()): 'active' | 'canceled' {
   if (tx.revocationDate) return 'canceled';

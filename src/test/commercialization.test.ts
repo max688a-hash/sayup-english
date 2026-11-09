@@ -55,10 +55,16 @@ describe('SayUp 商业化与两端权限闭环真实性校验', () => {
     expect(zhDict).not.toContain('开通一个月使用期');
   });
 
-  it('打卡赠送留存规则真实落地：积分制，新人25天送30积分，会员连续3个月达标送30积分，1积分=1天会员', () => {
+  it('打卡赠送留存规则真实落地：积分制，新人25天送30积分，会员连续3个会员月达标送30积分，1积分=1天', () => {
     const rewardBody = DICT.zh.rewardBody;
     expect(rewardBody).toContain('25 天');
     expect(rewardBody).toContain('30 积分');
-    expect(rewardBody).toContain('1 积分 = 1 天会员');
+    expect(rewardBody).toContain('1 积分 = 1 天');
+    expect(rewardBody).toContain('会员月按订阅周期起算');
+    expect(rewardBody).toContain('不取消自动续费');
+    expect(rewardBody).toContain('剩余天数自动顺延');
+    expect(rewardBody).not.toContain('自然月');
+    expect(rewardBody).not.toContain('不扣钱');
+    expect(rewardBody).not.toContain('第 4 个月免费');
   });
 });

@@ -59,6 +59,33 @@ export type Database = {
         }
         Relationships: []
       }
+      apple_notification_events: {
+        Row: {
+          notification_type: string
+          notification_uuid: string
+          original_transaction_id: string | null
+          processed: boolean
+          received_at: string
+          subtype: string | null
+        }
+        Insert: {
+          notification_type: string
+          notification_uuid: string
+          original_transaction_id?: string | null
+          processed?: boolean
+          received_at?: string
+          subtype?: string | null
+        }
+        Update: {
+          notification_type?: string
+          notification_uuid?: string
+          original_transaction_id?: string | null
+          processed?: boolean
+          received_at?: string
+          subtype?: string | null
+        }
+        Relationships: []
+      }
       learning_progress: {
         Row: {
           completed_at: string
@@ -76,6 +103,39 @@ export type Database = {
           completed_at?: string
           id?: string
           item_key?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      membership_periods: {
+        Row: {
+          created_at: string
+          environment: string
+          id: string
+          original_transaction_id: string
+          period_end: string
+          period_start: string
+          revoked: boolean
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          environment?: string
+          id?: string
+          original_transaction_id: string
+          period_end: string
+          period_start: string
+          revoked?: boolean
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          environment?: string
+          id?: string
+          original_transaction_id?: string
+          period_end?: string
+          period_start?: string
+          revoked?: boolean
           user_id?: string
         }
         Relationships: []
@@ -232,6 +292,7 @@ export type Database = {
           current_period_start: string | null
           environment: string
           id: string
+          last_event_at: string | null
           paddle_customer_id: string
           paddle_subscription_id: string
           price_id: string
@@ -247,6 +308,7 @@ export type Database = {
           current_period_start?: string | null
           environment?: string
           id?: string
+          last_event_at?: string | null
           paddle_customer_id: string
           paddle_subscription_id: string
           price_id: string
@@ -262,6 +324,7 @@ export type Database = {
           current_period_start?: string | null
           environment?: string
           id?: string
+          last_event_at?: string | null
           paddle_customer_id?: string
           paddle_subscription_id?: string
           price_id?: string
@@ -328,12 +391,20 @@ export type Database = {
       }
       claim_first_admin: { Args: never; Returns: boolean }
       claim_rewards: { Args: never; Returns: string }
+      defer_point_grants: { Args: { _uid: string }; Returns: undefined }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
+      }
+      latest_coverage_segment: {
+        Args: { _uid: string }
+        Returns: {
+          seg_start: string
+          seg_end: string
+        }[]
       }
       redeem_partner_code: { Args: { _code: string }; Returns: string }
       redeem_points: { Args: { _days: number }; Returns: Json }
