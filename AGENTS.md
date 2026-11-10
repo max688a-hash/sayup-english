@@ -27,3 +27,8 @@
 
 - Learning results stay inside the index app, read only the signed-in owner’s practice records and existing check-in RPC, and export aggregate-only reports; microphone waveform peaks remain session-only to avoid retaining voice data.
 - Results PNGs are drawn client-side from summary fields and optional session peaks, never a page screenshot, so account details and speech text cannot leak into the image.
+- Inject and validate managed public backend identifiers, explicitly transforming generated bracket-notation reads without editing generated clients; dotted defines alone can leave published browser settings empty.
+- Detect device-dependent screen layout after hydration so mobile browser width cannot change the initial server-rendered element tree.
+- Lazy-load learning modules, account dialogs and the main vocabulary corpus from the app shell, keeping navigation metadata in a lightweight catalog; unopened lessons must not block first interaction.
+- Apple input/signature validation raises AppleRequestError and returns HTTP 400; reserve HTTP 500 for operational failures so rejected untrusted notifications do not trigger crash telemetry or mask retryable backend errors.
+- Reward amounts live in src/lib/reward-rules.ts and are enforced only by database functions (claim_reward_days, apply_referral_code) that grant membership days directly; the legacy points ledger and redeem function stay only for older app builds, so rewards cannot be forged client-side and copy stays in sync via tests.

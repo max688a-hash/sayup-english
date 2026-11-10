@@ -22,7 +22,8 @@ import { CARDS } from '@/components/speaking-gym';
 
 type Speak = (t: string, s?: 'slow' | 'normal' | 'current') => void;
 type P = { speak: Speak; onRecord: (r: PracticeRecord) => void };
-export type LibKind = 'scenes' | 'patterns' | 'repeat' | 'cloze' | 'free' | 'reading' | 'words' | 'bots' | 'phrases' | 'beats';
+import { LIB_ENTRIES, type LibKind } from '@/lib/library-catalog';
+export { LIB_ENTRIES, type LibKind } from '@/lib/library-catalog';
 const A = (x: unknown) => x as any[];
 
 function Head({ title, onExit }: { title: string; onExit: () => void }) {
@@ -274,15 +275,4 @@ export function Library({ kind, ...p }: P & { kind: LibKind; onExit: () => void 
   const C = M[kind]; return <C {...p} />;
 }
 
-export const LIB_ENTRIES: { kind: LibKind; title: string; sub: string; icon: string }[] = [
-  { kind: 'scenes', icon: '🏙️', title: '生活场景 · 角色对话', sub: `${A(LIFE_SCENES).length} 个场景任务 · ${A(ROLE_PLAY_DIALOGUES).length + A(DIALOGUES).length} 段对话逐句开口` },
-  { kind: 'phrases', icon: '🧱', title: '场景短语块', sub: `${A(PHRASE_CHUNKS).length} 组 · 寒暄、职场、流利度表达` },
-  { kind: 'patterns', icon: '🧩', title: '句型家族', sub: `${A(SENTENCE_PATTERN_FAMILIES).length} 个骨架 · 换词造句` },
-  // 跟读复述与节拍连读已并入「口语训练营」（speaking-gym.tsx），这里不再单列。
-  { kind: 'reading', icon: '📖', title: '分级阅读', sub: `${A(READING_MATERIALS).length} 篇 A1–C1 · 生词一键加入复习` },
-  { kind: 'cloze', icon: '📝', title: '完形填空小测', sub: `${A(ALL_CLOZE_PASSAGES).length} 篇 · 交卷看对错再朗读` },
-  { kind: 'free', icon: '🎤', title: '自由开口 · 话题演讲', sub: `${A(FREE_SPEAK_PROMPTS).length} 道开放题 · AI 评切题与用词` },
-  { kind: 'words', icon: '🧸', title: '主题单词组 · 看图识词', sub: `${A(ALL_GROUPS).length} 组 · 儿童看图到 C1 句中填词` },
-  { kind: 'bots', icon: '🤖', title: 'AI 陪练角色', sub: `${A(AI_BOTS).length} 个角色 · 按你的回答走不同剧情` },
-];
 export const useLibCount = () => useMemo(() => LIB_ENTRIES.length, []);

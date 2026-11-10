@@ -10,7 +10,7 @@ describe('Native iOS & Mobile Adaptation Verification', () => {
 
   it('verifies that styles.css contains rules to hide lovable badge and mock frame', async () => {
     const fs = await import('node:fs/promises');
-    const css = await fs.readFile('/Volumes/tianyou-168/sayup-english/src/styles.css', 'utf-8');
+    const css = await fs.readFile('src/styles.css', 'utf-8');
     
     // Must contain lovable badge purge rule
     expect(css).toContain('#lovable-badge');

@@ -1,38 +1,24 @@
 import uiGarden from '@/assets/ui-garden.jpg';
 import uiMistakes from '@/assets/ui-mistakes.jpg';
+import { rememberInviteFromUrl } from '@/lib/invite-link';
 import { tr, trn } from '@/lib/tr';
 import { speakCloud, stopCloudSpeech, playExclusiveAudio } from '@/lib/cloud-speech';
 import { setContentLang } from '@/lib/tr';
-import { useEffect, useRef, useState, type ReactNode, type UIEvent, type TouchEvent } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState, type ReactNode, type UIEvent, type TouchEvent } from 'react';
 import { ClickableSentence } from '@/components/clickable-sentence';
-import { DictionarySheet } from '@/components/dictionary-sheet';
 import { ArrowLeft, ArrowRight, AudioLines, BookOpen, Check, CheckCheck, ChevronRight, Coffee, Flame, GraduationCap, Headphones, Leaf, Maximize2, MessageCircle, Mic, Minimize2, MoreHorizontal, Plane, RotateCcw, ShoppingBag, Sparkles, Target, Volume2, X, Zap, Briefcase, Users, Signal, Wifi, BatteryFull, Sun, Moon, Star, CircleHelp, Turtle, Gauge, Cat, ClipboardCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { SpeechCoach, type PracticeRecord } from '@/components/speech-coach';
-import { AdvancedHub, type AdvModule } from '@/components/advanced-hub';
-import { PlacementTest, StoryReader } from '@/components/story-hub';
-import { CourseHub } from '@/components/course-hub';
-import { VocabReview } from '@/components/vocab-review';
-import { Library, LIB_ENTRIES, type LibKind } from '@/components/library';
-import { LearningResults } from '@/components/learning-results';
-import { CheckinCalendar } from '@/components/checkin-calendar';
-import { PronLab } from '@/components/pron-lab';
-import { MistakeBook, ChunkDrill } from '@/components/review-tools';
-import { StressDrill, ShadowDrill, ImmersionDrill } from '@/components/speaking-drills';
-import { SpeakingGym } from '@/components/speaking-gym';
-import { FreeChat } from '@/components/free-chat';
-import { DailyExchange } from '@/components/daily-exchange';
-import { TodayPlan } from '@/components/today-plan';
-import { SubscribeDialog } from '@/components/membership';
 import { DICT, LANGS, type Lang } from '@/lib/i18n';
-import { AuthDialog, AccountSheet } from '@/components/account';
 import { useAuth } from '@/hooks/use-auth';
 import { useMemberVoice } from '@/hooks/use-member-voice';
 import { supabase } from '@/integrations/supabase/client';
 import { Lock, UserRound } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { scenes, kidScene, toyScene, kidCategories, words, kidWords, type Scene, type Tab } from '@/lib/speaking-content';
-import { getMainVocabWords, getKidsVocabWords } from '@/lib/main-vocab';
+import type { MainVocabWord } from '@/lib/main-vocab';
+import type { PracticeRecord } from '@/components/speech-coach';
+import type { AdvModule } from '@/components/advanced-hub';
+import { LIB_ENTRIES, type LibKind } from '@/lib/library-catalog';
 import {
   loadKnownWords,
   saveKnownWords,
@@ -85,6 +71,29 @@ import w_door from '@/assets/words/door.jpg';
 import w_key from '@/assets/words/key.jpg';
 import { isIosApp, isNativeApp } from '@/lib/platform';
 import w_clock from '@/assets/words/clock.jpg';
+const DictionarySheet = lazy(() => import('@/components/dictionary-sheet').then(module => ({ default: module.DictionarySheet })));
+const SpeechCoach = lazy(() => import('@/components/speech-coach').then(module => ({ default: module.SpeechCoach })));
+const AdvancedHub = lazy(() => import('@/components/advanced-hub').then(module => ({ default: module.AdvancedHub })));
+const PlacementTest = lazy(() => import('@/components/story-hub').then(module => ({ default: module.PlacementTest })));
+const StoryReader = lazy(() => import('@/components/story-hub').then(module => ({ default: module.StoryReader })));
+const CourseHub = lazy(() => import('@/components/course-hub').then(module => ({ default: module.CourseHub })));
+const VocabReview = lazy(() => import('@/components/vocab-review').then(module => ({ default: module.VocabReview })));
+const Library = lazy(() => import('@/components/library').then(module => ({ default: module.Library })));
+const LearningResults = lazy(() => import('@/components/learning-results').then(module => ({ default: module.LearningResults })));
+const CheckinCalendar = lazy(() => import('@/components/checkin-calendar').then(module => ({ default: module.CheckinCalendar })));
+const PronLab = lazy(() => import('@/components/pron-lab').then(module => ({ default: module.PronLab })));
+const MistakeBook = lazy(() => import('@/components/review-tools').then(module => ({ default: module.MistakeBook })));
+const ChunkDrill = lazy(() => import('@/components/review-tools').then(module => ({ default: module.ChunkDrill })));
+const StressDrill = lazy(() => import('@/components/speaking-drills').then(module => ({ default: module.StressDrill })));
+const ShadowDrill = lazy(() => import('@/components/speaking-drills').then(module => ({ default: module.ShadowDrill })));
+const ImmersionDrill = lazy(() => import('@/components/speaking-drills').then(module => ({ default: module.ImmersionDrill })));
+const SpeakingGym = lazy(() => import('@/components/speaking-gym').then(module => ({ default: module.SpeakingGym })));
+const FreeChat = lazy(() => import('@/components/free-chat').then(module => ({ default: module.FreeChat })));
+const DailyExchange = lazy(() => import('@/components/daily-exchange').then(module => ({ default: module.DailyExchange })));
+const TodayPlan = lazy(() => import('@/components/today-plan').then(module => ({ default: module.TodayPlan })));
+const SubscribeDialog = lazy(() => import('@/components/membership').then(module => ({ default: module.SubscribeDialog })));
+const AuthDialog = lazy(() => import('@/components/account').then(module => ({ default: module.AuthDialog })));
+const AccountSheet = lazy(() => import('@/components/account').then(module => ({ default: module.AccountSheet })));
 const wordImages: Record<string, string> = { coffee: w_coffee, please: w_please, delicious: w_delicious, recommend: w_recommend, cat: w_cat, apple: w_apple, happy: w_happy, sunshine: w_sunshine, menu: w_menu, ticket: w_ticket, passport: w_passport, colleague: w_colleague, dog: w_dog, ball: w_ball, banana: w_banana, flower: w_flower, milk: w_milk, water: w_water, bread: w_bread, egg: w_egg, rice: w_rice, tea: w_tea, juice: w_juice, bus: w_bus, car: w_car, train: w_train, plane: w_plane, bike: w_bike, phone: w_phone, book: w_book, pen: w_pen, bag: w_bag, shoes: w_shoes, hat: w_hat, chair: w_chair, table: w_table, bed: w_bed, door: w_door, key: w_key, clock: w_clock };
 
 const tabs: { name: Tab; icon: typeof MessageCircle }[] = [{ name: '对话', icon: MessageCircle }, { name: '角色', icon: Users }, { name: '学习', icon: GraduationCap }, { name: '词汇', icon: BookOpen }, { name: '加强', icon: Zap }];
@@ -96,7 +105,7 @@ const CORE_ENTRIES: Record<string, { title: string; sub: string; icon: ReactNode
   placement: { title: '入门水平测试', sub: '10 道题 · 约 3 分钟 · 推荐适合你的起点', icon: <ClipboardCheck size={22} /> },
   course: { title: '12 周主线课程', sub: '日常与职场英语 · A2 起步约 3 个月', icon: <GraduationCap size={22} /> },
   results: { title: '学习成果', sub: '真实跟读波形 · AI 评分趋势 · 打卡天数', icon: <AudioLines size={22} /> },
-  checkin: { title: '打卡日历 · 送积分', sub: '每天 3 次真实跟读算打卡 · 满 25 天领奖励', icon: <Flame size={22} /> },
+  checkin: { title: '打卡日历 · 送会员', sub: '每天 3 次真实跟读算打卡 · 满 25 天送会员', icon: <Flame size={22} /> },
   mistakes: { title: '智能错题本', sub: '低于 60 分的句子自动收集 · 重练过关', icon: <ClipboardCheck size={22} /> },
   listen: { title: '听力训练', sub: 'A1–C1 分级听力 · 在线听力资源', icon: <Headphones size={22} /> },
   daily: { title: '每日交流', sub: '59 个真实生活场景 · A1–C1 · 听懂换说法再开口', icon: <MessageCircle size={22} /> },
@@ -126,6 +135,8 @@ export function SpeakingApp({ initialLang, initialTab }: { initialLang?: Lang; i
   const [tab, setTab] = useState<Tab>(initialTab ?? '对话');
   const [kids, setKids] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
+  const [native, setNative] = useState(false);
+  useEffect(() => { setNative(isNativeApp()); }, []);
   const [previewInfo, setPreviewInfo] = useState(false);
   const [category, setCategory] = useState('全部');
   const [learnGroup, setLearnGroup] = useState(1);
@@ -199,10 +210,24 @@ export function SpeakingApp({ initialLang, initialTab }: { initialLang?: Lang; i
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const bottom = useRef<HTMLDivElement>(null);
   const [vocabPage, setVocabPage] = useState(1);
-  const fullVocab = getMainVocabWords();
-  const fullKidsVocab = getKidsVocabWords();
+  const [fullVocab, setFullVocab] = useState<MainVocabWord[]>([]);
+  const [fullKidsVocab, setFullKidsVocab] = useState<MainVocabWord[]>([]);
+  const [vocabError, setVocabError] = useState(false);
+  const [vocabRetry, setVocabRetry] = useState(0);
+  useEffect(() => {
+    if (tab !== '词汇' || fullVocab.length) return;
+    let active = true;
+    setVocabError(false);
+    void import('@/lib/main-vocab').then(module => {
+      if (!active) return;
+      setFullVocab(module.getMainVocabWords());
+      setFullKidsVocab(module.getKidsVocabWords());
+    }).catch(() => { if (active) setVocabError(true); });
+    return () => { active = false; };
+  }, [tab, fullVocab.length, vocabRetry]);
   const activeWords = (kids ? fullKidsVocab : fullVocab).filter(w => wordLevel === '全部' || w.level.toUpperCase() === wordLevel.toUpperCase());
   const currentWord = wordIndex === null ? null : activeWords[wordIndex];
+  useEffect(() => { rememberInviteFromUrl(); }, []);
   useEffect(() => { const q = new URLSearchParams(window.location.search); if (q.get('checkout') === 'success') { setNotice(tr("付款成功！会员身份通常几秒内生效，可在「我的账号」查看。")); window.history.replaceState(null, '', '/'); } }, []);
   useEffect(() => { bottom.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, [messages]);
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current); window.speechSynthesis?.cancel(); stopCloudSpeech(); }, []);
@@ -272,8 +297,6 @@ export function SpeakingApp({ initialLang, initialTab }: { initialLang?: Lang; i
   const onSwipeStart = (e: TouchEvent<HTMLElement>) => { const t = e.touches[0]; if (!t) return; const left = e.currentTarget.getBoundingClientRect().left; swipe.current = t.clientX - left < 40 ? { x: t.clientX, y: t.clientY } : null; };
   const onSwipeEnd = (e: TouchEvent<HTMLElement>) => { const s0 = swipe.current; swipe.current = null; if (!s0) return; const t = e.changedTouches[0]; if (!t) return; const dx = t.clientX - s0.x, dy = Math.abs(t.clientY - s0.y); if (dx > 70 && dy < 60 && backButton(e.currentTarget)) clickBack(); };
 
-  const native = isNativeApp();
-
   return <div className={cn('preview-workspace', (fullscreen || native) && 'is-fullscreen', native && 'is-native-app')}>
     {!native && <header className="workspace-header"><div className="workspace-brand"><img className="brand-logo" src={logoImage} alt={tr("声芽 SayUp Logo")} width={36} height={36} /><span>{tr("声芽")}<span className="workspace-brand-en"> SayUp</span></span><span className="preview-tag">WEB PREVIEW</span></div><div className="workspace-actions"><span className="live-label"><i /> {tr("实时预览")}</span><Button variant="ghost" size="icon" title={tr("预览说明")} aria-label={tr("预览说明")} onClick={() => setPreviewInfo(true)}><CircleHelp /></Button><Button variant="ghost" size="icon" title={fullscreen ? tr("退出全屏") : tr("全屏预览")} aria-label={fullscreen ? tr("退出全屏") : tr("全屏预览")} onClick={() => setFullscreen(!fullscreen)}>{fullscreen ? <Minimize2 /> : <Maximize2 />}</Button></div></header>}
     {fullscreen && !native && <Button variant="secondary" size="icon" className="fullscreen-exit" aria-label={tr("退出全屏")} title={tr("退出全屏")} onClick={() => setFullscreen(false)}><Minimize2 /></Button>}
@@ -288,6 +311,7 @@ export function SpeakingApp({ initialLang, initialTab }: { initialLang?: Lang; i
         </div>
         <div className="speed-bar"><span className="speed-bar-label"><Volume2 size={13} /> {tr("示范发音")}</span><div className="speed-segment" role="group" aria-label={tr("示范发音语速")}><Button variant="ghost" size="sm" className={cn('speed-option', rateMode === 'slow' && 'active')} aria-pressed={rateMode === 'slow'} onClick={() => setRateMode('slow')}><Turtle size={12} /> {tr("慢速")}</Button><Button variant="ghost" size="sm" className={cn('speed-option', rateMode === 'normal' && 'active')} aria-pressed={rateMode === 'normal'} onClick={() => setRateMode('normal')}><Gauge size={12} /> {tr("正常")}</Button></div><span className="speed-bar-hint">{rateMode === 'slow' ? tr("放慢约三分之一，方便跟读") : tr("接近日常对话语速")}</span></div>
         <main className="app-content" key={tab + String(kids) + lang} onScroll={onContentScroll} onTouchStart={onSwipeStart} onTouchEnd={onSwipeEnd}>
+          <Suspense fallback={<div role="status" className="min-h-32 flex items-center justify-center text-muted-foreground">{tr('正在加载…')}</div>}>
           {detail ? <>
             <div className="detail-heading"><Button variant="ghost" size="icon" aria-label={tr("返回上一级")} onClick={back}><ArrowLeft /></Button><span>{scene ? (rolePlay ? tr("情景角色扮演") : tr("情景对话")) : currentWord ? tr("记忆词卡") : practice ? tr("薄弱项强化") : tr("每日学习")}</span><span className="level-tag">{scene?.level || 'A1'}</span></div>
             {scene && <div className="conversation-view"><div className="scene-heading"><div className="eyebrow">{trn(scene.english)}</div><h1>{trn(scene.title)}</h1><p>{rolePlay ? tr("你来扮演顾客，声芽来扮演店员") : tr("和声芽聊一聊，让英语融入日常")}</p><span className="simulation-label">{tr("模拟对话 ·")} {Math.min(turn + 1, scene.turns.length)} / {trn(scene.turns.length)} {tr("回合")}</span></div>{rolePlay && <div className="role-hint"><Users size={17} /><span>{tr("你的角色：")}{scene.id === 'travel' ? tr("旅客") : scene.id === 'work' ? tr("新同事") : scene.id === 'toys' ? tr("小顾客") : kids ? tr("小朋友") : tr("顾客")}</span><span className="ml-auto text-teal">{turn < scene.turns.length ? tr("轮到你了") : tr("已完成")}</span></div>}<div className="chat-messages">{messages.map((m, i) => <div className={cn('chat-row', m.user && 'is-user')} key={i}>{!m.user && <span className="chat-avatar"><img src={logoImage} alt="SayUp" className="w-[18px] h-[18px] rounded-full object-contain" /></span>}<div className="chat-bubble"><p><ClickableSentence text={m.text} onWordClick={openDict} /></p>{!m.user && <AudioButton text={m.text} />}</div></div>)}{turnTip && <div className="turn-feedback"><div className="turn-feedback-head"><Sparkles size={15} /><span>{turnTip}</span></div><div className="turn-feedback-actions"><Button variant="ghost" size="sm" aria-label={tr("慢速重听示范发音")} title={tr("慢速重听示范发音")} onClick={() => speak(lastReply, 'slow')}><Turtle size={14} /> {tr("慢速重听")}</Button><Button variant="ghost" size="sm" aria-label={tr("正常语速重听示范发音")} title={tr("正常语速重听示范发音")} onClick={() => speak(lastReply, 'normal')}><Volume2 size={14} /> {tr("正常重听")}</Button><Button variant="ghost" size="sm" aria-label={tr("重新选择回复")} title={tr("重新选择回复")} onClick={retryTurn}><RotateCcw size={14} /> {tr("再选一次")}</Button></div></div>}<div ref={bottom} /></div>{turn < scene.turns.length ? <div className="reply-area"><p className="section-overline"><CircleHelp size={13} /> {tr("回合提示 · 点一句回复，或试着自己说")}</p><div className="reply-options">{(scene.options[turn] ?? []).filter(option => option !== scene.replies[turn]).map(option => <div className="reply-option-row" key={option}><div role="button" tabIndex={0} className="reply-option" onClick={() => send(option)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); send(option); } }}><ClickableSentence text={option} onWordClick={openDict} /></div><AudioButton text={option} /></div>)}</div>{attempts.length > 0 && <><Button variant="ghost" className="review-toggle" onClick={() => setShowReview(!showReview)}><MessageCircle size={14} /> {tr("分支回看 · 已尝试")} {trn(attempts.length)} {tr("句")}<ChevronRight size={13} className={cn('review-chevron', showReview && 'open')} /></Button>{showReview && <div className="branch-review">{attempts.map((a, i) => <div className="branch-item" key={i}><div className="branch-item-head"><span className="branch-turn">{tr("第")} {a.turn + 1} {tr("回合")}</span><span className="audio-pair"><AudioButton text={a.reply} slow /><AudioButton text={a.reply} /></span></div><p className="branch-reply"><ClickableSentence text={trn(a.reply)} onWordClick={openDict} /></p><p className="branch-tip">{trn(a.tip)}</p>{a.turn < turn && <Button variant="ghost" size="sm" className="branch-rewind" onClick={() => rewindTo(a.turn)}><RotateCcw size={13} /> {tr("回到这轮改选")}</Button>}</div>)}</div>}</>}<div className="suggested-sentence"><span><ClickableSentence text={scene.replies[turn] ?? ""} onWordClick={openDict} /></span><AudioButton text={scene.replies[turn] ?? ""} /></div>{PracticeControl({ target: scene.replies[turn] ?? "" })}<form className="chat-input" onSubmit={e => { e.preventDefault(); send(input); }}><input value={input} onChange={e => setInput(e.target.value)} aria-label={tr("输入英文回复")} placeholder={tr("也可以输入英文回复…")} /><Button type="submit" size="icon" aria-label={tr("发送回复")} disabled={!input.trim()}><ArrowRight /></Button></form><Button variant="ghost" className="w-full text-primary" onClick={() => send(scene.replies[turn] ?? "")}>{tr("使用提示回复")} <ArrowRight size={14} /></Button></div> : <div className="completion"><div className="success-icon"><Check /></div><h2>{tr("又一次勇敢开口！")}</h2><p>{tr("你完成了")} {trn(scene.turns.length)} {tr("回合情景对话")}</p><Button onClick={() => { resetDetail(); setDialogDone(true); setNotice(tr("情景对话已完成，做得很棒！")); }}>{tr("完成练习")} <Check size={16} /></Button><Button variant="ghost" onClick={() => openScene(scene, rolePlay)}><RotateCcw /> {tr("再练一次")}</Button></div>}</div>}
@@ -366,14 +390,14 @@ export function SpeakingApp({ initialLang, initialTab }: { initialLang?: Lang; i
             <div className="greeting-row"><div><div className="eyebrow">{kids ? 'HELLO, LITTLE EXPLORER' : 'A LITTLE EVERY DAY, A LOT ALONG THE WAY'}</div><h1>{tab === '对话' ? (kids ? tr("你好，小小探险家！") : tr("今天，也勇敢开口吧")) : tab === '角色' ? tr("换个角色，聊点新鲜的") : tab === '学习' ? tr("每一小步，都是进步") : tab === '词汇' ? tr("让每个单词，成为朋友") : tr("把薄弱，变成你的强项")}<span className="greeting-spark">{tab === '对话' ? '✦' : ''}</span></h1><p>{tab === '对话' ? tr("从熟悉的生活开始，练出自然的英语。") : tab === '角色' ? tr("进入真实情景，体验不一样的你。") : tab === '学习' ? tr("听懂、记住、说出来，声芽陪你一步步来。") : tab === '词汇' ? tr("不只记住意思，更要学会怎么说。") : tr("针对性练习，让每一次开口更有底气。")}</p></div></div>
             {tab === '对话' && <>
               <div className="member-cta"><Button onClick={() => needLogin('sub')}><Star size={15} /> {trn(t.subscribe)}</Button></div>
-              {!kids && <section className="promo-card" aria-label={tr("声芽会员福利")}><div className="promo-head"><Flame size={16} className="text-amber" /><b>{tr("打卡送积分，积分兑会员")}</b></div><p>{tr("前 2 周课程免费试学。新人 30 天打卡满 25 天送 30 积分，会员连续 3 个月每月满 25 天再送 30 积分。1 积分 = 1 天会员，随时兑换。")}</p><div className="promo-points"><span><Check size={12} /> {tr("智能逐词纠音")}</span><span><Check size={12} /> {tr("12 周强攻开口")}</span><span><Check size={12} /> {tr("沉浸式原声听力")}</span></div><Button variant="ghost" size="sm" className="promo-link" onClick={() => needLogin('sub')}>{tr("查看会员方案")} <ArrowRight size={13} /></Button></section>}
+              {!kids && <section className="promo-card" aria-label={tr("声芽会员福利")}><div className="promo-head"><Flame size={16} className="text-amber" /><b>{tr("打卡学习送会员")}</b></div><p>{tr("前 2 周课程免费试学。新人 30 天内打卡满 25 天送 30 天会员；付费会员每月打卡满 25 天送 7 天；邀请好友付费送 15 天。")}</p><div className="promo-points"><span><Check size={12} /> {tr("智能逐词纠音")}</span><span><Check size={12} /> {tr("12 周强攻开口")}</span><span><Check size={12} /> {tr("沉浸式原声听力")}</span></div><Button variant="ghost" size="sm" className="promo-link" onClick={() => needLogin('sub')}>{tr("查看会员方案")} <ArrowRight size={13} /></Button></section>}
               <div className="daily-summary">
                 <span><Flame size={17} className="text-amber" /><b>{calculateRealStats(records.map(r => r.at)).streak}</b> {tr("天连续学习")}</span>
                 <div className="summary-divider" />
                 <span><AudioLines size={17} className="text-teal" />{tr("今日开口")} <b>{calculateRealStats(records.map(r => r.at)).todayMinutes}</b> {tr("分钟")}</span>
                 <span className="daily-dot" />
               </div>
-              <section className="featured-scene"><img src={kids ? kidsImage : cafeImage} width={1024} height={640} alt={kids ? tr("小猫和小狗在玩具店里玩球") : tr("暖灯下的街角咖啡店")} /><div className="featured-overlay" /><div className="featured-copy"><span className="featured-label"><Sparkles size={11} /> {kids ? tr("儿童精选") : tr("今日推荐")}</span><h2>{kids ? <>{tr("一起认识")}<br />{tr("动物朋友")}</> : <>{tr("一杯咖啡，")}<br />{tr("一段新对话。")}</>}</h2><p>{kids ? 'Say hello to little friends.' : 'Your daily dose of English.'}</p><Button onClick={() => openScene(kids ? kidScene : featuredScene)} className="featured-cta">{tr("开始对话")} <ArrowRight size={14} /></Button></div><span className="featured-level">{kids ? tr("启蒙") : tr("A1 入门")} {tr("· 约 5 分钟")}</span></section>
+              <section className="featured-scene"><img fetchPriority="high" decoding="async" src={kids ? kidsImage : cafeImage} width={1024} height={640} alt={kids ? tr("小猫和小狗在玩具店里玩球") : tr("暖灯下的街角咖啡店")} /><div className="featured-overlay" /><div className="featured-copy"><span className="featured-label"><Sparkles size={11} /> {kids ? tr("儿童精选") : tr("今日推荐")}</span><h2>{kids ? <>{tr("一起认识")}<br />{tr("动物朋友")}</> : <>{tr("一杯咖啡，")}<br />{tr("一段新对话。")}</>}</h2><p>{kids ? 'Say hello to little friends.' : 'Your daily dose of English.'}</p><Button onClick={() => openScene(kids ? kidScene : featuredScene)} className="featured-cta">{tr("开始对话")} <ArrowRight size={14} /></Button></div><span className="featured-level">{kids ? tr("启蒙") : tr("A1 入门")} {tr("· 约 5 分钟")}</span></section>
               <div className="section-heading"><h2>{tr("聊你感兴趣的")}</h2><span>{tr("真实情景，轻松开口")}</span></div><div className="filter-row">{(kids ? kidCategories : ['全部', '日常生活', '旅行出行', '职场交流']).map(c => <Button variant="ghost" key={c} onClick={() => setCategory(c)} className={cn('filter-button', c === category && 'active')}>{trn(c)}</Button>)}</div><div className="scene-grid">{(kids ? childrenScenes : scenes).filter(s => category === '全部' || s.category === category).map((s, i) => { const Icon = sceneIcons[s.icon]; return <Button key={s.id} variant="ghost" className="topic-card" onClick={() => openScene(s)}><div className="flex items-start justify-between w-full"><span className={`topic-icon tone-${i % 4}`}><Icon size={23} /></span><span className="level-tag">{trn(s.level)}</span></div><h3>{trn(s.title)}</h3><p>{trn(s.category)} · {trn(s.turns.length)} {tr("回合")}</p><span className="topic-card-arrow"><ArrowRight size={16} /></span></Button>; })}</div>
               <div className="section-heading mt-6"><h2>{tr("接着上次的小进步")}</h2><span className="text-teal">KEEP GOING</span></div><Button variant="ghost" className="continue-lesson" onClick={() => { setTab('学习'); setLearning(0); }}><span className="continue-icon"><Headphones size={21} /></span><div className="min-w-0 text-left"><h3>{kids ? tr("和小猫说声 Hello") : tr("礼貌表达你的需要")}</h3><p>{tr("第 1 课 ·")} {completed ? tr("已完成，可以复习") : tr("学会说 I’d like…")}</p></div><ChevronRight className="ml-auto" /></Button><p className="bottom-note"><Leaf size={12} /> {tr("不用完美，开口就是进步。")}</p>
             </>}
@@ -399,6 +423,7 @@ export function SpeakingApp({ initialLang, initialTab }: { initialLang?: Lang; i
               <TodayPlan open={(t, id) => { setDailyId(id); setAdvanced(t === 'stories' ? 'stories' : t); }} />
             </>}{tab === '学习' && !advanced && !kids && <div className="weak-list mb-4"><div className="grid grid-cols-5 gap-1.5 mb-2">{LEARN_GROUPS.map((g, gi) => <button type="button" key={g.title} aria-pressed={learnGroup === gi} onClick={() => setLearnGroup(gi)} className={cn('flex flex-col items-center gap-1 rounded-2xl border p-2 text-xs font-semibold', learnGroup === gi ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card')}>{g.icon}{tr(g.short)}</button>)}</div>{[LEARN_GROUPS[learnGroup] ?? LEARN_GROUPS[0]!].map(g => <div key={g.title} className="contents"><div className="section-heading"><h2>{tr(g.title)}</h2><span>{g.items.length} {tr("项")}</span></div>{g.items.map(k => { const lib = LIB_ENTRIES.find(e => e.kind === k); const m = lib ? { title: lib.title, sub: lib.sub, icon: <span>{lib.icon}</span> } : CORE_ENTRIES[k]; if (!m) return null; return <Button key={k} variant="ghost" className="weak-card" onClick={() => { if (k === 'daily') setDailyId(undefined); if (k === 'stories') setStoryLevel(undefined); if (k === 'records') { resetDetail(); setTab('加强'); return; } setAdvanced(k as never); }}><span className="topic-icon tone-2">{m.icon}</span><div className="text-left"><h3>{tr(m.title)}</h3><p>{tr(m.sub)}</p></div><ChevronRight className="ml-auto" /></Button>; })}</div>)}</div>}{tab === '学习' && !advanced && (kids || learnGroup === 0) && <><div className="learning-overview"><span className="topic-icon tone-0"><GraduationCap size={27} /></span><div><h2>{kids ? tr("小小英语探险") : tr("日常英语 · 入门 A1")}</h2><p>{tr("单元 01 · 从一句 Hello 开始")}</p></div></div><div className="section-heading"><h2>{tr("你的学习路径")}</h2><span>{completed ? '1' : '0'} {tr("/ 3 课完成")}</span></div><div className="lesson-path">{[{ title: kids ? tr('认识动物朋友') : tr('礼貌表达你的需要'), subtitle: tr('I’d like… · 约 5 分钟') }, { title: tr('介绍你自己'), subtitle: tr('My name is… · 约 5 分钟') }, { title: tr('说说你的喜好'), subtitle: tr('I like… · 约 5 分钟') }].map((l, i) => <div className="path-item" key={l.title}><span className={cn('path-number', i === 0 && 'active')}>{i === 0 && completed ? <Check size={19} /> : `0${i + 1}`}</span><Button className="lesson-card" variant="ghost" onClick={() => { if (i > 0) { setAdvanced('course'); return; } setLearning(0); setFeedback(false); }}><div className="text-left"><h3>{trn(l.title)}</h3><p>{i === 0 && kids ? tr("I like cats! · 约 5 分钟") : l.subtitle}</p><span className="lesson-badge">{i === 0 ? completed ? tr("已完成 · 复习") : tr("现在开始") : tr("在 12 周主线课程中继续")}</span></div><ChevronRight /></Button></div>)}</div><div className="tip-panel"><Leaf size={18} /><div><b>{tr("每天 5 分钟，给成长一点时间")}</b><p>{tr("每课包含学习、填空巩固和开口练三个阶段。")}</p></div></div></>}
             {tab === '词汇' && <>
+              {!fullVocab.length && (vocabError ? <Button variant="outline" onClick={() => setVocabRetry(n => n + 1)}>{tr('重试')}</Button> : <p role="status">{tr('正在加载…')}</p>)}
               <div className="vocab-stats">
                 <div>
                   <span className="eyebrow">MY WORD GARDEN · 3000+ VOCABULARY</span>
@@ -483,6 +508,7 @@ export function SpeakingApp({ initialLang, initialTab }: { initialLang?: Lang; i
               ) : null}
               <Button
                 className="w-full h-12 mt-4"
+                disabled={!activeWords.length}
                 onClick={() => {
                   setWordIndex(0);
                   setFlipped(false);
@@ -493,13 +519,15 @@ export function SpeakingApp({ initialLang, initialTab }: { initialLang?: Lang; i
             </>}
             {tab === '加强' && <><div className="strength-summary"><div><span className="eyebrow">SMALL FIXES, BIG PROGRESS</span><h2>{tr("精准练习，更快进步")}</h2><p>{tr("说错的句子自动进错题本，逐个攻克。")}</p></div><img src={uiMistakes} alt="" width={64} height={64} loading="lazy" className="h-16 w-16 flex-none rounded-2xl object-cover" /></div><div className="section-heading"><h2>{tr("我的错题本")}</h2></div><div className="weak-list"><Button variant="ghost" className="weak-card" onClick={() => setAdvanced('mistakes' as never)}><span className="topic-icon tone-2"><ClipboardCheck size={24} /></span><div className="text-left"><h3>{tr("打开错题本")}</h3><p>{tr("低于 60 分的句子自动收集 · 重练过关")}</p></div><ChevronRight className="ml-auto" /></Button></div><div className="section-heading mt-6"><h2>{tr("我的录音记录")}</h2><span>{trn(records.length)} {tr("条")}</span></div>{records.length === 0 ? <div className="empty-state"><span className="empty-bubble"><Mic size={26} /></span><b>{tr("还没有录音")}</b><p>{tr("在对话、学习或强化练习里点「开始跟读录音」，AI 会逐词纠正，记录会出现在这里。")}</p></div> : <div className="record-list">{records.map(r => <div className="record-item" key={r.id}><div className="flex items-center justify-between gap-2"><b className="truncate">{trn(r.target)}</b><span className={cn('record-score', r.analysis.score >= 85 ? 'good' : r.analysis.score >= 60 ? 'mid' : 'low')}>{trn(r.analysis.score)}</span></div><p className="record-heard">{tr("识别到：")}{trn(r.heard)}</p>{r.analysis.issues[0] && <p className="record-fix">{tr("待纠正：")}<b>{trn(r.analysis.issues[0].word)}</b> · {trn(r.analysis.issues[0].fix)}</p>}<div className="flex items-center gap-1"><Button variant="ghost" size="sm" onClick={() => void playExclusiveAudio(r.audioUrl)}><Volume2 size={13} /> {tr("我的录音")}</Button><AudioButton text={r.target} /><span className="ml-auto text-[10px] text-muted-foreground">{r.at.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}</span></div></div>)}</div>}<div className="tip-panel mt-6"><Zap size={19} /><div><b>{tr("不怕说错，怕的是不再尝试")}</b><p>{tr("所有纠正都来自你的真实录音，分数只代表这一次的发挥。")}</p></div></div></>}
           </>}
+          </Suspense>
         </main>
-        {sheet === 'sub' && <SubscribeDialog lang={lang} onClose={() => setSheet(null)} onLogin={() => { setSheet(null); setAuthMode('in'); setSheet('auth'); }} userId={user?.id} onPurchased={() => { setSheet(null); setNotice(tr("会员已开通，全部课程已解锁")); }} />}{sheet === 'auth' && <AuthDialog initialMode={authMode} reason={authReason} onClose={() => { setSheet(null); }} />}{sheet === 'account' && user && <AccountSheet user={user} onResults={() => { setSheet(null); resetDetail(); setTab('学习'); setAdvanced('results'); }} onClose={() => setSheet(null)} />}
+        <Suspense fallback={<div role="status" className="app-notice">{tr('正在加载…')}</div>}>{sheet === 'sub' && <SubscribeDialog lang={lang} onClose={() => setSheet(null)} onLogin={() => { setSheet(null); setAuthMode('in'); setSheet('auth'); }} userId={user?.id} onPurchased={() => { setSheet(null); setNotice(tr("会员已开通，全部课程已解锁")); }} />}{sheet === 'auth' && <AuthDialog initialMode={authMode} reason={authReason} onClose={() => { setSheet(null); }} />}{sheet === 'account' && user && <AccountSheet user={user} onResults={() => { setSheet(null); resetDetail(); setTab('学习'); setAdvanced('results'); }} onClose={() => setSheet(null)} />}
+        </Suspense>
         {notice && <div role="status" className="app-notice">{notice}<Button variant="ghost" size="icon" aria-label={tr("关闭提示")} onClick={() => setNotice('')}><X size={14} /></Button></div>}
         <nav className="bottom-nav" aria-label={tr("核心栏目")}>{tabs.map(t => <Button variant="ghost" key={t.name} className={cn('nav-item', tab === t.name && 'active')} onClick={() => { resetDetail(); setTab(t.name); }} aria-label={t.name} aria-current={tab === t.name ? 'page' : undefined}><t.icon size={22} strokeWidth={tab === t.name ? 2.2 : 1.6} /><span>{trn(DICT[lang].tabs[t.name])}</span>{tab === t.name && <i />}</Button>)}</nav><div className="home-indicator"><span /></div>
       </div>
     </div>
-    <DictionarySheet word={dictWord} contextSentence={dictSentence} open={!!dictWord} onClose={() => setDictWord(null)} />
+    <Suspense fallback={null}>{dictWord && <DictionarySheet word={dictWord} contextSentence={dictSentence} open={!!dictWord} onClose={() => setDictWord(null)} />}</Suspense>
     <footer className="workspace-footer"><span className="flex items-center gap-2"><span className="footer-dot" />{tr("声芽 SayUp")}</span><span>{tr("一点一滴，自然生长。")}</span><span>DESIGNED FOR YOUR DAILY GROWTH</span></footer>
   </div>;
 }

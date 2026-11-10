@@ -1,5 +1,7 @@
 import { words, kidWords } from '@/lib/speaking-content';
 import { getMainVocabWords, getKidsVocabWords } from '@/lib/main-vocab';
+import { cleanWordToken } from '@/lib/word-token';
+export { cleanWordToken } from '@/lib/word-token';
 
 export type WordEntry = {
   word: string;
@@ -118,12 +120,6 @@ for (const [k, v] of Object.entries(EXTENDED_DICT)) {
 /**
  * Normalizes a token: strips punctuation, spaces, converts to lowercase.
  */
-export function cleanWordToken(raw: string): string {
-  return raw
-    .toLowerCase()
-    .replace(/^[^a-z]+|[^a-z]+$/gi, '')
-    .trim();
-}
 
 /**
  * Checks if a token represents an English word suitable for lookup.

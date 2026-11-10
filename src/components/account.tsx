@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { lovable } from '@/integrations/lovable/index';
 import { VoicePicker } from '@/components/voice-picker';
+import { InviteCard } from '@/components/invite-card';
 
 function Sheet({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
   return <div className="member-backdrop" onClick={onClose}><section role="dialog" aria-modal="true" aria-label={title} className="member-sheet" onClick={e => e.stopPropagation()}><div className="flex items-center justify-between mb-3"><h2>{title}</h2><Button variant="ghost" size="icon" aria-label={tr("关闭")} onClick={onClose}><X /></Button></div>{children}</section></div>;
@@ -80,6 +81,7 @@ export function AccountSheet({ user, onClose, onResults }: { user: User; onClose
       {end && <p className={soon && !s0.cancel_at_period_end ? 'text-destructive font-semibold' : ''}>{s0.cancel_at_period_end ? tr('会员到期日：') : tr('下次扣费日期：')}{end.toLocaleDateString()}{soon && !s0.cancel_at_period_end ? ' · ' + tr('3 天内将自动扣费') : ''}</p>}
       <span className="text-xs text-muted-foreground block mt-1">{tr("如需管理或取消订阅，请在设备「系统设置 - 订阅」中管理。")}</span>
     </div></div>; })()}
+    <InviteCard />
     <h3 className="font-semibold mt-3 mb-2 text-sm">{tr("最近的口语记录")}</h3>
     {recs.length === 0 ? <p className="text-xs text-muted-foreground">{tr("还没有录音记录，去跟读一句试试。")}</p> : <div className="record-list">{recs.map(r => <div className="record-item" key={r.id}><div className="flex items-center justify-between gap-2"><b className="truncate">{trn(r.target)}</b><span className="record-score">{trn(r.score)}</span></div>{r.main_issue && <p className="record-fix">{tr("待纠正：")}{trn(r.main_issue)}</p>}<span className="text-[10px] text-muted-foreground">{new Date(r.created_at).toLocaleString('zh-CN')}</span></div>)}</div>}
     <a href="/legal" className="block text-center text-xs text-muted-foreground underline mt-3">{tr("隐私政策与服务条款")}</a><Button variant="outline" className="w-full mt-4" onClick={async () => { await supabase.auth.signOut(); onClose(); }}><LogOut size={15} /> {tr("退出登录")}</Button>

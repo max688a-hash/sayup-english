@@ -17,6 +17,11 @@ export const deleteMyAccount = createServerFn({ method: "POST" })
       const { error } = await (supabaseAdmin.from(t) as any).delete().eq(col, uid);
       if (error && !/column/.test(error.message)) throw new Error("delete " + t + " failed");
     }
+    for (const [t, col] of [["referral_codes", "user_id"], ["referrals", "invitee_id"], ["referrals", "inviter_id"]] as const) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: rErr } = await (supabaseAdmin.from(t) as any).delete().eq(col, uid);
+      if (rErr) throw new Error("delete " + t + " failed");
+    }
     const { error } = await supabaseAdmin.auth.admin.deleteUser(uid);
     if (error) throw new Error("delete user failed");
     return { ok: true as const };

@@ -17,7 +17,7 @@ function sourceFiles(dir: string, out: string[] = []) {
   for (const f of fs.readdirSync(dir)) {
     const p = path.join(dir, f);
     if (fs.statSync(p).isDirectory()) sourceFiles(p, out);
-    else if (/\.(ts|tsx)$/.test(p) && !/\.test\.|\.bak|routeTree|i18n\.ts$/.test(p)) out.push(p);
+    else if (/\.(ts|tsx)$/.test(p) && !/\.test\.|\.bak|routeTree|build-config|i18n\.ts$/.test(p)) out.push(p);
   }
   return out;
 }

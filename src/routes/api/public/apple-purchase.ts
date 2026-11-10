@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { AppleRequestError } from '@/lib/apple-request-error';
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
@@ -11,14 +12,18 @@ export const Route = createFileRoute("/api/public/apple-purchase")({
       POST: async ({ request }) => {
         let body: { signedTransaction?: string; signedPayload?: string };
         try {
-          body = await request.json();
+          const value: unknown = await request.json();
+          if (!value || typeof value !== 'object' || Array.isArray(value)) return json({ status: 'invalid' }, 400);
+          body = value;
         } catch {
           return json({ status: "invalid" }, 400);
         }
         try {
           const { handleApplePurchasePost } = await import("@/lib/apple-purchase.server");
-          return json(await handleApplePurchasePost(body));
+          const result = await handleApplePurchasePost(body);
+          return json(result, result.status === 'invalid' ? 400 : 200);
         } catch (error) {
+          if (error instanceof AppleRequestError) return json({ status: 'invalid' }, 400);
           console.error(error);
           return json({ status: "error" }, 500);
         }

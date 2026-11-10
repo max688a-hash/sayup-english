@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { REWARD_RULES as R } from '@/lib/reward-rules';
 
 export const Route = createFileRoute('/legal')({
   head: () => ({
@@ -16,7 +17,7 @@ export const Route = createFileRoute('/legal')({
 
 const OPERATOR = '【运营主体：公司注册完成后填写】';
 const EMAIL = 'huazhang06@gmail.com';
-const DATE = '2026-10-16';
+const DATE = '2026-11-10';
 
 function Legal() {
   return <main className="mx-auto max-w-2xl px-5 py-10 space-y-6 text-sm leading-7 text-foreground">
@@ -38,10 +39,16 @@ function Legal() {
     <section><h2 className="font-semibold">1. 服务内容</h2>
       <p>声芽提供英语口语练习、AI 发音反馈与学习内容。学习效果因人而异，取决于练习时长与投入，我们不承诺任何学习结果或考试成绩。</p></section>
     <section><h2 className="font-semibold">2. 会员与自动续费</h2>
-      <p>会员按月、季或年订阅，到期自动续费。如通过苹果 App Store 订阅，费用将在确认购买后从您的 Apple ID 账户扣除，且到期前 24 小时自动续订并扣款。用户可在 iOS 设备「系统设置 - Apple ID - 订阅」中随时管理或取消自动续订。取消后当期仍可使用至到期。打卡奖励（如连续达标赠送月份）以应用内公布的规则为准。</p></section>
-    <section><h2 className="font-semibold">3. 使用规范与知识产权</h2>
+      <p>会员按月、季或年订阅，到期自动续费。如通过苹果 App Store 订阅，费用将在确认购买后从您的 Apple ID 账户扣除，且到期前 24 小时自动续订并扣款。用户可在 iOS 设备「系统设置 - Apple ID - 订阅」中随时管理或取消自动续订。取消后当期仍可使用至到期。</p></section>
+    <section><h2 className="font-semibold">3. 打卡与邀请奖励</h2>
+      <p>有效打卡：当天至少完成 {R.checkinRecordingsPerDay} 次有评分的真实录音练习。</p>
+      <p>新人挑战：注册后 {R.newcomerWindowDays} 天内有效打卡满 {R.newcomerCheckinDays} 天，送 {R.newcomerRewardDays} 天会员，每个账号限一次；练习免费试学内容也计入。</p>
+      <p>会员月度奖励：每个已付费的会员月（按订阅周期计算）内有效打卡满 {R.monthlyCheckinDays} 天，送 {R.monthlyRewardDays} 天会员。赠送的天数不算付费月，期间打卡不再产生奖励；停止续费后，最后一个达标付费月的奖励发放完即结束。</p>
+      <p>邀请好友：好友注册后 {R.referralApplyWithinDays} 天内填写你的邀请码，且好友付费会员满 {R.referralPaidHoldDays} 天后，送你 {R.referralRewardDays} 天会员；只奖励直接邀请人，每人每年最多 {R.referralMaxPerYear} 次。</p>
+      <p>奖励天数自动到账，排在当前会员到期之后接续使用。赠送天数不可提现、不可转让，不抵扣、不暂停苹果订阅扣费；自动续费由苹果管理，停止续费须在苹果订阅设置中操作。发现刷号、伪造录音等作弊行为的，我们有权取消相应奖励。</p></section>
+    <section><h2 className="font-semibold">4. 使用规范与知识产权</h2>
       <p>请勿利用本服务从事违法活动或干扰系统。应用内课程、对话与例句由声芽原创或合法授权，未经许可不得复制用于商业用途。</p></section>
-    <section><h2 className="font-semibold">4. 适用法律</h2>
+    <section><h2 className="font-semibold">5. 适用法律</h2>
       <p>本条款适用中华人民共和国法律。争议应先友好协商，协商不成的，提交运营方所在地有管辖权的人民法院解决。</p></section>
   </main>;
 }

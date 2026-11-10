@@ -1,5 +1,5 @@
 import React from 'react';
-import { cleanWordToken } from '@/lib/dictionary';
+import { cleanWordToken } from '@/lib/word-token';
 
 interface ClickableSentenceProps {
   text: string;

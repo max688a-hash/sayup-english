@@ -221,6 +221,45 @@ export type Database = {
         }
         Relationships: []
       }
+      referral_codes: {
+        Row: {
+          code: string
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      referrals: {
+        Row: {
+          created_at: string
+          invitee_id: string
+          inviter_id: string
+          rewarded_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          invitee_id: string
+          inviter_id: string
+          rewarded_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          invitee_id?: string
+          inviter_id?: string
+          rewarded_at?: string | null
+        }
+        Relationships: []
+      }
       reward_grants: {
         Row: {
           billing_applied_at: string | null
@@ -377,12 +416,29 @@ export type Database = {
         }
         Relationships: []
       }
+      zz_probe: {
+        Row: {
+          id: number
+        }
+        Insert: {
+          id: number
+        }
+        Update: {
+          id?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
       admin_slot_open: { Args: never; Returns: boolean }
+      apply_referral_code: { Args: { _code: string }; Returns: string }
+      checkin_day_count: {
+        Args: { _from: string; _to: string; _uid: string }
+        Returns: number
+      }
       checkin_days: {
         Args: { _from: string; _to: string }
         Returns: {
@@ -390,8 +446,13 @@ export type Database = {
         }[]
       }
       claim_first_admin: { Args: never; Returns: boolean }
+      claim_reward_days: { Args: never; Returns: Json }
       claim_rewards: { Args: never; Returns: string }
       defer_point_grants: { Args: { _uid: string }; Returns: undefined }
+      grant_reward_days: {
+        Args: { _days: number; _key: string; _kind: string; _uid: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -402,10 +463,11 @@ export type Database = {
       latest_coverage_segment: {
         Args: { _uid: string }
         Returns: {
-          seg_start: string
           seg_end: string
+          seg_start: string
         }[]
       }
+      my_referral_info: { Args: never; Returns: Json }
       redeem_partner_code: { Args: { _code: string }; Returns: string }
       redeem_points: { Args: { _days: number }; Returns: Json }
       reward_points_balance: { Args: never; Returns: number }
