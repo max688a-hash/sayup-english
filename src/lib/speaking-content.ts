@@ -1,6 +1,6 @@
 export type Tab = '对话' | '角色' | '学习' | '词汇' | '加强';
 export type Word = { word: string; phonetic: string; meaning: string; example: string; level: string };
-export type Scene = { id: string; title: string; english: string; category: string; icon: 'coffee' | 'plane' | 'briefcase' | 'shopping'; level: string; turns: string[]; replies: string[]; options: [string, string][]; tips: string[] };
+export type Scene = { id: string; title: string; english: string; category: string; icon: 'coffee' | 'plane' | 'briefcase' | 'shopping'; level: string; turns: string[]; replies: string[]; options: [string, string][]; tips: string[]; zh?: Record<string, string> };
 export const scenes: Scene[] = [
   {
     id: 'cafe',
@@ -41,6 +41,27 @@ export const scenes: Scene[] = [
       '完美收尾！How much is it 用来问价格非常自然。',
       '支付得体！By card please 是刷卡支付的标准表达。',
     ],
+    zh: {
+      'Hi! What can I get for you?': '你好！要点什么？',
+      'Sure. Hot or iced?': '好的。要热的还是冰的？',
+      'What size do you need?': '需要什么杯型？',
+      'For here or to go?': '在这里喝还是带走？',
+      'Anything else? A muffin maybe?': '还要别的吗？来个玛芬蛋糕？',
+      'Cash or card?': '现金还是刷卡？',
+      "Hi, I'd like a large latte, please.": '你好，我要一杯大杯拿铁。',
+      "I'd like a latte, please.": '我要一杯拿铁。',
+      'Iced, with less sugar.': '冰的，少糖。',
+      'Hot, please.': '热的，谢谢。',
+      'A medium, please.': '中杯，谢谢。',
+      'A small, please.': '小杯，谢谢。',
+      'To go, please.': '带走，谢谢。',
+      'Iced, please.': '冰的，谢谢。',
+      "No, that's it. How much is it?": '不要了，就这些。多少钱？',
+      "That's all, thank you!": '就这些，谢谢！',
+      'By card please.': '刷卡，谢谢。',
+      'Card please.': '刷卡。',
+      'Lovely talking to you. Have a wonderful day!': '和你聊天很开心。祝你有美好的一天！',
+    },
   },
   {
     id: 'travel',
@@ -69,6 +90,18 @@ export const scenes: Scene[] = [
       '不错！carry-on 指随身携带的行李。',
       '完成值机！gate 是登机口，boarding 是登机。',
     ],
+    zh: {
+      'Hello! May I see your passport?': '你好！请出示一下护照。',
+      'Do you have any bags to check?': '有行李要托运吗？',
+      'Here is your boarding pass.': '这是您的登机牌。',
+      'Here you are.': '给你。',
+      'Sure, here it is.': '好的，给你。',
+      'Yes, just one bag.': '有，就一件行李。',
+      'No, only a carry-on.': '没有，只有随身行李。',
+      'Thank you. Where is my gate?': '谢谢。我的登机口在哪里？',
+      'Thanks! What time is boarding?': '谢谢！几点登机？',
+      'Lovely talking to you. Have a wonderful day!': '和你聊天很开心。祝你有美好的一天！',
+    },
   },
   {
     id: 'work',
@@ -97,6 +130,18 @@ export const scenes: Scene[] = [
       '表达清楚！join a team 表示加入某个团队。',
       '完美收尾！excited 和 looking forward 都表达期待。',
     ],
+    zh: {
+      "Hi! I'm Alex. Nice to meet you.": '嗨！我是 Alex，很高兴认识你。',
+      'Which team are you joining?': '你加入哪个团队？',
+      'Welcome to the team!': '欢迎加入团队！',
+      "I'm Sam. Nice to meet you too.": '我是 Sam，也很高兴认识你。',
+      "Hi Alex! I'm Sam.": '嗨 Alex！我是 Sam。',
+      "I'm joining the design team.": '我加入设计团队。',
+      "I'll be on the design team.": '我会在设计团队。',
+      "Thanks! I'm excited to be here.": '谢谢！很期待在这里工作。',
+      'Thank you! Looking forward to it.': '谢谢！期待加入。',
+      'Lovely talking to you. Have a wonderful day!': '和你聊天很开心。祝你有美好的一天！',
+    },
   },
   {
     id: 'shop',
@@ -125,10 +170,22 @@ export const scenes: Scene[] = [
       '说得对！衣服尺码：small / medium / large。',
       '很棒！try it on 是“试穿”，how much 用来问价格。',
     ],
+    zh: {
+      'Hello! Can I help you?': '你好！需要帮助吗？',
+      'What size do you need?': '需要什么尺码？',
+      'Of course. Here you go!': '当然可以。给你！',
+      "I'm looking for a T-shirt.": '我想找一件 T 恤。',
+      'Just browsing, thanks.': '随便看看，谢谢。',
+      'A medium, please.': '中码，谢谢。',
+      'A small, please.': '小码，谢谢。',
+      'Thank you. Can I try it on?': '谢谢。可以试穿吗？',
+      'Thanks! How much is it?': '谢谢！多少钱？',
+      'Lovely talking to you. Have a wonderful day!': '和你聊天很开心。祝你有美好的一天！',
+    },
   },
 ];
-export const kidScene: Scene = { id: 'kids', title: '认识动物朋友', english: 'Hello, little friends!', category: '动物朋友', icon: 'coffee', level: '启蒙', turns: ['Hello! What animal do you like?', 'What color is the cat?', 'Can you say hello to the cat?'], replies: ['I like cats!', 'The cat is orange.', 'Hello, little cat!'], options: [['I like cats!', 'I like dogs!'], ['The cat is orange.', 'The cat is white.'], ['Hello, little cat!', 'Hi, little cat!']], tips: ['真棒！I like… 可以说出你喜欢的动物。', '观察得真仔细！orange 是橙色，white 是白色。', '太棒了！你和小猫成为好朋友啦！'] };
-export const toyScene: Scene = { id: 'toys', title: '我的玩具商店', english: 'Let’s play together', category: '玩具游戏', icon: 'shopping', level: '启蒙', turns: ['Welcome to my toy shop! What toy do you want?', 'Here is a ball. What color do you like?', 'Here you go! Do you want to play together?'], replies: ['I want a ball, please.', 'I like blue!', 'Yes! Let’s play!'], options: [['I want a ball, please.', 'I want a teddy bear, please.'], ['I like blue!', 'I like red!'], ['Yes! Let’s play!', 'Yes, please! Thank you!']], tips: ['真棒！I want… please 可以礼貌地说出想要的玩具。', '说得真好！blue 是蓝色，red 是红色。', '太棒了！Let’s play 就是“我们一起玩吧”！'] };
+export const kidScene: Scene = { id: 'kids', title: '认识动物朋友', english: 'Hello, little friends!', category: '动物朋友', icon: 'coffee', level: '启蒙', turns: ['Hello! What animal do you like?', 'What color is the cat?', 'Can you say hello to the cat?'], replies: ['I like cats!', 'The cat is orange.', 'Hello, little cat!'], options: [['I like cats!', 'I like dogs!'], ['The cat is orange.', 'The cat is white.'], ['Hello, little cat!', 'Hi, little cat!']], tips: ['真棒！I like… 可以说出你喜欢的动物。', '观察得真仔细！orange 是橙色，white 是白色。', '太棒了！你和小猫成为好朋友啦！'], zh: { 'Hello! What animal do you like?': '你好！你喜欢什么动物？', 'What color is the cat?': '小猫是什么颜色的？', 'Can you say hello to the cat?': '你能和小猫打个招呼吗？', 'I like cats!': '我喜欢小猫！', 'I like dogs!': '我喜欢小狗！', 'The cat is orange.': '小猫是橙色的。', 'The cat is white.': '小猫是白色的。', 'Hello, little cat!': '你好，小猫咪！', 'Hi, little cat!': '嗨，小猫咪！', 'Lovely talking to you. Have a wonderful day!': '和你聊天很开心。祝你有美好的一天！' } };
+export const toyScene: Scene = { id: 'toys', title: '我的玩具商店', english: 'Let’s play together', category: '玩具游戏', icon: 'shopping', level: '启蒙', turns: ['Welcome to my toy shop! What toy do you want?', 'Here is a ball. What color do you like?', 'Here you go! Do you want to play together?'], replies: ['I want a ball, please.', 'I like blue!', 'Yes! Let’s play!'], options: [['I want a ball, please.', 'I want a teddy bear, please.'], ['I like blue!', 'I like red!'], ['Yes! Let’s play!', 'Yes, please! Thank you!']], tips: ['真棒！I want… please 可以礼貌地说出想要的玩具。', '说得真好！blue 是蓝色，red 是红色。', '太棒了！Let’s play 就是“我们一起玩吧”！'], zh: { 'Welcome to my toy shop! What toy do you want?': '欢迎来到我的玩具店！你想要什么玩具？', 'Here is a ball. What color do you like?': '这是一个球。你喜欢什么颜色？', 'Here you go! Do you want to play together?': '给你！你想一起玩吗？', 'I want a ball, please.': '我想要一个球，谢谢。', 'I want a teddy bear, please.': '我想要一只泰迪熊，谢谢。', 'I like blue!': '我喜欢蓝色！', 'I like red!': '我喜欢红色！', 'Yes! Let’s play!': '想！我们一起玩吧！', 'Yes, please! Thank you!': '好的，谢谢！', 'Lovely talking to you. Have a wonderful day!': '和你聊天很开心。祝你有美好的一天！' } };
 export const kidCategories = ['全部', '动物朋友', '玩具游戏'];
 export const words: Word[] = [
   { word: 'coffee', phonetic: '/ˈkɒfi/', meaning: '咖啡', example: "I'd like a coffee, please.", level: 'A1' },
