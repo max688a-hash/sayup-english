@@ -122,7 +122,8 @@ export function SpeechCoach({ target, onPassed, onRecord }: { target: string; on
       form.append('lang', getContentLang());
 
       // Try network analysis with timeout
-      const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => resolve(null), 3000));
+      // Server STT + LLM analysis measured at ~6-9s; allow headroom for longer recordings
+      const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => resolve(null), 20000));
       const fetchPromise = fetch(getApiUrl('/api/speech-analyze'), { method: 'POST', body: form, signal: ctrl.signal })
         .then(async (res) => {
           if (!res.ok) return null;
@@ -135,6 +136,15 @@ export function SpeechCoach({ target, onPassed, onRecord }: { target: string; on
       if (data && data.status === 'ok' && data.analysis) {
         finalAnalysis = data.analysis as Analysis;
         finalHeard = data.heard || finalHeard;
+      } else if (data && data.status === 'no_speech') {
+        finalAnalysis = {
+          score: 0,
+          verdict: 'retry',
+          summary: tr('没有检测到清晰的人声，请靠近麦克风重新录音。'),
+          issues: [],
+          suggestions: [],
+          next_try: tr('把整句完整读一遍，注意发音清晰度。'),
+        };
       }
     } catch {}
 
