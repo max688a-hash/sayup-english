@@ -109,3 +109,11 @@ https://app.orikstudio.com/api/public/apple-purchase
 - 迁移未执行前，前端积分 UI 点击会报"函数不存在"——第 1 步是硬前提
 - 苹果通知端点已实现但**未经真实通知联调**；`sayup.orikstudio.com` 修复是云端独立工作
 - 本方案不构成商店审核与法律合规承诺；消费者保护、退款政策、隐私披露仍需逐项核对
+
+## 2026-11-11 · Build 5 (commit fde5a446)
+- Kids A0 dialogue library: 8 scenes wired (fruit/colors/counting/breakfast/park/weather/family/bedtime), choices + zh, 79 sentences baked (audio index 19,190)
+- Cloud practice_records merge: signed-in users see remote rows marked `remote`, play only when real audioUrl
+- Dead files deleted: vocabImages.ts / tprImmersion.ts / kidsAssets.ts (~1000 lines)
+- AVAudioSession playAndRecord+defaultToSpeaker (BT audio fix, in AppDelegate)
+- Verified: tsc clean, 70/70 tests, signed XU3FP3HXF3, uploaded 1.0(5) to ASC
+- PENDING real-device: 50-scene list, review playback, BT audio, cloud-record labels
