@@ -67,12 +67,15 @@ export function InviteCard() {
       <Button size="sm" variant="outline" onClick={share}><Copy size={14} /> {tr('分享邀请码')}</Button>
     </div>}
     <p className="text-xs text-muted-foreground mt-1">{tr('已邀请 {0} 人 · 已到账 {1} 次', info.invited ?? 0, info.rewarded ?? 0)}</p>
-    {info.can_apply && <form className="flex gap-2 mt-2" onSubmit={e => { e.preventDefault(); void apply(input); }}>
+    {info.can_apply && <>
+      <p className="text-xs text-muted-foreground mt-2">{tr('被好友邀请注册的，在这里填写对方的邀请码；没有邀请码可不填。')}</p>
+      <form className="flex gap-2 mt-1" onSubmit={e => { e.preventDefault(); void apply(input); }}>
       <input aria-label={tr('填写好友的邀请码')} placeholder={tr('填写好友的邀请码')} value={input} maxLength={12}
         onChange={e => setInput(e.target.value.toUpperCase())}
         className="min-w-0 flex-1 rounded-md border border-input bg-background px-3 py-1.5 text-sm" />
       <Button size="sm" type="submit" disabled={busy || !input.trim()}>{tr('提交')}</Button>
-    </form>}
+      </form>
+    </>}
     {msg && <p className="text-xs mt-2" role="status">{msg}</p>}
   </div></div>;
 }
