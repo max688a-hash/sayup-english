@@ -9,7 +9,7 @@ import { evaluateSpokenText } from '@/lib/speech-evaluator';
 import { playExclusiveAudio } from '@/lib/cloud-speech';
 
 export type Analysis = { score: number; verdict: 'good' | 'needs_work' | 'retry'; summary: string; issues: { word: string; problem: string; fix: string }[]; suggestions: string[]; next_try: string };
-export type PracticeRecord = { id: string; target: string; heard: string; analysis: Analysis; audioUrl: string; at: Date; waveform?: number[]; seconds?: number };
+export type PracticeRecord = { id: string; target: string; heard: string; analysis: Analysis; audioUrl: string; at: Date; waveform?: number[]; seconds?: number; remote?: boolean };
 
 type Phase = 'idle' | 'recording' | 'analyzing' | 'done' | 'retry' | 'error';
 

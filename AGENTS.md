@@ -32,3 +32,7 @@
 - Lazy-load learning modules, account dialogs and the main vocabulary corpus from the app shell, keeping navigation metadata in a lightweight catalog; unopened lessons must not block first interaction.
 - Apple input/signature validation raises AppleRequestError and returns HTTP 400; reserve HTTP 500 for operational failures so rejected untrusted notifications do not trigger crash telemetry or mask retryable backend errors.
 - Reward amounts live in src/lib/reward-rules.ts and are enforced only by database functions (claim_reward_days, apply_referral_code) that grant membership days directly; the legacy points ledger and redeem function stay only for older app builds, so rewards cannot be forged client-side and copy stays in sync via tests.
+
+## 物理路径验收协议（验收必须遵守，2026-11 立）
+
+宣称任何功能「完成/可用/内容正常」前必须过四层探针：入口（每个可见入口追到数据落点）→ 路径（真跑真点看真实输出）→ 数据（用户点得到的量，不是文件里的量）→ 身份（游客/免费/付费分别验）。文件存在但没被用户路径引用 = 死数据，必须如实报告，不得转述为「内容正常」。全局版见 ~/.agents/skills/physical-acceptance/。

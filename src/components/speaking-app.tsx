@@ -14,7 +14,7 @@ import { useMemberVoice } from '@/hooks/use-member-voice';
 import { supabase } from '@/integrations/supabase/client';
 import { Lock, UserRound } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { scenes, kidScene, toyScene, kidCategories, words, kidWords, type Scene, type Tab } from '@/lib/speaking-content';
+import { scenes, kidScene, toyScene, allKidScenes, kidAllCategories, words, kidWords, type Scene, type Tab } from '@/lib/speaking-content';
 import { rolePlayScenes } from '@/lib/roleplay-scenes';
 import { DialogueReview } from '@/components/dialogue-review';
 import type { MainVocabWord } from '@/lib/main-vocab';
@@ -144,7 +144,7 @@ export function SpeakingApp({ initialLang, initialTab }: { initialLang?: Lang; i
   const [learnGroup, setLearnGroup] = useState(1);
   const featuredScene = scenes[0] ?? kidScene;
   const allScenes = useRef<Scene[]>([...scenes, ...rolePlayScenes]).current;
-  const childrenScenes: Scene[] = [kidScene, toyScene];
+  const childrenScenes: Scene[] = allKidScenes;
   const [scene, setScene] = useState<Scene | null>(null);
   const [rolePlay, setRolePlay] = useState(false);
   const [turn, setTurn] = useState(0);
@@ -185,7 +185,38 @@ export function SpeakingApp({ initialLang, initialTab }: { initialLang?: Lang; i
   useEffect(() => {
     if (!user) {
       setRecords(loadLocalRecords());
+      return;
     }
+    // 登录用户：合并云端练习记录元数据。录音音频本体只存在本机（object URL），
+    // 云端行只能显示成绩，不能回放——UI 必须如实标注。
+    void supabase
+      .from('practice_records')
+      .select('id,target,heard,score,main_issue,created_at')
+      .order('created_at', { ascending: false })
+      .limit(30)
+      .then(({ data }) => {
+        if (!data) return;
+        const remote: PracticeRecord[] = data.map(row => ({
+          id: row.id,
+          target: row.target ?? '',
+          heard: row.heard ?? '',
+          analysis: {
+            score: row.score ?? 0,
+            verdict: (row.score ?? 0) >= 85 ? 'good' : (row.score ?? 0) >= 60 ? 'needs_work' : 'retry',
+            summary: '',
+            issues: row.main_issue ? [{ word: String(row.main_issue).split(' · ')[0] ?? '', problem: '', fix: String(row.main_issue).split(' · ')[1] ?? '' }] : [],
+            suggestions: [],
+            next_try: row.target ?? '',
+          },
+          audioUrl: '',
+          at: new Date(row.created_at ?? Date.now()),
+          remote: true,
+        }));
+        setRecords(old => {
+          const localIds = new Set(old.map(r => r.id));
+          return [...old, ...remote.filter(r => !localIds.has(r.id))].slice(0, 60);
+        });
+      });
   }, [user?.id]);
   const { voice: coreVoice, member: isMember } = useMemberVoice(user?.id);
   const [pendingSheet, setPendingSheet] = useState<null | 'sub'>(null);
@@ -401,7 +432,7 @@ export function SpeakingApp({ initialLang, initialTab }: { initialLang?: Lang; i
                 <span className="daily-dot" />
               </div>
               <section className="featured-scene"><img fetchPriority="high" decoding="async" src={kids ? kidsImage : cafeImage} width={1024} height={640} alt={kids ? tr("小猫和小狗在玩具店里玩球") : tr("暖灯下的街角咖啡店")} /><div className="featured-overlay" /><div className="featured-copy"><span className="featured-label"><Sparkles size={11} /> {kids ? tr("儿童精选") : tr("今日推荐")}</span><h2>{kids ? <>{tr("一起认识")}<br />{tr("动物朋友")}</> : <>{tr("一杯咖啡，")}<br />{tr("一段新对话。")}</>}</h2><p>{kids ? 'Say hello to little friends.' : 'Your daily dose of English.'}</p><Button onClick={() => openScene(kids ? kidScene : featuredScene)} className="featured-cta">{tr("开始对话")} <ArrowRight size={14} /></Button></div><span className="featured-level">{kids ? tr("启蒙") : tr("A1 入门")} {tr("· 约 5 分钟")}</span></section>
-              <div className="section-heading"><h2>{tr("聊你感兴趣的")}</h2><span>{tr("真实情景，轻松开口")}</span></div><div className="filter-row">{(kids ? kidCategories : ['全部', '日常生活', '旅行出行', '职场交流']).map(c => <Button variant="ghost" key={c} onClick={() => setCategory(c)} className={cn('filter-button', c === category && 'active')}>{trn(c)}</Button>)}</div><div className="scene-grid">{(kids ? childrenScenes : allScenes).filter(s => category === '全部' || s.category === category).map((s, i) => { const Icon = sceneIcons[s.icon]; return <Button key={s.id} variant="ghost" className="topic-card" onClick={() => openScene(s)}><div className="flex items-start justify-between w-full"><span className={`topic-icon tone-${i % 4}`}><Icon size={23} /></span><span className="level-tag">{trn(s.level)}</span></div><h3>{trn(s.title)}</h3><p>{trn(s.category)} · {trn(s.turns.length)} {tr("回合")}</p><span className="topic-card-arrow"><ArrowRight size={16} /></span></Button>; })}</div>
+              <div className="section-heading"><h2>{tr("聊你感兴趣的")}</h2><span>{tr("真实情景，轻松开口")}</span></div><div className="filter-row">{(kids ? kidAllCategories : ['全部', '日常生活', '旅行出行', '职场交流']).map(c => <Button variant="ghost" key={c} onClick={() => setCategory(c)} className={cn('filter-button', c === category && 'active')}>{trn(c)}</Button>)}</div><div className="scene-grid">{(kids ? childrenScenes : allScenes).filter(s => category === '全部' || s.category === category).map((s, i) => { const Icon = sceneIcons[s.icon]; return <Button key={s.id} variant="ghost" className="topic-card" onClick={() => openScene(s)}><div className="flex items-start justify-between w-full"><span className={`topic-icon tone-${i % 4}`}><Icon size={23} /></span><span className="level-tag">{trn(s.level)}</span></div><h3>{trn(s.title)}</h3><p>{trn(s.category)} · {trn(s.turns.length)} {tr("回合")}</p><span className="topic-card-arrow"><ArrowRight size={16} /></span></Button>; })}</div>
               <div className="section-heading mt-6"><h2>{tr("接着上次的小进步")}</h2><span className="text-teal">KEEP GOING</span></div><Button variant="ghost" className="continue-lesson" onClick={() => { setTab('学习'); setLearning(0); }}><span className="continue-icon"><Headphones size={21} /></span><div className="min-w-0 text-left"><h3>{kids ? tr("和小猫说声 Hello") : tr("礼貌表达你的需要")}</h3><p>{tr("第 1 课 ·")} {completed ? tr("已完成，可以复习") : tr("学会说 I’d like…")}</p></div><ChevronRight className="ml-auto" /></Button><p className="bottom-note"><Leaf size={12} /> {tr("不用完美，开口就是进步。")}</p>
             </>}
             {tab === '角色' && <><section className="role-banner"><div className="role-avatar"><Coffee size={31} /></div><div><span className="eyebrow">YOUR TURN TO SHINE</span><h2>{tr("今天，你想成为谁？")}</h2><p>{tr("双人对话 · 回合提示 · 跟读练习")}</p></div></section><div className="section-heading"><h2>{tr("挑选你的情景")}</h2><span>{tr("多轮实战 · 真实对话")}</span></div><div className="role-list">{(kids ? childrenScenes : allScenes).map((s, i) => { const Icon = sceneIcons[s.icon]; return <Button variant="ghost" className="role-card" key={s.id} onClick={() => openScene(s, true)}><span className={`topic-icon tone-${i}`}><Icon size={25} /></span><div className="min-w-0 text-left"><h3>{trn(s.title)}</h3><p>{trn(s.english)}</p><span className="text-xs text-teal">{trn(s.level)} {tr("· 双人角色扮演")}</span></div><ChevronRight className="ml-auto" /></Button>; })}</div><div className="tip-panel mt-6"><Sparkles size={19} /><div><b>{tr("在角色里，发现自信的自己")}</b><p>{tr("试着听懂对方，再用自己的话回答。")}</p></div></div></>}
@@ -520,7 +551,7 @@ export function SpeakingApp({ initialLang, initialTab }: { initialLang?: Lang; i
                 <BookOpen size={18} /> {isMember ? tr("开始词卡记忆（本组") + ` ${trn(activeWords.length)} ` + tr("词）") : tr("开始词卡记忆（精选前 40 词）")}
               </Button>
             </>}
-            {tab === '加强' && <><div className="strength-summary"><div><span className="eyebrow">SMALL FIXES, BIG PROGRESS</span><h2>{tr("精准练习，更快进步")}</h2><p>{tr("说错的句子自动进错题本，逐个攻克。")}</p></div><img src={uiMistakes} alt="" width={64} height={64} loading="lazy" className="h-16 w-16 flex-none rounded-2xl object-cover" /></div><div className="section-heading"><h2>{tr("我的错题本")}</h2></div><div className="weak-list"><Button variant="ghost" className="weak-card" onClick={() => setAdvanced('mistakes' as never)}><span className="topic-icon tone-2"><ClipboardCheck size={24} /></span><div className="text-left"><h3>{tr("打开错题本")}</h3><p>{tr("低于 60 分的句子自动收集 · 重练过关")}</p></div><ChevronRight className="ml-auto" /></Button></div><div className="section-heading mt-6"><h2>{tr("我的录音记录")}</h2><span>{trn(records.length)} {tr("条")}</span></div>{records.length === 0 ? <div className="empty-state"><span className="empty-bubble"><Mic size={26} /></span><b>{tr("还没有录音")}</b><p>{tr("在对话、学习或强化练习里点「开始跟读录音」，AI 会逐词纠正，记录会出现在这里。")}</p></div> : <div className="record-list">{records.map(r => <div className="record-item" key={r.id}><div className="flex items-center justify-between gap-2"><b className="truncate">{trn(r.target)}</b><span className={cn('record-score', r.analysis.score >= 85 ? 'good' : r.analysis.score >= 60 ? 'mid' : 'low')}>{trn(r.analysis.score)}</span></div><p className="record-heard">{tr("识别到：")}{trn(r.heard)}</p>{r.analysis.issues[0] && <p className="record-fix">{tr("待纠正：")}<b>{trn(r.analysis.issues[0].word)}</b> · {trn(r.analysis.issues[0].fix)}</p>}<div className="flex items-center gap-1"><Button variant="ghost" size="sm" onClick={() => void playExclusiveAudio(r.audioUrl)}><Volume2 size={13} /> {tr("我的录音")}</Button><AudioButton text={r.target} /><span className="ml-auto text-[10px] text-muted-foreground">{r.at.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}</span></div></div>)}</div>}<div className="tip-panel mt-6"><Zap size={19} /><div><b>{tr("不怕说错，怕的是不再尝试")}</b><p>{tr("所有纠正都来自你的真实录音，分数只代表这一次的发挥。")}</p></div></div></>}
+            {tab === '加强' && <><div className="strength-summary"><div><span className="eyebrow">SMALL FIXES, BIG PROGRESS</span><h2>{tr("精准练习，更快进步")}</h2><p>{tr("说错的句子自动进错题本，逐个攻克。")}</p></div><img src={uiMistakes} alt="" width={64} height={64} loading="lazy" className="h-16 w-16 flex-none rounded-2xl object-cover" /></div><div className="section-heading"><h2>{tr("我的错题本")}</h2></div><div className="weak-list"><Button variant="ghost" className="weak-card" onClick={() => setAdvanced('mistakes' as never)}><span className="topic-icon tone-2"><ClipboardCheck size={24} /></span><div className="text-left"><h3>{tr("打开错题本")}</h3><p>{tr("低于 60 分的句子自动收集 · 重练过关")}</p></div><ChevronRight className="ml-auto" /></Button></div><div className="section-heading mt-6"><h2>{tr("我的录音记录")}</h2><span>{trn(records.length)} {tr("条")}</span></div>{records.length === 0 ? <div className="empty-state"><span className="empty-bubble"><Mic size={26} /></span><b>{tr("还没有录音")}</b><p>{tr("在对话、学习或强化练习里点「开始跟读录音」，AI 会逐词纠正，记录会出现在这里。")}</p></div> : <div className="record-list">{records.map(r => <div className="record-item" key={r.id}><div className="flex items-center justify-between gap-2"><b className="truncate">{trn(r.target)}</b><span className={cn('record-score', r.analysis.score >= 85 ? 'good' : r.analysis.score >= 60 ? 'mid' : 'low')}>{trn(r.analysis.score)}</span></div><p className="record-heard">{tr("识别到：")}{trn(r.heard)}</p>{r.analysis.issues[0] && <p className="record-fix">{tr("待纠正：")}<b>{trn(r.analysis.issues[0].word)}</b> · {trn(r.analysis.issues[0].fix)}</p>}<div className="flex items-center gap-1">{r.audioUrl ? <Button variant="ghost" size="sm" onClick={() => void playExclusiveAudio(r.audioUrl)}><Volume2 size={13} /> {tr("我的录音")}</Button> : <span className="text-[10px] text-muted-foreground">{tr("云端记录 · 录音仅存原设备")}</span>}<AudioButton text={r.target} /><span className="ml-auto text-[10px] text-muted-foreground">{r.at.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}</span></div></div>)}</div>}<div className="tip-panel mt-6"><Zap size={19} /><div><b>{tr("不怕说错，怕的是不再尝试")}</b><p>{tr("所有纠正都来自你的真实录音，分数只代表这一次的发挥。")}</p></div></div></>}
           </>}
           </Suspense>
         </main>
