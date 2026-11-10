@@ -1,5 +1,6 @@
 import UIKit
 import Capacitor
+import AVFAudio
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -7,7 +8,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        // Recording switches the session to playAndRecord; without defaultToSpeaker all
+        // playback (TTS, lesson audio, recording replay) routes to the earpiece receiver.
+        let session = AVAudioSession.sharedInstance()
+        try? session.setCategory(.playAndRecord, options: [.defaultToSpeaker, .allowBluetoothHFP])
+        try? session.setActive(true)
         return true
     }
 
