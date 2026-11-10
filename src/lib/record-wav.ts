@@ -68,7 +68,7 @@ export async function recordWav(): Promise<{ stop: () => Promise<Recording>; can
         const samples = chunks.reduce((s, c) => s + c.length, 0);
         const seconds = samples / context.sampleRate;
         await context.close();
-        return { file: new File([blob], "recording.wav", { type: "audio/wav" }), seconds, voiced: (loudFrames >= 1 || samples >= 8000) && seconds >= 0.3, waveform: waveformPeaks(chunks) };
+        return { file: new File([blob], "recording.wav", { type: "audio/wav" }), seconds, voiced: loudFrames >= 2 && seconds >= 0.3, waveform: waveformPeaks(chunks) };
       },
     };
   } catch (error) {

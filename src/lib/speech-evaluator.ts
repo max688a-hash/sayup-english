@@ -86,6 +86,17 @@ export function evaluateSpokenText(
     }
   }
 
+  if (matches === 0 && targetWords.length >= 3) {
+    return {
+      score: 15,
+      verdict: 'retry',
+      summary: '一句都没对上目标句子——可能是没录到声音、环境太吵，或语音识别出了偏差。请靠近麦克风，先听一遍示范，再放慢语速完整读一次。',
+      issues: [],
+      suggestions: ['先点喇叭听一遍示范发音，再跟读', '靠近麦克风，把整句大声读完'],
+      next_try: cleanTarget,
+    };
+  }
+
   const accuracy = targetWords.length > 0 ? matches / targetWords.length : 1;
   let score = Math.round(accuracy * 85 + (heardWords.length > 0 ? 15 : 0));
   score = Math.max(20, Math.min(98, score));

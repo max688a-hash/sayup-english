@@ -145,9 +145,6 @@ export function SpeechCoach({ target, onPassed, onRecord }: { target: string; on
       if (isSimulatorDummy) {
         finalHeard = '';
       }
-      if (!finalHeard && result.voiced) {
-        finalHeard = target.replace(/^\[FREE\]\s*/i, '');
-      }
       finalAnalysis = evaluateSpokenText(target, finalHeard, result.seconds);
     }
 

@@ -323,7 +323,7 @@ html[lang="vi"] .detail-heading > button:first-child::after { content:"Quay lạ
 .suggested-sentence { display:flex; align-items:center; justify-content:space-between; font-size:13px; padding:12px; border:1px dashed var(--border); border-radius:6px; margin-bottom:13px; }
 .reply-options { display:flex; flex-direction:column; gap:8px; margin-bottom:13px; }
 .reply-option-row { display:flex; align-items:center; gap:8px; }
-.reply-option { flex:1; min-width:0; display:flex; align-items:center; height:auto; padding:10px 12px; font-size:13px; font-weight:400; white-space:normal; text-align:left; border-color:color-mix(in oklch,var(--primary) 30%,var(--border)); background:color-mix(in oklch,var(--primary) 6%,var(--surface)); }
+.reply-option { flex:1; min-width:0; display:flex; align-items:center; height:auto; padding:10px 12px; font-size:13px; font-weight:400; white-space:normal; text-align:left; border:1px solid color-mix(in oklch,var(--primary) 30%,var(--border)); border-radius:8px; background:color-mix(in oklch,var(--primary) 6%,var(--surface)); cursor:pointer; }
 .reply-option-row .audio-button { align-self:center; }
 .reply-option:hover { border-color:var(--primary); background:color-mix(in oklch,var(--primary) 12%,var(--surface)); }
 .turn-feedback { display:flex; flex-direction:column; gap:9px; margin:4px 0 10px; padding:10px 12px; font-size:12px; line-height:1.5; color:var(--teal); background:color-mix(in oklch,var(--teal) 8%,var(--surface)); border:1px solid color-mix(in oklch,var(--teal) 28%,var(--border)); border-radius:7px; }
