@@ -128,3 +128,8 @@ https://app.orikstudio.com/api/public/apple-purchase
 - 9 new self-written migrant-life dialogues appended to rolePlayDialogues.ts (58 total entries; dedup parent-teacher-2)
 - 117 sentences baked, audio index 19,307; tsc clean; 70/70 tests; playwright scene count 63 labels incl. new scenes
 - PENDING real-device: voice advance, BT audio, review playback
+
+## 2026-11-11 · Build 8 (QC pass)
+- Human audit of 9 new dialogues caught 3 defects: 'two minutes walk' grammar, 'is it not' register, clinic scene missing bot closer. All fixed + 3 new audio files baked (index 19,310). Verified inside iOS bundle.
+- NOTE: `npm run ios:sync` (not `npm run build` + `cap sync`) is the correct iOS asset pipeline — it SSR-snapshots index.html; plain cap sync fails without it.
+- Upload succeeded build 8. PENDING real-device: voice advance, BT audio, review playback.
