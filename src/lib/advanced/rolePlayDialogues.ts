@@ -1166,7 +1166,7 @@ export const ROLE_PLAY_DIALOGUES = [
       { speaker: 'bot', text: 'Nice to meet you, Ming. How long have you lived here?', zh: '很高兴认识你，小明。你在这儿住多久了？' },
       { speaker: 'user', text: 'About three years now. It is a pretty quiet area.', zh: '差不多三年了。这里挺安静的。' },
       { speaker: 'bot', text: 'That sounds nice. Is there a good supermarket nearby?', zh: '那不错。附近有像样的超市吗？' },
-      { speaker: 'user', text: 'Yes, there is one on the corner, just two minutes walk.', zh: '有，拐角就有一家，走两分钟就到。' },
+      { speaker: 'user', text: 'Yes, there is one on the corner, just two minutes\' walk.', zh: '有，拐角就有一家，走两分钟就到。' },
       { speaker: 'bot', text: 'Perfect. And what about buses into the city?', zh: '太好了。那进城的公交方便吗？' },
       { speaker: 'user', text: 'The 407 stops just down the street. It runs every ten minutes.', zh: '407路就在街口停，十分钟一班。' },
       { speaker: 'bot', text: 'That is really handy. Thanks for all the tips!', zh: '太方便了。谢谢你告诉我这么多！' },
@@ -1235,7 +1235,7 @@ export const ROLE_PLAY_DIALOGUES = [
     userRole: '游客',
     botRole: '路人',
     turns: [
-      { speaker: 'bot', text: 'Lovely day for the park, is it not?', zh: '今天逛公园天气真好，是吧？' },
+      { speaker: 'bot', text: 'Lovely day for the park, isn\'t it?', zh: '今天逛公园天气真好，是吧？' },
       { speaker: 'user', text: 'It really is. Excuse me, could you take a photo for us?', zh: '是啊。打扰一下，能帮我们拍张照吗？' },
       { speaker: 'bot', text: 'Of course, happy to help. Just this camera here?', zh: '当然可以，很乐意帮忙。就用这个相机吗？' },
       { speaker: 'user', text: 'Yes, just press the big button on the right.', zh: '对，按右边那个大按钮就行。' },
@@ -1299,6 +1299,7 @@ export const ROLE_PLAY_DIALOGUES = [
       { speaker: 'user', text: 'Okay. How long until I start feeling better?', zh: '好的。大概多久能好？' },
       { speaker: 'bot', text: 'You should feel better in three or four days. If not, come straight back.', zh: '三四天应该会好转。如果没有，马上回来复诊。' },
       { speaker: 'user', text: 'Understood. Thank you very much, Doctor.', zh: '明白了。非常感谢您，医生。' },
+      { speaker: 'bot', text: 'You are welcome. Get plenty of rest, and take care.', zh: '不客气。好好休息，保重身体。' },
     ],
   },
   {
