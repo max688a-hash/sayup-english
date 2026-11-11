@@ -123,3 +123,8 @@ https://app.orikstudio.com/api/public/apple-purchase
 - Voice loop: SpeechCoach onPassed(heard) -> conversation sends heard text; intelligible speech advances turn; retry stays
 - Verified headless (play-count instrument): open=1 play, each reply +1 play, turns advancing
 - PENDING real-device: voice-recognition advance (fake mic untestable), BT audio, review playback
+
+## 2026-11-11 · Build 7 (SBS-framework content cut)
+- 9 new self-written migrant-life dialogues appended to rolePlayDialogues.ts (58 total entries; dedup parent-teacher-2)
+- 117 sentences baked, audio index 19,307; tsc clean; 70/70 tests; playwright scene count 63 labels incl. new scenes
+- PENDING real-device: voice advance, BT audio, review playback
