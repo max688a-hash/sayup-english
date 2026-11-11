@@ -13,7 +13,7 @@ export type PracticeRecord = { id: string; target: string; heard: string; analys
 
 type Phase = 'idle' | 'recording' | 'analyzing' | 'done' | 'retry' | 'error';
 
-export function SpeechCoach({ target, onPassed, onRecord }: { target: string; onPassed: () => void; onRecord: (r: PracticeRecord) => void }) {
+export function SpeechCoach({ target, onPassed, onRecord }: { target: string; onPassed: (heard: string) => void; onRecord: (r: PracticeRecord) => void }) {
   const [phase, setPhase] = useState<Phase>('idle');
   const [message, setMessage] = useState('');
   const [heard, setHeard] = useState('');
@@ -164,7 +164,7 @@ export function SpeechCoach({ target, onPassed, onRecord }: { target: string; on
     if (finalAnalysis.verdict === 'retry') {
       setMessage(tr('这次没有说完整，请再重复一次。'));
     } else {
-      onPassed();
+      onPassed(finalHeard || target);
     }
     onRecord({
       id: crypto.randomUUID(),
