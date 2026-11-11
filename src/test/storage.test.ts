@@ -5,6 +5,8 @@ import {
   loadGuestMistakes,
   updateGuestMistake,
   calculateRealStats,
+  loadLocalRecords,
+  saveLocalRecords,
 } from '@/lib/storage';
 
 describe('Storage & Learning Progress Persistence', () => {
@@ -33,6 +35,25 @@ describe('Storage & Learning Progress Persistence', () => {
     updateGuestMistake("I'd like a latte, please.", 85, "I'd like a latte please", null);
     mistakes = loadGuestMistakes();
     expect(mistakes.length).toBe(0);
+  });
+
+  it('revives record timestamps and drops dead blob audio URLs after reload', () => {
+    // Records persist via JSON — `at` serializes to string and blob: URLs die
+    // with the session. Reloaded records must still render (at.toLocaleTimeString)
+    // and must not offer a dead "play my recording" button.
+    saveLocalRecords([{
+      id: 'r1',
+      target: 'It is my mommy!',
+      heard: 'it is my mommy',
+      analysis: { score: 72, verdict: 'needs_work', summary: '', issues: [], suggestions: [], next_try: '' },
+      audioUrl: 'blob:https://x/dead-url',
+      at: new Date(),
+    }]);
+    const loaded = loadLocalRecords();
+    expect(loaded).toHaveLength(1);
+    expect(loaded[0].at).toBeInstanceOf(Date);
+    expect(() => loaded[0].at.toLocaleTimeString('zh-CN')).not.toThrow();
+    expect(loaded[0].audioUrl).toBe('');
   });
 
   it('calculates real streak based on practice dates', () => {

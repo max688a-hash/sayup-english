@@ -87,7 +87,12 @@ export function loadLocalRecords(): any[] {
   if (typeof window === 'undefined') return [];
   try {
     const raw = localStorage.getItem(LOCAL_RECORDS_KEY);
-    return raw ? JSON.parse(raw) : [];
+    const parsed: any[] = raw ? JSON.parse(raw) : [];
+    return parsed.map(r => ({
+      ...r,
+      at: r.at instanceof Date ? r.at : new Date(r.at ?? Date.now()),
+      audioUrl: typeof r.audioUrl === 'string' && r.audioUrl.startsWith('blob:') ? '' : (r.audioUrl ?? ''),
+    }));
   } catch {
     return [];
   }
