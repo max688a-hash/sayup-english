@@ -129,7 +129,7 @@ export const READING_MATERIALS_BATCH_2 = [
     ],
   },
   {
-    id: 'read-a2-market',
+    id: 'read-a2-street-market',
     cefr: 'A2',
     title: 'At the Weekend Market',
     titleZh: '周末集市',
