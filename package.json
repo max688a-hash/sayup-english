@@ -13,7 +13,8 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "audit:content": "vitest run src/test/content-integrity-audit.test.ts"
+    "audit:content": "vitest run src/test/content-integrity-audit.test.ts",
+    "ios:sim": "bash scripts/ios-sim.sh"
   },
   "overrides": {
     "rolldown": "1.2.1"
