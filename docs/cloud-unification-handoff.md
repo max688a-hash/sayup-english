@@ -117,3 +117,9 @@ https://app.orikstudio.com/api/public/apple-purchase
 - AVAudioSession playAndRecord+defaultToSpeaker (BT audio fix, in AppDelegate)
 - Verified: tsc clean, 70/70 tests, signed XU3FP3HXF3, uploaded 1.0(5) to ASC
 - PENDING real-device: 50-scene list, review playback, BT audio, cloud-record labels
+
+## 2026-11-11 · Build 6 (live conversation loop, commit b999ccf6)
+- Bot lines auto-speak: openScene plays opening; send() plays next bot line for every reply path
+- Voice loop: SpeechCoach onPassed(heard) -> conversation sends heard text; intelligible speech advances turn; retry stays
+- Verified headless (play-count instrument): open=1 play, each reply +1 play, turns advancing
+- PENDING real-device: voice-recognition advance (fake mic untestable), BT audio, review playback
