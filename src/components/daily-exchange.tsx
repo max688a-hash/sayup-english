@@ -72,6 +72,7 @@ function Scene({ scene, speak, onRecord, onBack, onFinished }: { scene: Exchange
   const bot = botLines[alt % botLines.length]!;
   const replies = useMemo(() => { const seen = new Set<string>(); return [...(turn.options ?? []), ...(turn.hints ?? [])].filter(l => !seen.has(l.en) && seen.add(l.en)); }, [turn]);
   useEffect(() => { if (finished) onFinished(); }, [finished]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (!finished) speak(bot.en); }, [ti]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (finished) return <div className="adv-hub">
     <Head title={scene.title} onExit={onBack} />
@@ -106,7 +107,7 @@ function Scene({ scene, speak, onRecord, onBack, onFinished }: { scene: Exchange
       </Button>
       <Button variant="ghost" size="icon" className="self-center" aria-label={tr('听示范')} onClick={() => speak(r.en)}><Volume2 size={16} /></Button>
     </div>)}</div>
-    {pick && <SpeechCoach key={ti + pick.en} target={pick.en} onRecord={onRecord} onPassed={() => setPassed(p => { const n = [...p]; n[ti] = true; return n; })} />}
+    {pick && <SpeechCoach key={ti + pick.en} target={pick.en} onRecord={onRecord} onPassed={() => { setPassed(p => { const n = [...p]; n[ti] = true; return n; }); setTimeout(() => { setTi(t => t + 1); setAlt(0); setPick(null); setShowZh(false); }, 1600); }} />}
     <div className="flex gap-2 mt-3">
       <Button className="flex-1" disabled={!pick} onClick={() => { setTi(ti + 1); setAlt(0); setPick(null); setShowZh(false); }}>{ti === scene.turns.length - 1 ? tr('完成场景') : tr('下一轮')}</Button>
     </div>
